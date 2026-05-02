@@ -5,6 +5,9 @@ import { generateLoginId } from "@/lib/generateLoginId";
 import { signToken } from "@/lib/jwt";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 const signUpSchema = z.object({
   companyName: z.string().min(1),
   name: z.string().min(1),

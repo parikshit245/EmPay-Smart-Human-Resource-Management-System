@@ -4,6 +4,9 @@ import { comparePassword } from "@/lib/auth";
 import { signToken } from "@/lib/jwt";
 import { z } from "zod";
 
+export const dynamic = "force-dynamic";
+export const runtime = "nodejs";
+
 const signInSchema = z.object({
   loginId: z.string().min(1),
   password: z.string().min(1),
