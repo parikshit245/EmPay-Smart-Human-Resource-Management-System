@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Calendar, Check, Loader2, Plus, X } from "lucide-react";
+import { AlertTriangle, Calendar, Check, Loader2, Plus, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -57,7 +57,12 @@ const statusStyles: Record<LeaveStatus, string> = {
   REJECTED: "border-red-500/30 bg-red-500/10 text-red-300",
 };
 
-const leaveTypes = ["Sick Leave", "Casual Leave", "Paid Leave", "Other"];
+const leaveTypeOptions = [
+  { value: "SICK", label: "Sick Leave" },
+  { value: "PAID", label: "Paid Leave" },
+  { value: "UNPAID", label: "Unpaid Leave" },
+  { value: "OTHER", label: "Other" },
+];
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -65,6 +70,18 @@ function formatDate(value: string) {
     month: "short",
     year: "numeric",
   }).format(new Date(value));
+}
+
+function formatLeaveType(value: string) {
+  return leaveTypeOptions.find((option) => option.value === value)?.label || value;
+}
+
+function money(value: number) {
+  return new Intl.NumberFormat("en-IN", {
+    style: "currency",
+    currency: "INR",
+    maximumFractionDigits: 0,
+  }).format(value || 0);
 }
 
 function RequestTable({
@@ -111,7 +128,7 @@ function RequestTable({
                   <div className="text-xs text-slate-500">{request.user.loginId}</div>
                 </td>
               )}
-              <td className="px-4 py-3">{request.leaveType}</td>
+              <td className="px-4 py-3">{formatLeaveType(request.leaveType)}</td>
               <td className="px-4 py-3">
                 {formatDate(request.startDate)} - {formatDate(request.endDate)}
               </td>
@@ -189,8 +206,14 @@ export default function TimeOffPage() {
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [deductionEstimate, setDeductionEstimate] = useState<{
+    deduction: number;
+    unpaidLeaveDays: number;
+    totalWorkingDays: number;
+  } | null>(null);
+  const [estimateLoading, setEstimateLoading] = useState(false);
   const [form, setForm] = useState({
-    leaveType: "Sick Leave",
+    leaveType: "SICK",
     startDate: "",
     endDate: "",
     reason: "",
@@ -212,6 +235,39 @@ export default function TimeOffPage() {
     loadRequests();
   }, []);
 
+  useEffect(() => {
+    if (form.leaveType !== "UNPAID" || !form.startDate || !form.endDate) {
+      setDeductionEstimate(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    async function loadDeductionEstimate() {
+      setEstimateLoading(true);
+      try {
+        const query = new URLSearchParams({
+          startDate: form.startDate,
+          endDate: form.endDate,
+        });
+        const res = await fetch(`/api/time-off/deduction-estimate?${query.toString()}`, {
+          signal: controller.signal,
+        });
+        const json = await res.json();
+        if (res.ok) setDeductionEstimate(json.data);
+      } catch (err) {
+        if (!(err instanceof DOMException && err.name === "AbortError")) {
+          setDeductionEstimate(null);
+        }
+      } finally {
+        if (!controller.signal.aborted) setEstimateLoading(false);
+      }
+    }
+
+    loadDeductionEstimate();
+    return () => controller.abort();
+  }, [form.endDate, form.leaveType, form.startDate]);
+
   async function loadRequests() {
     setLoading(true);
     setError(null);
@@ -231,7 +287,7 @@ export default function TimeOffPage() {
 
   async function submitRequest(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
-    if (form.leaveType === "Sick Leave" && !form.medicalCertificateData) {
+    if (form.leaveType === "SICK" && !form.medicalCertificateData) {
       setError("Medical certificate is required for sick leave.");
       return;
     }
@@ -247,7 +303,7 @@ export default function TimeOffPage() {
       if (!res.ok) throw new Error(json.error || "Failed to submit request");
       setDialogOpen(false);
       setForm({
-        leaveType: "Sick Leave",
+        leaveType: "SICK",
         startDate: "",
         endDate: "",
         reason: "",
@@ -368,7 +424,7 @@ export default function TimeOffPage() {
                       setForm((prev) => ({
                         ...prev,
                         leaveType: value,
-                        ...(value === "Sick Leave"
+                        ...(value === "SICK"
                           ? {}
                           : {
                               medicalCertificateName: "",
@@ -382,9 +438,9 @@ export default function TimeOffPage() {
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent className="border-slate-700 bg-slate-900 text-slate-200">
-                      {leaveTypes.map((type) => (
-                        <SelectItem key={type} value={type}>
-                          {type}
+                      {leaveTypeOptions.map((type) => (
+                        <SelectItem key={type.value} value={type.value}>
+                          {type.label}
                         </SelectItem>
                       ))}
                     </SelectContent>
@@ -416,6 +472,27 @@ export default function TimeOffPage() {
                     />
                   </div>
                 </div>
+                {form.leaveType === "UNPAID" && (
+                  <div className="flex gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                    <div>
+                      <p className="font-medium">
+                        Selecting unpaid leave will deduct{" "}
+                        {estimateLoading
+                          ? "calculating..."
+                          : money(deductionEstimate?.deduction || 0)}{" "}
+                        from your salary.
+                      </p>
+                      {deductionEstimate && (
+                        <p className="mt-1 text-xs text-amber-100/70">
+                          Based on {deductionEstimate.unpaidLeaveDays} unpaid working day
+                          {deductionEstimate.unpaidLeaveDays === 1 ? "" : "s"} out of{" "}
+                          {deductionEstimate.totalWorkingDays} working days this month.
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                )}
                 <div className="space-y-1.5">
                   <Label>Reason</Label>
                   <Textarea
@@ -427,7 +504,7 @@ export default function TimeOffPage() {
                     placeholder="Add a short reason..."
                   />
                 </div>
-                {form.leaveType === "Sick Leave" && (
+                {form.leaveType === "SICK" && (
                   <div className="space-y-1.5">
                     <Label>Medical Certificate *</Label>
                     <Input

@@ -83,6 +83,17 @@ interface ManagerOption {
   role: string;
 }
 
+interface LeaveAvailability {
+  paidLeavesAllocated: number;
+  paidLeavesUsed: number;
+  paidLeavesLeft: number;
+  sickLeavesAllocated: number;
+  sickLeavesUsed: number;
+  sickLeavesLeft: number;
+  unpaidLeavesUsedCurrentMonth: number;
+  year: number;
+}
+
 const emptySalary: SalaryInfo = {
   monthWage: 0,
   yearlyWage: 0,
@@ -139,6 +150,105 @@ function money(value: number) {
     currency: "INR",
     maximumFractionDigits: 0,
   }).format(value || 0);
+}
+
+function canViewLeaveAvailability(role?: string) {
+  return role === "ADMIN" || role === "HR_OFFICER" || role === "PAYROLL_OFFICER";
+}
+
+function LeaveProgress({
+  label,
+  left,
+  used,
+  allocated,
+  color,
+}: {
+  label: string;
+  left: number;
+  used: number;
+  allocated: number;
+  color: string;
+}) {
+  const percent = allocated > 0 ? Math.min(100, (used / allocated) * 100) : 0;
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between gap-3">
+        <p className="text-sm font-medium text-slate-200">{label}</p>
+        <p className="text-sm text-slate-400">
+          {left} / {allocated}
+        </p>
+      </div>
+      <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+        <div className={cn("h-full rounded-full", color)} style={{ width: `${percent}%` }} />
+      </div>
+      <p className="text-xs text-slate-500">{used} used</p>
+    </div>
+  );
+}
+
+function EmployeeLeaveAvailability({ employeeId }: { employeeId: string }) {
+  const [availability, setAvailability] = useState<LeaveAvailability | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    async function loadAvailability() {
+      try {
+        const res = await fetch(`/api/employees/${employeeId}/leaves/availability`);
+        const json = await res.json();
+        if (!res.ok) throw new Error(json.error || "Failed to load leave data");
+        setAvailability(json.data);
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to load leave data.");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadAvailability();
+  }, [employeeId]);
+
+  return (
+    <Card className="border-slate-800/70 bg-slate-900/70">
+      <CardHeader>
+        <CardTitle className="text-slate-100">Leave Availability</CardTitle>
+      </CardHeader>
+      <CardContent>
+        {loading ? (
+          <div className="flex justify-center py-8">
+            <Loader2 className="h-6 w-6 animate-spin text-indigo-400" />
+          </div>
+        ) : error ? (
+          <p className="text-sm text-red-300">{error}</p>
+        ) : !availability ? (
+          <p className="text-sm text-slate-400">No leave data available.</p>
+        ) : (
+          <div className="grid gap-5 md:grid-cols-3">
+            <LeaveProgress
+              label="Paid Leaves Left"
+              left={availability.paidLeavesLeft}
+              used={availability.paidLeavesUsed}
+              allocated={availability.paidLeavesAllocated}
+              color="bg-emerald-500"
+            />
+            <LeaveProgress
+              label="Sick Leaves Left"
+              left={availability.sickLeavesLeft}
+              used={availability.sickLeavesUsed}
+              allocated={availability.sickLeavesAllocated}
+              color="bg-blue-500"
+            />
+            <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 p-4">
+              <p className="text-sm font-medium text-amber-100">Unpaid Leaves Used</p>
+              <p className="mt-2 text-3xl font-bold text-amber-300">
+                {availability.unpaidLeavesUsedCurrentMonth}
+              </p>
+              <p className="mt-1 text-xs text-amber-100/70">Current month, payroll working days</p>
+            </div>
+          </div>
+        )}
+      </CardContent>
+    </Card>
+  );
 }
 
 export default function EmployeeProfilePage() {
@@ -432,6 +542,10 @@ export default function EmployeeProfilePage() {
         )}>
           {message}
         </div>
+      )}
+
+      {canViewLeaveAvailability(user?.role) && (
+        <EmployeeLeaveAvailability employeeId={employee.id} />
       )}
 
       <Tabs defaultValue="resume">

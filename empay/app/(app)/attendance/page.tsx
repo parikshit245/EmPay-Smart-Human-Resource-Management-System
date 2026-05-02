@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 import { CalendarDays, Clock, Loader2, LogIn, LogOut } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -29,6 +30,14 @@ interface EmployeeOption {
   id: string;
   name: string;
   loginId: string;
+}
+
+interface AttendanceSummaryData {
+  daysPresent: number;
+  totalLeaves: number;
+  totalWorkingDays: number;
+  currentMonth: string;
+  currentYear: number;
 }
 
 type RangeMode = "week" | "month" | "custom";
@@ -87,6 +96,53 @@ const statusStyles = {
   ABSENT: "border-amber-500/30 bg-amber-500/10 text-amber-300",
   ON_LEAVE: "border-blue-500/30 bg-blue-500/10 text-blue-300",
 };
+
+function AttendanceSummary() {
+  const [summary, setSummary] = useState<AttendanceSummaryData | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadSummary() {
+      try {
+        const res = await fetch("/api/attendance/summary");
+        const json = await res.json();
+        if (res.ok) setSummary(json.data);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadSummary();
+  }, []);
+
+  const metrics = [
+    { label: "Days Present", value: summary?.daysPresent ?? 0, className: "text-emerald-300" },
+    { label: "Total Leaves", value: summary?.totalLeaves ?? 0, className: "text-blue-300" },
+    { label: "Working Days", value: summary?.totalWorkingDays ?? 0, className: "text-indigo-300" },
+  ];
+
+  return (
+    <Card className="border-slate-800/70 bg-slate-900/70">
+      <CardHeader className="border-b border-slate-800/70">
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+          <CardTitle className="text-slate-100">Attendance Summary</CardTitle>
+          <Badge variant="outline" className="w-fit border-indigo-500/30 bg-indigo-500/10 text-indigo-200">
+            Current Month: {summary ? `${summary.currentMonth} ${summary.currentYear}` : "..."}
+          </Badge>
+        </div>
+      </CardHeader>
+      <CardContent className="grid gap-3 pt-0 sm:grid-cols-3">
+        {metrics.map((metric) => (
+          <div key={metric.label} className="rounded-lg border border-slate-800 bg-slate-950/40 p-4">
+            <p className="text-xs uppercase tracking-wide text-slate-500">{metric.label}</p>
+            <p className={cn("mt-2 text-3xl font-bold", metric.className)}>
+              {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : metric.value}
+            </p>
+          </div>
+        ))}
+      </CardContent>
+    </Card>
+  );
+}
 
 export default function AttendancePage() {
   const { user } = useUser();
@@ -183,6 +239,8 @@ export default function AttendancePage() {
 
   return (
     <div className="space-y-6">
+      <AttendanceSummary />
+
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
