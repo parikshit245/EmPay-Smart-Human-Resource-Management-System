@@ -114,24 +114,24 @@ export default function SettingsPage() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-100">
-          <Settings className="h-6 w-6 text-indigo-400" />
+        <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
+          <Settings className="h-6 w-6 text-[#714b67]" />
           Settings
         </h1>
-        <p className="mt-1 text-sm text-slate-400">Manage organization configuration</p>
+        <p className="mt-1 text-sm text-[#6c757d]">Manage organization configuration</p>
       </div>
 
       {message && (
-        <div className="rounded-lg border border-indigo-500/30 bg-indigo-500/10 p-3 text-sm text-indigo-200">
+        <div className="rounded-lg border border-[#714b67]/30 bg-[#ede7f6] p-3 text-sm text-[#714b67]">
           {message}
         </div>
       )}
 
       <form
         onSubmit={saveSettings}
-        className="rounded-xl border border-slate-800/70 bg-slate-900/70 p-5"
+        className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-5"
       >
-        <h2 className="mb-4 font-semibold text-slate-100">Company Info</h2>
+        <h2 className="mb-4 font-semibold text-[#1a1c24]">Company Info</h2>
         <div className="grid gap-4 md:grid-cols-[1fr_auto] md:items-end">
           <div className="space-y-1.5">
             <Label>Company Name</Label>
@@ -142,22 +142,22 @@ export default function SettingsPage() {
                   prev ? { ...prev, companyName: event.target.value } : prev
                 )
               }
-              className="border-slate-700 bg-slate-900 text-slate-100"
+              className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]"
             />
           </div>
-          <Button disabled={saving} className="bg-indigo-600 text-white hover:bg-indigo-500">
+          <Button disabled={saving} className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Save
           </Button>
         </div>
 
         <div className="mt-4 grid gap-4 md:grid-cols-[auto_1fr] md:items-center">
-          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-slate-800 bg-slate-950">
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-xl border border-[#ede7f6] bg-[#f4f5f7]">
             {settings.companyLogo ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img src={settings.companyLogo} alt="Company logo" className="h-full w-full object-cover" />
             ) : (
-              <span className="text-lg font-bold text-indigo-300">EP</span>
+              <span className="text-lg font-bold text-[#714b67]">EP</span>
             )}
           </div>
           <div className="space-y-1.5">
@@ -166,19 +166,19 @@ export default function SettingsPage() {
               type="file"
               accept="image/*"
               onChange={handleLogoUpload}
-              className="border-slate-700 bg-slate-900 text-slate-100 file:text-slate-200"
+              className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] file:text-[#374151]"
             />
           </div>
         </div>
       </form>
 
-      <div className="overflow-hidden rounded-xl border border-slate-800/70 bg-slate-900/70">
-        <div className="border-b border-slate-800/70 px-4 py-3">
-          <h2 className="font-semibold text-slate-100">Role Management</h2>
+      <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
+        <div className="border-b border-[#ede7f6] px-4 py-3">
+          <h2 className="font-semibold text-[#1a1c24]">Role Management</h2>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
-            <thead className="bg-slate-950/60 text-xs uppercase text-slate-500">
+            <thead className="bg-[#faf8ff] text-xs uppercase text-[#6c757d]">
               <tr>
                 <th className="px-4 py-3 font-medium">Name</th>
                 <th className="px-4 py-3 font-medium">LoginId</th>
@@ -186,12 +186,12 @@ export default function SettingsPage() {
                 <th className="px-4 py-3 font-medium">Change Role</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/70">
+            <tbody className="divide-y divide-[#ede7f6]">
               {users.map((user) => (
-                <tr key={user.id} className="text-slate-300">
+                <tr key={user.id} className="text-[#374151]">
                   <td className="px-4 py-3">
-                    <div className="font-medium text-slate-200">{user.name}</div>
-                    <div className="text-xs text-slate-500">{user.email}</div>
+                    <div className="font-medium text-[#374151]">{user.name}</div>
+                    <div className="text-xs text-[#6c757d]">{user.email}</div>
                   </td>
                   <td className="px-4 py-3">{user.loginId}</td>
                   <td className="px-4 py-3">{user.role.replace("_", " ")}</td>
@@ -202,10 +202,10 @@ export default function SettingsPage() {
                         onValueChange={(value) => updateRole(user.id, value as SettingsUser["role"])}
                         disabled={roleSavingId === user.id}
                       >
-                        <SelectTrigger className="w-48 border-slate-700 bg-slate-900 text-slate-100">
+                        <SelectTrigger className="w-48 border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]">
                           <SelectValue />
                         </SelectTrigger>
-                        <SelectContent className="border-slate-700 bg-slate-900 text-slate-200">
+                        <SelectContent className="border-[#e5e7eb] bg-[#ffffff] text-[#374151]">
                           {roles.map((role) => (
                             <SelectItem key={role.value} value={role.value}>
                               {role.label}
@@ -214,7 +214,7 @@ export default function SettingsPage() {
                         </SelectContent>
                       </Select>
                       {roleSavingId === user.id && (
-                        <Loader2 className="h-4 w-4 animate-spin text-indigo-300" />
+                        <Loader2 className="h-4 w-4 animate-spin text-[#714b67]" />
                       )}
                     </div>
                   </td>

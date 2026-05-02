@@ -173,15 +173,15 @@ function LeaveProgress({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-3">
-        <p className="text-sm font-medium text-slate-200">{label}</p>
-        <p className="text-sm text-slate-400">
+        <p className="text-sm font-medium text-[#374151]">{label}</p>
+        <p className="text-sm text-[#6c757d]">
           {left} / {allocated}
         </p>
       </div>
-      <div className="h-2 overflow-hidden rounded-full bg-slate-800">
+      <div className="h-2 overflow-hidden rounded-full bg-[#faf8ff]">
         <div className={cn("h-full rounded-full", color)} style={{ width: `${percent}%` }} />
       </div>
-      <p className="text-xs text-slate-500">{used} used</p>
+      <p className="text-xs text-[#6c757d]">{used} used</p>
     </div>
   );
 }
@@ -208,19 +208,19 @@ function EmployeeLeaveAvailability({ employeeId }: { employeeId: string }) {
   }, [employeeId]);
 
   return (
-    <Card className="border-slate-800/70 bg-slate-900/70">
+    <Card className="border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
       <CardHeader>
-        <CardTitle className="text-slate-100">Leave Availability</CardTitle>
+        <CardTitle className="text-[#1a1c24]">Leave Availability</CardTitle>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-indigo-400" />
+            <Loader2 className="h-6 w-6 animate-spin text-[#714b67]" />
           </div>
         ) : error ? (
-          <p className="text-sm text-red-300">{error}</p>
+          <p className="text-sm text-[#dc3545]">{error}</p>
         ) : !availability ? (
-          <p className="text-sm text-slate-400">No leave data available.</p>
+          <p className="text-sm text-[#6c757d]">No leave data available.</p>
         ) : (
           <div className="grid gap-5 md:grid-cols-3">
             <LeaveProgress
@@ -228,21 +228,21 @@ function EmployeeLeaveAvailability({ employeeId }: { employeeId: string }) {
               left={availability.paidLeavesLeft}
               used={availability.paidLeavesUsed}
               allocated={availability.paidLeavesAllocated}
-              color="bg-emerald-500"
+              color="bg-[#28a745]"
             />
             <LeaveProgress
               label="Sick Leaves Left"
               left={availability.sickLeavesLeft}
               used={availability.sickLeavesUsed}
               allocated={availability.sickLeavesAllocated}
-              color="bg-blue-500"
+              color="bg-[#1bb6f9]"
             />
-            <div className="rounded-lg border border-amber-500/25 bg-amber-500/10 p-4">
-              <p className="text-sm font-medium text-amber-100">Unpaid Leaves Used</p>
-              <p className="mt-2 text-3xl font-bold text-amber-300">
+            <div className="rounded-lg border border-[#fbb130]/35 bg-[#fff8ec] p-4">
+              <p className="text-sm font-medium text-[#b26f00]">Unpaid Leaves Used</p>
+              <p className="mt-2 text-3xl font-bold text-[#b26f00]">
                 {availability.unpaidLeavesUsedCurrentMonth}
               </p>
-              <p className="mt-1 text-xs text-amber-100/70">Current month, payroll working days</p>
+              <p className="mt-1 text-xs text-[#b26f00]/70">Current month, payroll working days</p>
             </div>
           </div>
         )}
@@ -466,13 +466,13 @@ export default function EmployeeProfilePage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
+        <Loader2 className="h-8 w-8 animate-spin text-[#714b67]" />
       </div>
     );
   }
 
   if (!employee) {
-    return <p className="text-red-400">{message || "Employee not found."}</p>;
+    return <p className="text-[#dc3545]">{message || "Employee not found."}</p>;
   }
 
   const salary = employee.salaryInfo || emptySalary;
@@ -483,18 +483,18 @@ export default function EmployeeProfilePage() {
         <Button
           variant="ghost"
           onClick={() => router.back()}
-          className="text-slate-400 hover:bg-slate-800/60 hover:text-slate-100"
+          className="text-[#6c757d] hover:bg-[#faf8ff] hover:text-[#1a1c24]"
         >
           <ArrowLeft className="h-4 w-4" />
         </Button>
-        <h1 className="text-2xl font-bold text-slate-100">Employee Profile</h1>
+        <h1 className="text-2xl font-bold text-[#1a1c24]">Employee Profile</h1>
       </div>
 
-      <Card className="bg-slate-900/70 border-slate-800/70">
+      <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
         <CardContent className="p-6">
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-5">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-indigo-500/20 text-2xl font-bold text-indigo-200">
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-[#f3eaf1] text-2xl font-bold text-[#714b67]">
                 {employee.profilePhoto ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={employee.profilePhoto} alt={employee.name} className="h-full w-full object-cover" />
@@ -504,12 +504,12 @@ export default function EmployeeProfilePage() {
               </div>
               <div>
                 <div className="flex flex-wrap items-center gap-2">
-                  <h2 className="text-2xl font-semibold text-slate-100">{employee.name}</h2>
-                  <Badge variant="outline" className="border-indigo-500/30 text-indigo-300">
+                  <h2 className="text-2xl font-semibold text-[#1a1c24]">{employee.name}</h2>
+                  <Badge variant="outline" className="border-[#714b67]/30 text-[#714b67]">
                     {employee.role.replace("_", " ")}
                   </Badge>
                 </div>
-                <div className="mt-2 grid gap-x-6 gap-y-1 text-sm text-slate-400 sm:grid-cols-2 lg:grid-cols-3">
+                <div className="mt-2 grid gap-x-6 gap-y-1 text-sm text-[#6c757d] sm:grid-cols-2 lg:grid-cols-3">
                   <span>{employee.loginId}</span>
                   <span>{employee.email}</span>
                   <span>{employee.phone || "No phone"}</span>
@@ -523,7 +523,7 @@ export default function EmployeeProfilePage() {
               <Button
                 onClick={saveProfile}
                 disabled={saving}
-                className="bg-indigo-600 text-white hover:bg-indigo-500"
+                className="bg-[#714b67] text-white hover:bg-[#5a3a52]"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save
@@ -537,8 +537,8 @@ export default function EmployeeProfilePage() {
         <div className={cn(
           "rounded-lg border p-3 text-sm",
           message.includes("saved") || message.includes("updated")
-            ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-            : "border-red-500/30 bg-red-500/10 text-red-300"
+            ? "border-[#28a745]/30 bg-[#edf7ef] text-[#28a745]"
+            : "border-[#dc3545]/30 bg-[#fdecea] text-[#dc3545]"
         )}>
           {message}
         </div>
@@ -557,9 +557,9 @@ export default function EmployeeProfilePage() {
         </TabsList>
 
         <TabsContent value="resume">
-          <Card className="bg-slate-900/70 border-slate-800/70">
+          <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
             <CardHeader>
-              <CardTitle className="text-slate-100">Resume</CardTitle>
+              <CardTitle className="text-[#1a1c24]">Resume</CardTitle>
             </CardHeader>
             <CardContent className="space-y-5">
               <TextareaField label="About" value={employee.resume?.about || ""} disabled={!canEdit} onChange={(value) => updateResume({ about: value })} />
@@ -597,9 +597,9 @@ export default function EmployeeProfilePage() {
 
         {canViewPrivateInfo && (
         <TabsContent value="private">
-          <Card className="bg-slate-900/70 border-slate-800/70">
+          <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
             <CardHeader>
-              <CardTitle className="text-slate-100">Private Info</CardTitle>
+              <CardTitle className="text-[#1a1c24]">Private Info</CardTitle>
             </CardHeader>
             <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-2">
               <TextField label="DOB" type="date" value={dateInput(employee.privateInfo?.dob)} disabled={!canEdit} onChange={(value) => updatePrivate({ dob: value || null })} />
@@ -640,10 +640,10 @@ export default function EmployeeProfilePage() {
 
         {canViewSalary && (
           <TabsContent value="salary">
-            <Card className="bg-slate-900/70 border-slate-800/70">
+            <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
               <CardHeader className="flex flex-row items-center justify-between">
-                <CardTitle className="text-slate-100">Salary Info</CardTitle>
-                <Button onClick={saveSalary} disabled={saving} className="bg-indigo-600 text-white hover:bg-indigo-500">
+                <CardTitle className="text-[#1a1c24]">Salary Info</CardTitle>
+                <Button onClick={saveSalary} disabled={saving} className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Salary
                 </Button>
@@ -675,10 +675,10 @@ export default function EmployeeProfilePage() {
 
         {canUseSecurity && (
         <TabsContent value="security">
-          <Card className="bg-slate-900/70 border-slate-800/70">
+          <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-slate-100">
-                <Shield className="h-5 w-5 text-indigo-300" />
+              <CardTitle className="flex items-center gap-2 text-[#1a1c24]">
+                <Shield className="h-5 w-5 text-[#714b67]" />
                 Security
               </CardTitle>
             </CardHeader>
@@ -688,7 +688,7 @@ export default function EmployeeProfilePage() {
                 <TextField label="Old Password" type="password" value={oldPassword} onChange={setOldPassword} />
                 <TextField label="New Password" type="password" value={newPassword} onChange={setNewPassword} />
                 <TextField label="Confirm New Password" type="password" value={confirmPassword} onChange={setConfirmPassword} />
-                <Button type="submit" disabled={saving} className="w-fit bg-indigo-600 text-white hover:bg-indigo-500">
+                <Button type="submit" disabled={saving} className="w-fit bg-[#714b67] text-white hover:bg-[#5a3a52]">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Password
                 </Button>
@@ -703,7 +703,7 @@ export default function EmployeeProfilePage() {
 }
 
 function SectionTitle({ title }: { title: string }) {
-  return <h3 className="md:col-span-2 pt-2 text-sm font-semibold text-slate-200">{title}</h3>;
+  return <h3 className="md:col-span-2 pt-2 text-sm font-semibold text-[#374151]">{title}</h3>;
 }
 
 function TextField({
@@ -723,13 +723,13 @@ function TextField({
 }) {
   return (
     <div className={cn("space-y-1.5", className)}>
-      <Label className="text-slate-300">{label}</Label>
+      <Label className="text-[#374151]">{label}</Label>
       <Input
         type={type}
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
-        className="bg-slate-800/50 border-slate-600 text-slate-100 disabled:text-slate-400 [color-scheme:dark]"
+        className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] disabled:text-[#6c757d] [color-scheme:light]"
       />
     </div>
   );
@@ -748,12 +748,12 @@ function TextareaField({
 }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-slate-300">{label}</Label>
+      <Label className="text-[#374151]">{label}</Label>
       <Textarea
         value={value}
         disabled={disabled}
         onChange={(event) => onChange(event.target.value)}
-        className="bg-slate-800/50 border-slate-600 text-slate-100 disabled:text-slate-400"
+        className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] disabled:text-[#6c757d]"
       />
     </div>
   );
@@ -774,12 +774,12 @@ function SelectField({
 }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-slate-300">{label}</Label>
+      <Label className="text-[#374151]">{label}</Label>
       <Select value={value || undefined} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className="w-full bg-slate-800/50 border-slate-600 text-slate-100">
+        <SelectTrigger className="w-full bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24]">
           <SelectValue placeholder={`Select ${label.toLowerCase()}`} />
         </SelectTrigger>
-        <SelectContent className="bg-slate-900 border-slate-700 text-slate-200">
+        <SelectContent className="bg-[#ffffff] border-[#e5e7eb] text-[#374151]">
           {values.map((item) => (
             <SelectItem key={item} value={item}>
               {item}
@@ -804,12 +804,12 @@ function ManagerField({
 }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-slate-300">Reporting Manager</Label>
+      <Label className="text-[#374151]">Reporting Manager</Label>
       <Select value={value} onValueChange={onChange} disabled={disabled}>
-        <SelectTrigger className="w-full bg-slate-800/50 border-slate-600 text-slate-100">
+        <SelectTrigger className="w-full bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24]">
           <SelectValue placeholder="Select reporting manager" />
         </SelectTrigger>
-        <SelectContent className="bg-slate-900 border-slate-700 text-slate-200">
+        <SelectContent className="bg-[#ffffff] border-[#e5e7eb] text-[#374151]">
           <SelectItem value="none">No Manager</SelectItem>
           {managers.map((manager) => (
             <SelectItem key={manager.id} value={manager.id}>
@@ -841,10 +841,10 @@ function TagEditor({
 }) {
   return (
     <div className="space-y-2">
-      <Label className="text-slate-300">{label}</Label>
+      <Label className="text-[#374151]">{label}</Label>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
-          <Badge key={item} variant="outline" className="gap-1 border-indigo-500/30 bg-indigo-500/10 text-indigo-200">
+          <Badge key={item} variant="outline" className="gap-1 border-[#714b67]/30 bg-[#ede7f6] text-[#714b67]">
             {item}
             {!disabled && (
               <button type="button" onClick={() => onRemove(item)}>
@@ -859,9 +859,9 @@ function TagEditor({
           <Input
             value={value}
             onChange={(event) => onValueChange(event.target.value)}
-            className="bg-slate-800/50 border-slate-600 text-slate-100"
+            className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24]"
           />
-          <Button type="button" onClick={onAdd} variant="outline" className="border-slate-700 text-slate-200">
+          <Button type="button" onClick={onAdd} variant="outline" className="border-[#e5e7eb] text-[#374151]">
             <Plus className="h-4 w-4" />
             Add
           </Button>
@@ -874,8 +874,8 @@ function TagEditor({
 function ReadOnlyMoney({ label, value }: { label: string; value: number }) {
   return (
     <div className="space-y-1.5">
-      <Label className="text-slate-300">{label}</Label>
-      <Input value={money(value)} readOnly className="bg-slate-800/50 border-slate-700 text-slate-300" />
+      <Label className="text-[#374151]">{label}</Label>
+      <Input value={money(value)} readOnly className="bg-[#faf8ff] border-[#e5e7eb] text-[#374151]" />
     </div>
   );
 }

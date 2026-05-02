@@ -80,12 +80,12 @@ interface AttendanceReport {
 const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
 const statusStyles = {
-  PENDING: "border-amber-500/30 bg-amber-500/10 text-amber-300",
-  APPROVED: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-  REJECTED: "border-red-500/30 bg-red-500/10 text-red-300",
-  PRESENT: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-  ABSENT: "border-amber-500/30 bg-amber-500/10 text-amber-300",
-  ON_LEAVE: "border-blue-500/30 bg-blue-500/10 text-blue-300",
+  PENDING: "border-[#fbb130]/40 bg-[#fff8ec] text-[#b26f00]",
+  APPROVED: "border-[#28a745]/30 bg-[#edf7ef] text-[#28a745]",
+  REJECTED: "border-[#dc3545]/30 bg-[#fdecea] text-[#dc3545]",
+  PRESENT: "border-[#28a745]/30 bg-[#edf7ef] text-[#28a745]",
+  ABSENT: "border-[#fbb130]/40 bg-[#fff8ec] text-[#b26f00]",
+  ON_LEAVE: "border-[#1bb6f9]/30 bg-[#e8f7ff] text-[#1bb6f9]",
 };
 
 function money(value: number) {
@@ -163,10 +163,10 @@ export default function ReportsPage() {
   function employeeSelect(value: string, onChange: (value: string) => void) {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full border-slate-700 bg-slate-900 text-slate-100">
+        <SelectTrigger className="w-full border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="border-slate-700 bg-slate-900 text-slate-200">
+        <SelectContent className="border-[#e5e7eb] bg-[#ffffff] text-[#374151]">
           <SelectItem value="all">All Employees</SelectItem>
           {employees.map((employee) => (
             <SelectItem key={employee.id} value={employee.id}>
@@ -181,10 +181,10 @@ export default function ReportsPage() {
   function monthSelect(value: string, onChange: (value: string) => void) {
     return (
       <Select value={value} onValueChange={onChange}>
-        <SelectTrigger className="w-full border-slate-700 bg-slate-900 text-slate-100">
+        <SelectTrigger className="w-full border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]">
           <SelectValue />
         </SelectTrigger>
-        <SelectContent className="border-slate-700 bg-slate-900 text-slate-200">
+        <SelectContent className="border-[#e5e7eb] bg-[#ffffff] text-[#374151]">
           {months.map((month, index) => (
             <SelectItem key={month} value={String(index + 1)}>
               {month}
@@ -235,11 +235,11 @@ export default function ReportsPage() {
       {printablePayslip && <PayslipPrint payslip={printablePayslip} payrun={printablePayslip.payrun} />}
 
       <div>
-        <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-100">
-          <BarChart3 className="h-6 w-6 text-indigo-400" />
+        <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
+          <BarChart3 className="h-6 w-6 text-[#714b67]" />
           Reports
         </h1>
-        <p className="mt-1 text-sm text-slate-400">Analytics and downloadable reports</p>
+        <p className="mt-1 text-sm text-[#6c757d]">Analytics and downloadable reports</p>
       </div>
 
       <Tabs defaultValue="payslips">
@@ -250,51 +250,51 @@ export default function ReportsPage() {
         </TabsList>
 
         <TabsContent value="payslips" className="space-y-4">
-          <div className="grid gap-3 rounded-xl border border-slate-800/70 bg-slate-900/70 p-4 md:grid-cols-4">
+          <div className="grid gap-3 rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-4 md:grid-cols-4">
             <div className="space-y-1.5"><Label>Employee</Label>{employeeSelect(filters.payslipUser, (value) => setFilters((p) => ({ ...p, payslipUser: value })))}</div>
             <div className="space-y-1.5"><Label>Month</Label>{monthSelect(filters.payslipMonth, (value) => setFilters((p) => ({ ...p, payslipMonth: value })))}</div>
-            <div className="space-y-1.5"><Label>Year</Label><Input value={filters.payslipYear} onChange={(e) => setFilters((p) => ({ ...p, payslipYear: e.target.value }))} className="border-slate-700 bg-slate-900 text-slate-100" /></div>
-            <Button onClick={loadPayslips} className="self-end bg-indigo-600 text-white hover:bg-indigo-500">Apply</Button>
+            <div className="space-y-1.5"><Label>Year</Label><Input value={filters.payslipYear} onChange={(e) => setFilters((p) => ({ ...p, payslipYear: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]" /></div>
+            <Button onClick={loadPayslips} className="self-end bg-[#714b67] text-white hover:bg-[#5a3a52]">Apply</Button>
           </div>
           <ReportShell loading={loadingReport}>
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950/60 text-xs uppercase text-slate-500"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Month</th><th className="px-4 py-3">Gross</th><th className="px-4 py-3">Deductions</th><th className="px-4 py-3">Net</th><th className="px-4 py-3">Download</th></tr></thead>
-              <tbody className="divide-y divide-slate-800/70">
-                {payslips.map((p) => <tr key={p.id} className="text-slate-300"><td className="px-4 py-3">{p.employee.name}</td><td className="px-4 py-3">{months[p.payrun.month - 1]} {p.payrun.year}</td><td className="px-4 py-3">{money(p.grossPay)}</td><td className="px-4 py-3">{money(p.employeePF + p.employerPF + p.professionalTax + p.tdsDeduction)}</td><td className="px-4 py-3 text-emerald-300">{money(p.netPay)}</td><td className="px-4 py-3"><Button size="sm" variant="outline" onClick={() => printPayslip(p)}><Download className="h-3.5 w-3.5" />PDF</Button></td></tr>)}
+              <thead className="bg-[#faf8ff] text-xs uppercase text-[#6c757d]"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Month</th><th className="px-4 py-3">Gross</th><th className="px-4 py-3">Deductions</th><th className="px-4 py-3">Net</th><th className="px-4 py-3">Download</th></tr></thead>
+              <tbody className="divide-y divide-[#ede7f6]">
+                {payslips.map((p) => <tr key={p.id} className="text-[#374151]"><td className="px-4 py-3">{p.employee.name}</td><td className="px-4 py-3">{months[p.payrun.month - 1]} {p.payrun.year}</td><td className="px-4 py-3">{money(p.grossPay)}</td><td className="px-4 py-3">{money(p.employeePF + p.employerPF + p.professionalTax + p.tdsDeduction)}</td><td className="px-4 py-3 text-[#28a745]">{money(p.netPay)}</td><td className="px-4 py-3"><Button size="sm" variant="outline" onClick={() => printPayslip(p)}><Download className="h-3.5 w-3.5" />PDF</Button></td></tr>)}
               </tbody>
             </table>
           </ReportShell>
         </TabsContent>
 
         <TabsContent value="leaves" className="space-y-4">
-          <div className="grid gap-3 rounded-xl border border-slate-800/70 bg-slate-900/70 p-4 md:grid-cols-4">
+          <div className="grid gap-3 rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-4 md:grid-cols-4">
             <div className="space-y-1.5"><Label>Employee</Label>{employeeSelect(filters.leaveUser, (value) => setFilters((p) => ({ ...p, leaveUser: value })))}</div>
-            <div className="space-y-1.5"><Label>Start Date</Label><Input type="date" value={filters.startDate} onChange={(e) => setFilters((p) => ({ ...p, startDate: e.target.value }))} className="border-slate-700 bg-slate-900 text-slate-100 [color-scheme:dark]" /></div>
-            <div className="space-y-1.5"><Label>End Date</Label><Input type="date" value={filters.endDate} onChange={(e) => setFilters((p) => ({ ...p, endDate: e.target.value }))} className="border-slate-700 bg-slate-900 text-slate-100 [color-scheme:dark]" /></div>
-            <Button onClick={loadLeaves} className="self-end bg-indigo-600 text-white hover:bg-indigo-500">Apply</Button>
+            <div className="space-y-1.5"><Label>Start Date</Label><Input type="date" value={filters.startDate} onChange={(e) => setFilters((p) => ({ ...p, startDate: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] [color-scheme:light]" /></div>
+            <div className="space-y-1.5"><Label>End Date</Label><Input type="date" value={filters.endDate} onChange={(e) => setFilters((p) => ({ ...p, endDate: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] [color-scheme:light]" /></div>
+            <Button onClick={loadLeaves} className="self-end bg-[#714b67] text-white hover:bg-[#5a3a52]">Apply</Button>
           </div>
           <ReportShell loading={loadingReport}>
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950/60 text-xs uppercase text-slate-500"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Dates</th><th className="px-4 py-3">Reason</th><th className="px-4 py-3">Status</th></tr></thead>
-              <tbody className="divide-y divide-slate-800/70">
-                {leaves.map((l) => <tr key={l.id} className="text-slate-300"><td className="px-4 py-3">{l.user.name}</td><td className="px-4 py-3">{l.leaveType}</td><td className="px-4 py-3">{formatDate(l.startDate)} - {formatDate(l.endDate)}</td><td className="px-4 py-3">{l.reason || "-"}</td><td className="px-4 py-3"><Badge variant="outline" className={cn(statusStyles[l.status])}>{l.status}</Badge></td></tr>)}
+              <thead className="bg-[#faf8ff] text-xs uppercase text-[#6c757d]"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Type</th><th className="px-4 py-3">Dates</th><th className="px-4 py-3">Reason</th><th className="px-4 py-3">Status</th></tr></thead>
+              <tbody className="divide-y divide-[#ede7f6]">
+                {leaves.map((l) => <tr key={l.id} className="text-[#374151]"><td className="px-4 py-3">{l.user.name}</td><td className="px-4 py-3">{l.leaveType}</td><td className="px-4 py-3">{formatDate(l.startDate)} - {formatDate(l.endDate)}</td><td className="px-4 py-3">{l.reason || "-"}</td><td className="px-4 py-3"><Badge variant="outline" className={cn(statusStyles[l.status])}>{l.status}</Badge></td></tr>)}
               </tbody>
             </table>
           </ReportShell>
         </TabsContent>
 
         <TabsContent value="attendance" className="space-y-4">
-          <div className="grid gap-3 rounded-xl border border-slate-800/70 bg-slate-900/70 p-4 md:grid-cols-4">
+          <div className="grid gap-3 rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-4 md:grid-cols-4">
             <div className="space-y-1.5"><Label>Employee</Label>{employeeSelect(filters.attendanceUser, (value) => setFilters((p) => ({ ...p, attendanceUser: value })))}</div>
             <div className="space-y-1.5"><Label>Month</Label>{monthSelect(filters.attendanceMonth, (value) => setFilters((p) => ({ ...p, attendanceMonth: value })))}</div>
-            <div className="space-y-1.5"><Label>Year</Label><Input value={filters.attendanceYear} onChange={(e) => setFilters((p) => ({ ...p, attendanceYear: e.target.value }))} className="border-slate-700 bg-slate-900 text-slate-100" /></div>
-            <Button onClick={loadAttendance} className="self-end bg-indigo-600 text-white hover:bg-indigo-500">Apply</Button>
+            <div className="space-y-1.5"><Label>Year</Label><Input value={filters.attendanceYear} onChange={(e) => setFilters((p) => ({ ...p, attendanceYear: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]" /></div>
+            <Button onClick={loadAttendance} className="self-end bg-[#714b67] text-white hover:bg-[#5a3a52]">Apply</Button>
           </div>
           <ReportShell loading={loadingReport}>
             <table className="w-full text-left text-sm">
-              <thead className="bg-slate-950/60 text-xs uppercase text-slate-500"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Date</th><th className="px-4 py-3">Check In</th><th className="px-4 py-3">Check Out</th><th className="px-4 py-3">Status</th></tr></thead>
-              <tbody className="divide-y divide-slate-800/70">
-                {attendance.map((a) => <tr key={a.id} className="text-slate-300"><td className="px-4 py-3">{a.user.name}</td><td className="px-4 py-3">{formatDate(a.date)}</td><td className="px-4 py-3">{formatTime(a.checkIn)}</td><td className="px-4 py-3">{formatTime(a.checkOut)}</td><td className="px-4 py-3"><Badge variant="outline" className={cn(statusStyles[a.status])}>{a.status.replace("_", " ")}</Badge></td></tr>)}
+              <thead className="bg-[#faf8ff] text-xs uppercase text-[#6c757d]"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Date</th><th className="px-4 py-3">Check In</th><th className="px-4 py-3">Check Out</th><th className="px-4 py-3">Status</th></tr></thead>
+              <tbody className="divide-y divide-[#ede7f6]">
+                {attendance.map((a) => <tr key={a.id} className="text-[#374151]"><td className="px-4 py-3">{a.user.name}</td><td className="px-4 py-3">{formatDate(a.date)}</td><td className="px-4 py-3">{formatTime(a.checkIn)}</td><td className="px-4 py-3">{formatTime(a.checkOut)}</td><td className="px-4 py-3"><Badge variant="outline" className={cn(statusStyles[a.status])}>{a.status.replace("_", " ")}</Badge></td></tr>)}
               </tbody>
             </table>
           </ReportShell>
@@ -312,10 +312,10 @@ function ReportShell({
   children: React.ReactNode;
 }) {
   return (
-    <div className="overflow-hidden rounded-xl border border-slate-800/70 bg-slate-900/70">
+    <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
       {loading ? (
         <div className="flex justify-center py-14">
-          <Loader2 className="h-7 w-7 animate-spin text-indigo-400" />
+          <Loader2 className="h-7 w-7 animate-spin text-[#714b67]" />
         </div>
       ) : (
         <div className="overflow-x-auto">{children}</div>

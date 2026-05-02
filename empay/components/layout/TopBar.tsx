@@ -89,33 +89,33 @@ export default function TopBar({ onSearch, onMenuClick }: TopBarProps) {
   }, []);
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center justify-between border-b border-slate-800/60 bg-slate-950/90 px-4 backdrop-blur-md lg:left-64 lg:px-6">
+    <header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card/80 shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-4 backdrop-blur-md lg:left-64 lg:px-6">
       {/* Search */}
       <div className="flex items-center gap-3">
         <button
           onClick={onMenuClick}
-          className="rounded-xl p-2 text-slate-400 hover:bg-slate-800/60 hover:text-slate-100 lg:hidden"
+          className="rounded-xl p-2 text-muted-foreground hover:bg-muted hover:text-foreground lg:hidden"
           aria-label="Open navigation"
         >
           <Menu className="h-5 w-5" />
         </button>
       </div>
       <div ref={searchBoxRef} className="relative mx-3 w-full max-w-sm">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
         <Input
           value={searchValue}
           onChange={handleSearch}
           onFocus={() => setShowResults(true)}
           placeholder="Search employees..."
-          className="pl-9 bg-slate-800/50 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-indigo-500 focus:ring-indigo-500/20 h-9"
+          className="pl-9 bg-muted border-transparent text-foreground placeholder:text-muted-foreground focus:border-primary focus:ring-primary/20 h-9 transition-colors"
         />
         {searching && (
-          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-slate-500" />
+          <Loader2 className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-spin text-muted-foreground" />
         )}
         {showResults && searchValue.trim() && (
-          <div className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-xl border border-slate-800 bg-slate-950 shadow-xl">
+          <div className="absolute left-0 right-0 top-11 z-50 overflow-hidden rounded-xl border border-border bg-popover shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
             {results.length === 0 ? (
-              <p className="px-4 py-3 text-sm text-slate-400">No employees found.</p>
+              <p className="px-4 py-3 text-sm text-muted-foreground">No employees found.</p>
             ) : (
               results.slice(0, 6).map((employee) => (
                 <button
@@ -125,10 +125,10 @@ export default function TopBar({ onSearch, onMenuClick }: TopBarProps) {
                     setSearchValue("");
                     router.push(`/employees/${employee.id}`);
                   }}
-                  className="block w-full px-4 py-3 text-left hover:bg-slate-900"
+                  className="block w-full px-4 py-3 text-left hover:bg-muted transition-colors"
                 >
-                  <p className="text-sm font-medium text-slate-100">{employee.name}</p>
-                  <p className="text-xs text-slate-500">
+                  <p className="text-sm font-medium text-foreground">{employee.name}</p>
+                  <p className="text-xs text-muted-foreground">
                     {employee.loginId} · {employee.department || employee.email}
                   </p>
                 </button>
@@ -141,50 +141,50 @@ export default function TopBar({ onSearch, onMenuClick }: TopBarProps) {
       {/* Right actions */}
       <div className="flex items-center gap-3">
         {/* Notification bell */}
-        <button className="relative p-2 rounded-xl text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 transition-all">
+        <button className="relative p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-muted transition-all">
           <Bell className="w-5 h-5" />
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-indigo-500" />
+          <span className="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-primary" />
         </button>
 
         {/* Avatar dropdown */}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <button className="flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-slate-800/60 transition-all">
+            <button className="flex items-center gap-2 rounded-xl px-2 py-1.5 hover:bg-muted transition-all">
               <Avatar className="w-8 h-8">
                 {user?.profilePhoto ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={user.profilePhoto} alt={user.name} className="rounded-full object-cover" />
                 ) : (
-                  <AvatarFallback className="bg-gradient-to-br from-indigo-500 to-violet-600 text-white text-xs font-semibold">
+                  <AvatarFallback className="bg-primary text-primary-foreground text-xs font-semibold">
                     {initials}
                   </AvatarFallback>
                 )}
               </Avatar>
-              <span className="text-sm text-slate-300 font-medium hidden sm:block">
+              <span className="text-sm text-foreground font-medium hidden sm:block">
                 {user?.name?.split(" ")[0]}
               </span>
-              <ChevronDown className="w-3.5 h-3.5 text-slate-500" />
+              <ChevronDown className="w-3.5 h-3.5 text-muted-foreground" />
             </button>
           </DropdownMenuTrigger>
           <DropdownMenuContent
             align="end"
-            className="w-48 bg-slate-900 border-slate-700 text-slate-200"
+            className="w-48 bg-popover border-border text-popover-foreground"
           >
             <div className="px-3 py-2">
-              <p className="text-sm font-medium text-slate-100">{user?.name}</p>
-              <p className="text-xs text-slate-400">{user?.email}</p>
+              <p className="text-sm font-medium text-foreground">{user?.name}</p>
+              <p className="text-xs text-muted-foreground">{user?.email}</p>
             </div>
-            <DropdownMenuSeparator className="bg-slate-700" />
+            <DropdownMenuSeparator className="bg-border" />
             <DropdownMenuItem
-              className="cursor-pointer hover:bg-slate-800 focus:bg-slate-800 gap-2"
+              className="cursor-pointer hover:bg-muted focus:bg-muted gap-2"
               onClick={() => router.push(`/employees/${user?.id}`)}
             >
               <User className="w-4 h-4" />
               My Profile
             </DropdownMenuItem>
-            <DropdownMenuSeparator className="bg-slate-700" />
+            <DropdownMenuSeparator className="bg-border" />
             <DropdownMenuItem
-              className="cursor-pointer hover:bg-red-500/10 focus:bg-red-500/10 text-red-400 gap-2"
+              className="cursor-pointer hover:bg-destructive/10 focus:bg-destructive/10 text-destructive gap-2"
               onClick={handleLogout}
             >
               <LogOut className="w-4 h-4" />
