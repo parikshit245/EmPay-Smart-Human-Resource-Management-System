@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
 import { BarChart3, Download, Loader2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,23 +17,46 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { PayslipPrint, PayslipPrintStyles } from "@/components/payroll/payslip-print";
 
 interface Employee {
   id: string;
   name: string;
   loginId: string;
+  department: string | null;
+  email?: string;
+  empCode?: string | null;
+  location?: string | null;
+  dateOfJoining?: string | null;
+  privateInfo?: {
+    panNo: string | null;
+    uanNo: string | null;
+    accountNumber: string | null;
+    bankName?: string | null;
+    dateOfJoining: string | null;
+  } | null;
 }
 
-interface PayslipReport {
+type PayslipReport = {
   id: string;
-  grossPay: number;
-  netPay: number;
+  totalWorkingDays: number;
+  attendanceDays: number;
+  paidLeaveDays: number;
+  basicSalary: number;
+  hra: number;
+  standardAllowance: number;
+  performanceBonus: number;
+  lta: number;
+  fixedAllowance: number;
   employeePF: number;
+  employerPF: number;
   professionalTax: number;
   tdsDeduction: number;
+  grossPay: number;
+  netPay: number;
   employee: Employee;
-  payrun: { month: number; year: number };
-}
+  payrun: { month: number; year: number; createdAt?: string; paidAt?: string | null; approvedAt?: string | null };
+};
 
 interface LeaveReport {
   id: string;
@@ -91,6 +115,7 @@ export default function ReportsPage() {
   const [loadingEmployees, setLoadingEmployees] = useState(true);
   const [loadingReport, setLoadingReport] = useState(false);
   const [payslips, setPayslips] = useState<PayslipReport[]>([]);
+  const [printablePayslip, setPrintablePayslip] = useState<PayslipReport | null>(null);
   const [leaves, setLeaves] = useState<LeaveReport[]>([]);
   const [attendance, setAttendance] = useState<AttendanceReport[]>([]);
   const currentYear = new Date().getFullYear();
@@ -195,12 +220,20 @@ export default function ReportsPage() {
     fetchReport(`/api/reports/attendance?${q}`, setAttendance as (value: never[]) => void, "attendance");
   }
 
+  function printPayslip(payslip: PayslipReport) {
+    flushSync(() => setPrintablePayslip(payslip));
+    window.print();
+  }
+
   if (loadingEmployees) {
     return <Skeleton className="h-96 w-full" />;
   }
 
   return (
     <div className="space-y-6">
+      <PayslipPrintStyles />
+      {printablePayslip && <PayslipPrint payslip={printablePayslip} payrun={printablePayslip.payrun} />}
+
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-100">
           <BarChart3 className="h-6 w-6 text-indigo-400" />
@@ -227,7 +260,7 @@ export default function ReportsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-950/60 text-xs uppercase text-slate-500"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Month</th><th className="px-4 py-3">Gross</th><th className="px-4 py-3">Deductions</th><th className="px-4 py-3">Net</th><th className="px-4 py-3">Download</th></tr></thead>
               <tbody className="divide-y divide-slate-800/70">
-                {payslips.map((p) => <tr key={p.id} className="text-slate-300"><td className="px-4 py-3">{p.employee.name}</td><td className="px-4 py-3">{months[p.payrun.month - 1]} {p.payrun.year}</td><td className="px-4 py-3">{money(p.grossPay)}</td><td className="px-4 py-3">{money(p.employeePF + p.professionalTax + p.tdsDeduction)}</td><td className="px-4 py-3 text-emerald-300">{money(p.netPay)}</td><td className="px-4 py-3"><Button size="sm" variant="outline" onClick={() => window.print()}><Download className="h-3.5 w-3.5" />PDF</Button></td></tr>)}
+                {payslips.map((p) => <tr key={p.id} className="text-slate-300"><td className="px-4 py-3">{p.employee.name}</td><td className="px-4 py-3">{months[p.payrun.month - 1]} {p.payrun.year}</td><td className="px-4 py-3">{money(p.grossPay)}</td><td className="px-4 py-3">{money(p.employeePF + p.employerPF + p.professionalTax + p.tdsDeduction)}</td><td className="px-4 py-3 text-emerald-300">{money(p.netPay)}</td><td className="px-4 py-3"><Button size="sm" variant="outline" onClick={() => printPayslip(p)}><Download className="h-3.5 w-3.5" />PDF</Button></td></tr>)}
               </tbody>
             </table>
           </ReportShell>

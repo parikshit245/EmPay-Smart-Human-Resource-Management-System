@@ -26,7 +26,27 @@ export async function GET(request: NextRequest) {
         },
       },
       include: {
-        employee: { select: { id: true, name: true, loginId: true, department: true } },
+        employee: {
+          select: {
+            id: true,
+            name: true,
+            loginId: true,
+            department: true,
+            email: true,
+            empCode: true,
+            location: true,
+            dateOfJoining: true,
+            privateInfo: {
+              select: {
+                panNo: true,
+                uanNo: true,
+                accountNumber: true,
+                bankName: true,
+                dateOfJoining: true,
+              },
+            },
+          },
+        },
         payrun: true,
       },
       orderBy: { createdAt: "desc" },
