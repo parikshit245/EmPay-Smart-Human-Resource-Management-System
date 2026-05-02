@@ -30,6 +30,7 @@ model User {
   privateInfo     PrivateInfo?
   salaryInfo      SalaryInfo?
   attendance      Attendance[]
+  leaveAllocations EmployeeLeaveAllocation[]
   timeOffRequests TimeOffRequest[]
   payslips        Payslip[]
 }
@@ -88,6 +89,7 @@ model SalaryInfo {
   employeePF         Float  @default(0)
   employerPF         Float  @default(0)
   professionalTax    Float  @default(200)
+  tdsDeduction       Float  @default(0)
 }
 
 model Attendance {
@@ -128,31 +130,82 @@ enum LeaveStatus {
 }
 
 model Payrun {
-  id        String    @id @default(uuid())
-  month     Int
-  year      Int
-  createdAt DateTime  @default(now())
-  payslips  Payslip[]
+  id         String       @id @default(cuid())
+  month      Int
+  year       Int
+  status     PayrunStatus @default(GENERATED)
+  createdBy  String       @default("system")
+  approvedBy String?
+  approvedAt DateTime?
+  paidAt     DateTime?
+  createdAt  DateTime     @default(now())
+  payslips   Payslip[]
+
 }
 
 model Payslip {
-  id                String   @id @default(uuid())
+  id                String        @id @default(cuid())
   payrunId          String
-  payrun            Payrun   @relation(fields: [payrunId], references: [id])
-  userId            String
-  user              User     @relation(fields: [userId], references: [id])
+  payrun            Payrun        @relation(fields: [payrunId], references: [id])
+  employeeId        String        @map("userId")
+  employee          User          @relation(fields: [employeeId], references: [id])
+  totalWorkingDays  Float         @default(0)
+  attendanceDays    Float         @default(0)
+  paidLeaveDays     Float         @default(0)
   basicSalary       Float
   hra               Float
   standardAllowance Float
   performanceBonus  Float
   lta               Float
   fixedAllowance    Float
+  grossPay          Float
   employeePF        Float
   employerPF        Float
   professionalTax   Float
-  grossPay          Float
+  tdsDeduction      Float         @default(0)
   netPay            Float
-  createdAt         DateTime @default(now())
+  employerCost      Float         @default(0)
+  baseSalary        Float         @default(0)
+  totalSalary       Float         @default(0)
+  unpaidLeaveDays   Int           @default(0)
+  unpaidLeaveDeduction Float      @default(0)
+  status            PayslipStatus @default(GENERATED)
+  createdAt         DateTime      @default(now())
+}
+
+model EmployeeLeaveAllocation {
+  id                  String   @id
+  employeeId          String
+  employee            User     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  year                Int
+  paidLeavesAllocated Int      @default(20)
+  sickLeavesAllocated Int      @default(5)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime
+
+  @@unique([employeeId, year])
+}
+
+model PublicHoliday {
+  id        String   @id
+  name      String
+  date      DateTime
+  createdAt DateTime @default(now())
+}
+
+enum PayrunStatus {
+  DRAFT
+  GENERATED
+  REVIEWED
+  APPROVED
+  PAID
+  LOCKED
+}
+
+enum PayslipStatus {
+  GENERATED
+  VALIDATED
+  PAID
 }
 
 model Settings {

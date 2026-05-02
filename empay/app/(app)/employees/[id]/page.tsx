@@ -73,6 +73,7 @@ interface SalaryInfo {
   employeePF: number;
   employerPF: number;
   professionalTax: number;
+  tdsDeduction: number;
 }
 
 interface ManagerOption {
@@ -97,6 +98,7 @@ const emptySalary: SalaryInfo = {
   employeePF: 0,
   employerPF: 0,
   professionalTax: 200,
+  tdsDeduction: 0,
 };
 
 function dateInput(value?: string | null) {
@@ -127,6 +129,7 @@ function calculateSalary(monthWage: number, base: SalaryInfo): SalaryInfo {
     employeePF,
     employerPF,
     professionalTax,
+    tdsDeduction: base.tdsDeduction || 0,
   };
 }
 
@@ -312,6 +315,7 @@ export default function EmployeeProfilePage() {
           workingDaysPerWeek: employee.salaryInfo.workingDaysPerWeek,
           breakTime: employee.salaryInfo.breakTime,
           wageType: employee.salaryInfo.wageType,
+          tdsDeduction: employee.salaryInfo.tdsDeduction,
         }),
       });
       const json = await res.json();
@@ -535,6 +539,7 @@ export default function EmployeeProfilePage() {
                 <TextField label="Working Days/Week" type="number" value={String(salary.workingDaysPerWeek)} onChange={(value) => updateEmployee({ salaryInfo: { ...salary, workingDaysPerWeek: Number(value) } })} />
                 <TextField label="Break Time" type="number" value={String(salary.breakTime)} onChange={(value) => updateEmployee({ salaryInfo: { ...salary, breakTime: Number(value) } })} />
                 <SelectField label="Wage Type" value={salary.wageType} values={["MONTHLY", "HOURLY", "DAILY"]} onChange={(value) => updateEmployee({ salaryInfo: { ...salary, wageType: value } })} />
+                <TextField label="TDS Deduction" type="number" value={String(salary.tdsDeduction)} onChange={(value) => updateEmployee({ salaryInfo: { ...salary, tdsDeduction: Number(value) } })} />
                 {[
                   ["Basic", salary.basicSalary],
                   ["HRA", salary.hra],
@@ -545,6 +550,7 @@ export default function EmployeeProfilePage() {
                   ["Employee PF", salary.employeePF],
                   ["Employer PF", salary.employerPF],
                   ["Professional Tax", salary.professionalTax],
+                  ["TDS Deduction", salary.tdsDeduction],
                 ].map(([label, value]) => (
                   <ReadOnlyMoney key={label as string} label={label as string} value={value as number} />
                 ))}

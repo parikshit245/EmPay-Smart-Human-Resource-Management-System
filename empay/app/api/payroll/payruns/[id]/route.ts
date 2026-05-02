@@ -10,10 +10,7 @@ export async function GET(
 ) {
   try {
     const currentUser = await getCurrentUser(request);
-    if (!currentUser) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-    }
-
+    if (!currentUser) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     if (!["ADMIN", "PAYROLL_OFFICER"].includes(currentUser.role)) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
@@ -23,13 +20,25 @@ export async function GET(
       include: {
         payslips: {
           include: {
-            user: {
+            employee: {
               select: {
                 id: true,
                 name: true,
                 loginId: true,
                 department: true,
                 email: true,
+                empCode: true,
+                location: true,
+                dateOfJoining: true,
+                privateInfo: {
+                  select: {
+                    panNo: true,
+                    uanNo: true,
+                    accountNumber: true,
+                    bankName: true,
+                    dateOfJoining: true,
+                  },
+                },
               },
             },
           },
