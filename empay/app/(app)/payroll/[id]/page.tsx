@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dialog";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { cn } from "@/lib/utils";
+import { PayslipPrint, PayslipPrintStyles } from "@/components/payroll/payslip-print";
 
 interface Payrun {
   id: string;
@@ -79,8 +80,6 @@ const months = [
   "December",
 ];
 
-const shortMonths = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-
 const payrunStatusStyles: Record<PayrunStatus, string> = {
   DRAFT: "border-slate-500/30 bg-slate-500/10 text-slate-300",
   GENERATED: "border-blue-500/30 bg-blue-500/10 text-blue-300",
@@ -102,37 +101,6 @@ function money(value: number) {
     currency: "INR",
     maximumFractionDigits: 2,
   }).format(value || 0);
-}
-
-function formatDate(value?: string | null) {
-  if (!value) return "-";
-  return new Intl.DateTimeFormat("en-IN", {
-    day: "2-digit",
-    month: "short",
-    year: "numeric",
-  }).format(new Date(value));
-}
-
-function amountInWords(value: number) {
-  const rounded = Math.round(value || 0);
-  if (rounded === 0) return "Zero rupees";
-  if (rounded >= 10000000) return `${money(rounded)} rupees`;
-  const ones = ["", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen"];
-  const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
-  const belowHundred = (n: number) => (n < 20 ? ones[n] : `${tens[Math.floor(n / 10)]}${n % 10 ? ` ${ones[n % 10]}` : ""}`);
-  const belowThousand = (n: number) => {
-    const hundred = Math.floor(n / 100);
-    const rest = n % 100;
-    return `${hundred ? `${ones[hundred]} Hundred` : ""}${hundred && rest ? " " : ""}${rest ? belowHundred(rest) : ""}`;
-  };
-  const parts = [
-    [Math.floor(rounded / 100000), "Lakh"],
-    [Math.floor((rounded % 100000) / 1000), "Thousand"],
-    [rounded % 1000, ""],
-  ]
-    .filter(([num]) => Number(num) > 0)
-    .map(([num, label]) => `${belowThousand(Number(num))}${label ? ` ${label}` : ""}`);
-  return `${parts.join(" ")} rupees`;
 }
 
 function StatusBadge({ status }: { status: PayrunStatus }) {
@@ -246,109 +214,6 @@ function SalaryComputationTab({ payslip }: { payslip: Payslip }) {
   );
 }
 
-function PrintablePayslip({ payslip, payrun }: { payslip: Payslip; payrun: Payrun }) {
-  const start = new Date(payrun.year, payrun.month - 1, 1);
-  const joinDate = payslip.employee.privateInfo?.dateOfJoining || payslip.employee.dateOfJoining;
-  const earnings = [
-    ["Basic", payslip.basicSalary],
-    ["HRA", payslip.hra],
-    ["Standard Allowance", payslip.standardAllowance],
-    ["Performance Bonus", payslip.performanceBonus],
-    ["LTA", payslip.lta],
-    ["Fixed Allowance", payslip.fixedAllowance],
-  ] as const;
-  const deductions = [
-    ["PF", payslip.employeePF],
-    ["Professional Tax", payslip.professionalTax],
-    ["TDS", payslip.tdsDeduction],
-  ] as const;
-
-  return (
-    <div className="printable-payslip rounded-xl bg-white p-3 text-slate-950">
-      <div className="salary-report-page border border-slate-900 px-10 py-9">
-        <h2 className="font-['Comic_Sans_MS',cursive] text-2xl font-semibold text-blue-600">
-          Salary Statement Report Print
-        </h2>
-
-        <div className="mt-14 max-w-[550px] border-b border-slate-300 pb-2 text-lg text-red-500">
-          [EmPay]
-        </div>
-        <div className="mt-3 text-lg text-red-500">Salary Statement Report</div>
-
-        <div className="mt-7 grid grid-cols-2 gap-10 text-red-500">
-          <div className="space-y-1">
-            <p>{payslip.employee.name}</p>
-            <p>{payslip.employee.department || "Designation"}</p>
-          </div>
-          <div className="space-y-1">
-            <p>Date Of Joining</p>
-            <p>{formatDate(joinDate)}</p>
-            <p>Salary Effective From</p>
-            <p>{formatDate(start.toISOString())}</p>
-          </div>
-        </div>
-
-        <div className="mt-10 border-y border-slate-300">
-          <div className="grid grid-cols-[1.2fr_1fr_1fr] py-3 text-red-500">
-            <span>Salary Components</span>
-            <span className="text-center">Monthly Amount</span>
-            <span className="text-center">Yearly Amount</span>
-          </div>
-        </div>
-
-        <div className="px-3 py-4">
-          <h3 className="mb-4 text-xl text-red-500">Earnings</h3>
-          <div className="space-y-3">
-            {earnings.map(([label, value]) => (
-              <SalaryReportRow key={label} label={label} value={value} />
-            ))}
-          </div>
-        </div>
-
-        <div className="px-3 py-4">
-          <h3 className="mb-4 text-xl text-red-500">Deduction</h3>
-          <div className="space-y-3">
-            {deductions.map(([label, value]) => (
-              <SalaryReportRow key={label} label={label} value={value} />
-            ))}
-          </div>
-        </div>
-
-        <div className="mt-4 border-y border-slate-300">
-          <SalaryReportRow label="Net Salary" value={payslip.netPay} labelClassName="text-lg text-red-500" />
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SalaryReportRow({
-  label,
-  value,
-  labelClassName,
-}: {
-  label: string;
-  value: number;
-  labelClassName?: string;
-}) {
-  return (
-    <div className="grid grid-cols-[1.2fr_1fr_1fr] items-center py-2 text-sm">
-      <span className={cn("text-slate-900", labelClassName)}>{label}</span>
-      <span className="text-center">{money(value)}</span>
-      <span className="text-center">{money(value * 12)}</span>
-    </div>
-  );
-}
-
-function MoneyRow({ label, value, strong = false }: { label: string; value: number; strong?: boolean }) {
-  return (
-    <div className={cn("flex justify-between border-t border-slate-200 px-4 py-2", strong && "font-semibold")}>
-      <span>{label}</span>
-      <span>{value < 0 ? `- ${money(Math.abs(value))}` : money(value)}</span>
-    </div>
-  );
-}
-
 export default function PayrunDetailPage({ params }: { params: { id: string } }) {
   const [payrun, setPayrun] = useState<Payrun | null>(null);
   const [selectedPayslip, setSelectedPayslip] = useState<Payslip | null>(null);
@@ -385,37 +250,8 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
 
   return (
     <div className="space-y-6">
-      <style jsx global>{`
-        @page {
-          size: A4;
-          margin: 10mm;
-        }
-        @media print {
-          html,
-          body {
-            background: white !important;
-          }
-          body * {
-            visibility: hidden !important;
-          }
-          .printable-payslip,
-          .printable-payslip * {
-            visibility: visible !important;
-          }
-          .printable-payslip {
-            position: absolute !important;
-            left: 0 !important;
-            top: 0 !important;
-            width: 190mm !important;
-            padding: 0 !important;
-            border-radius: 0 !important;
-            box-shadow: none !important;
-          }
-          .salary-report-page {
-            min-height: 270mm !important;
-          }
-        }
-      `}</style>
+      <PayslipPrintStyles />
+      {selectedPayslip && payrun && <PayslipPrint payslip={selectedPayslip} payrun={payrun} />}
 
       <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
         <div>
@@ -444,10 +280,6 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
           <Button variant="outline" className="border-slate-700 text-slate-200 hover:bg-slate-800">
             <X className="h-4 w-4" />
             Cancel
-          </Button>
-          <Button variant="outline" onClick={() => window.print()} className="border-slate-700 text-slate-200 hover:bg-slate-800">
-            <Printer className="h-4 w-4" />
-            Print
           </Button>
         </div>
       </div>
@@ -544,7 +376,6 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
                   <SalaryComputationTab payslip={selectedPayslip} />
                 </TabsContent>
               </Tabs>
-              <PrintablePayslip payslip={selectedPayslip} payrun={payrun} />
             </div>
           )}
         </DialogContent>
