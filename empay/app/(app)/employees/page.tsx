@@ -88,18 +88,18 @@ export default function EmployeesPage() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <Users className="w-6 h-6 text-indigo-400" />
+          <h1 className="text-2xl font-bold text-[#1a1c24] flex items-center gap-2">
+            <Users className="w-6 h-6 text-[#714b67]" />
             Employees
           </h1>
-          <p className="text-slate-400 text-sm mt-1">
+          <p className="text-[#6c757d] text-sm mt-1">
             {employees.length} team member{employees.length !== 1 ? "s" : ""}
           </p>
         </div>
         {canAddEmployee && (
           <Button
             onClick={() => router.push("/employees/new")}
-            className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/25 gap-2"
+            className="bg-[#714b67] hover:bg-[#5a3a52] text-white shadow-[0_1px_4px_rgba(113,75,103,0.10)]  gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Employee
@@ -111,12 +111,12 @@ export default function EmployeesPage() {
         showWarningBanner &&
         warningCounts &&
         (warningCounts.withoutBankAccount > 0 || warningCounts.withoutManager > 0) && (
-          <div className="flex flex-col gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-100 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 rounded-xl border border-[#dc3545]/30 bg-[#fdecea] p-4 text-[#dc3545] sm:flex-row sm:items-center sm:justify-between">
             <div className="flex gap-3">
-              <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-red-300" />
+              <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#dc3545]" />
               <div>
                 <p className="font-medium">Employee setup warnings</p>
-                <p className="text-sm text-red-200/80">
+                <p className="text-sm text-[#dc3545]/80">
                   {warningCounts.withoutBankAccount} without Bank A/c ·{" "}
                   {warningCounts.withoutManager} without Manager
                 </p>
@@ -126,14 +126,14 @@ export default function EmployeesPage() {
               <Button
                 variant="outline"
                 onClick={() => router.push("/employees?filter=missingBank")}
-                className="border-red-400/40 text-red-100 hover:bg-red-500/10"
+                className="border-[#dc3545]/30 text-[#dc3545] hover:bg-[#fdecea]"
               >
                 Bank A/c
               </Button>
               <Button
                 variant="outline"
                 onClick={() => router.push("/employees?filter=missingManager")}
-                className="border-red-400/40 text-red-100 hover:bg-red-500/10"
+                className="border-[#dc3545]/30 text-[#dc3545] hover:bg-[#fdecea]"
               >
                 Manager
               </Button>
@@ -141,7 +141,7 @@ export default function EmployeesPage() {
                 variant="ghost"
                 size="icon"
                 onClick={() => setShowWarningBanner(false)}
-                className="text-red-100 hover:bg-red-500/10"
+                className="text-[#dc3545] hover:bg-[#fdecea]"
               >
                 <X className="h-4 w-4" />
               </Button>
@@ -153,12 +153,12 @@ export default function EmployeesPage() {
       {!loading && (
         <div className="grid grid-cols-3 gap-4">
           {[
-            { label: "Present Today", value: presentCount, color: "text-emerald-400", bg: "bg-emerald-500/10", border: "border-emerald-500/20" },
-            { label: "Absent Today", value: absentCount, color: "text-amber-400", bg: "bg-amber-500/10", border: "border-amber-500/20" },
-            { label: "On Leave", value: onLeaveCount, color: "text-blue-400", bg: "bg-blue-500/10", border: "border-blue-500/20" },
+            { label: "Present Today", value: presentCount, color: "text-[#28a745]", bg: "bg-[#edf7ef]", border: "border-[#28a745]/20" },
+            { label: "Absent Today", value: absentCount, color: "text-[#b26f00]", bg: "bg-[#fff8ec]", border: "border-[#fbb130]/30" },
+            { label: "On Leave", value: onLeaveCount, color: "text-[#1bb6f9]", bg: "bg-[#e8f7ff]", border: "border-[#1bb6f9]/20" },
           ].map((stat) => (
             <div key={stat.label} className={`${stat.bg} border ${stat.border} rounded-2xl p-4`}>
-              <p className="text-slate-400 text-xs mb-1">{stat.label}</p>
+              <p className="text-[#6c757d] text-xs mb-1">{stat.label}</p>
               <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
             </div>
           ))}
@@ -167,12 +167,12 @@ export default function EmployeesPage() {
 
       {/* Search */}
       <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-500" />
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-[#6c757d]" />
         <Input
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, department, or email..."
-          className="pl-9 bg-slate-900/60 border-slate-700 text-slate-200 placeholder:text-slate-500 focus:border-indigo-500"
+          className="pl-9 bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#e5e7eb] text-[#374151] placeholder:text-[#6c757d] focus:border-[#714b67]"
         />
       </div>
 
@@ -180,17 +180,17 @@ export default function EmployeesPage() {
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 text-indigo-400 animate-spin" />
-            <p className="text-slate-400">Loading employees...</p>
+            <Loader2 className="w-8 h-8 text-[#714b67] animate-spin" />
+            <p className="text-[#6c757d]">Loading employees...</p>
           </div>
         </div>
       ) : error ? (
         <div className="flex items-center justify-center py-20">
           <div className="text-center">
-            <p className="text-red-400">{error}</p>
+            <p className="text-[#dc3545]">{error}</p>
             <Button
               variant="ghost"
-              className="mt-3 text-indigo-400 hover:text-indigo-300"
+              className="mt-3 text-[#714b67] hover:text-[#714b67]"
               onClick={() => window.location.reload()}
             >
               Try Again
@@ -199,15 +199,15 @@ export default function EmployeesPage() {
         </div>
       ) : filtered.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-20 gap-3">
-          <Users className="w-12 h-12 text-slate-700" />
-          <p className="text-slate-400">
+          <Users className="w-12 h-12 text-[#adb5bd]" />
+          <p className="text-[#6c757d]">
             {search ? `No employees matching "${search}"` : "No employees found"}
           </p>
           {canAddEmployee && !search && (
             <Button
               onClick={() => router.push("/employees/new")}
               variant="outline"
-              className="border-indigo-500/50 text-indigo-400 hover:bg-indigo-500/10 mt-2"
+              className="border-[#714b67]/50 text-[#714b67] hover:bg-[#5a3a52]/10 mt-2"
             >
               Add First Employee
             </Button>

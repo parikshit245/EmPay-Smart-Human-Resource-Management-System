@@ -23,10 +23,10 @@ const roleLabels: Record<string, string> = {
 };
 
 const roleColors: Record<string, string> = {
-  ADMIN: "bg-red-500/15 text-red-400 border-red-500/25 hover:bg-red-500/20",
-  HR_OFFICER: "bg-blue-500/15 text-blue-400 border-blue-500/25 hover:bg-blue-500/20",
-  PAYROLL_OFFICER: "bg-emerald-500/15 text-emerald-400 border-emerald-500/25 hover:bg-emerald-500/20",
-  EMPLOYEE: "bg-slate-500/15 text-slate-400 border-slate-500/25 hover:bg-slate-500/20",
+  ADMIN: "bg-[#fdecea] text-[#dc3545] border-[#dc3545]/25 hover:bg-[#fdecea]",
+  HR_OFFICER: "bg-[#e8f7ff] text-[#1bb6f9] border-[#1bb6f9]/25 hover:bg-[#e8f7ff]",
+  PAYROLL_OFFICER: "bg-[#edf7ef] text-[#28a745] border-[#28a745]/25 hover:bg-[#edf7ef]",
+  EMPLOYEE: "bg-[#ede7f6] text-[#6c757d] border-[#714b67]/25 hover:bg-[#ede7f6]",
 };
 
 export default function EmployeeCard({ employee }: { employee: Employee }) {
@@ -42,26 +42,26 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
   const statusConfig = {
     PRESENT: {
       label: "Present",
-      color: "bg-emerald-500",
-      ring: "ring-emerald-500/30",
+      color: "bg-[#28a745]",
+      ring: "ring-[#28a745]/30",
     },
     ABSENT: {
       label: "Absent",
-      color: "bg-amber-500",
-      ring: "ring-amber-500/30",
+      color: "bg-[#fbb130]",
+      ring: "ring-[#fbb130]/30",
     },
     ON_LEAVE: {
       label: "On Leave",
-      color: "bg-blue-500",
-      ring: "ring-blue-500/30",
+      color: "bg-[#1bb6f9]",
+      ring: "ring-[#1bb6f9]/30",
     },
   }[employee.todayStatus];
 
   return (
     <div
       onClick={() => router.push(`/employees/${employee.id}`)}
-      className="group relative bg-slate-900/60 border border-slate-800/60 rounded-2xl p-5 cursor-pointer
-        hover:bg-slate-800/60 hover:border-indigo-500/30 hover:shadow-lg hover:shadow-indigo-500/10
+      className="group relative bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border border-[#ede7f6] rounded-2xl p-5 cursor-pointer
+        hover:bg-[#faf8ff] hover:border-[#714b67]/30 hover:shadow-[0_1px_4px_rgba(113,75,103,0.10)] 
         transition-all duration-300 hover:-translate-y-0.5"
     >
       {/* Status indicator */}
@@ -73,7 +73,7 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
 
       {/* Avatar */}
       <div className="flex items-center gap-4 mb-4">
-        <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold text-lg shadow-lg shadow-indigo-500/20 shrink-0 overflow-hidden">
+        <div className="w-14 h-14 rounded-2xl bg-[#714b67] flex items-center justify-center text-white font-bold text-lg shadow-[0_1px_4px_rgba(113,75,103,0.10)]  shrink-0 overflow-hidden">
           {employee.profilePhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={employee.profilePhoto} alt={employee.name} className="w-full h-full object-cover" />
@@ -82,17 +82,17 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-slate-100 truncate group-hover:text-indigo-300 transition-colors">
+          <p className="font-semibold text-[#1a1c24] truncate group-hover:text-[#714b67] transition-colors">
             {employee.name}
           </p>
-          <p className="text-xs text-slate-500 truncate mt-0.5">{employee.email}</p>
+          <p className="text-xs text-[#6c757d] truncate mt-0.5">{employee.email}</p>
         </div>
       </div>
 
       {/* Department & Role */}
       <div className="flex items-center gap-2 flex-wrap">
         {employee.department && (
-          <span className="text-xs text-slate-400 bg-slate-800/80 px-2 py-0.5 rounded-md border border-slate-700/50">
+          <span className="text-xs text-[#6c757d] bg-[#faf8ff] px-2 py-0.5 rounded-md border border-[#e5e7eb]">
             {employee.department}
           </span>
         )}
@@ -108,7 +108,7 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
       </div>
 
       {/* Status text */}
-      <div className="mt-3 pt-3 border-t border-slate-800/60">
+      <div className="mt-3 pt-3 border-t border-[#ede7f6]">
         <div className="flex items-center gap-1.5">
           {employee.todayStatus === "ON_LEAVE" ? (
             <span className="text-base">✈️</span>
@@ -117,9 +117,9 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
           )}
           <span className={cn(
             "text-xs font-medium",
-            employee.todayStatus === "PRESENT" ? "text-emerald-400" :
-            employee.todayStatus === "ON_LEAVE" ? "text-blue-400" :
-            "text-amber-400"
+            employee.todayStatus === "PRESENT" ? "text-[#28a745]" :
+            employee.todayStatus === "ON_LEAVE" ? "text-[#1bb6f9]" :
+            "text-[#b26f00]"
           )}>
             {statusConfig.label} Today
           </span>

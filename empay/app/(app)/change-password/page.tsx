@@ -54,25 +54,25 @@ export default function ChangePasswordPage() {
 
   return (
     <div className="mx-auto flex min-h-[70vh] max-w-md items-center">
-      <Card className="w-full bg-slate-900/70 border-slate-800/70">
+      <Card className="w-full bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
         <CardHeader className="space-y-3">
-          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-indigo-500/15">
-            <LockKeyhole className="h-5 w-5 text-indigo-300" />
+          <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#ede7f6]">
+            <LockKeyhole className="h-5 w-5 text-[#714b67]" />
           </div>
-          <CardTitle className="text-xl text-slate-100">Change Password</CardTitle>
-          <p className="text-sm text-slate-400">
+          <CardTitle className="text-xl text-[#1a1c24]">Change Password</CardTitle>
+          <p className="text-sm text-[#6c757d]">
             Set a new password to finish securing your account.
           </p>
         </CardHeader>
         <CardContent>
           <form onSubmit={onSubmit} className="space-y-4">
             {error && (
-              <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-400">
+              <div className="rounded-lg border border-[#dc3545]/30 bg-[#fdecea] p-3 text-sm text-[#dc3545]">
                 {error}
               </div>
             )}
             <div className="space-y-1.5">
-              <Label htmlFor="newPassword" className="text-slate-300">
+              <Label htmlFor="newPassword" className="text-[#374151]">
                 New Password
               </Label>
               <Input
@@ -80,11 +80,11 @@ export default function ChangePasswordPage() {
                 type="password"
                 value={newPassword}
                 onChange={(event) => setNewPassword(event.target.value)}
-                className="bg-slate-800/50 border-slate-600 text-slate-100"
+                className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24]"
               />
             </div>
             <div className="space-y-1.5">
-              <Label htmlFor="confirmPassword" className="text-slate-300">
+              <Label htmlFor="confirmPassword" className="text-[#374151]">
                 Confirm Password
               </Label>
               <Input
@@ -92,13 +92,13 @@ export default function ChangePasswordPage() {
                 type="password"
                 value={confirmPassword}
                 onChange={(event) => setConfirmPassword(event.target.value)}
-                className="bg-slate-800/50 border-slate-600 text-slate-100"
+                className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24]"
               />
             </div>
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-indigo-600 text-white hover:bg-indigo-500"
+              className="w-full bg-[#714b67] text-white hover:bg-[#5a3a52]"
             >
               {loading ? (
                 <>

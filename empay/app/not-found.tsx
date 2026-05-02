@@ -4,16 +4,16 @@ import { Button } from "@/components/ui/button";
 
 export default function NotFound() {
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-950 p-6">
+    <div className="flex min-h-screen items-center justify-center bg-[#f4f5f7] p-6">
       <div className="max-w-md text-center">
-        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-indigo-500/15">
-          <ShieldAlert className="h-7 w-7 text-indigo-300" />
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-xl bg-[#ede7f6]">
+          <ShieldAlert className="h-7 w-7 text-[#714b67]" />
         </div>
-        <h1 className="mt-5 text-3xl font-bold text-slate-100">Page not found</h1>
-        <p className="mt-2 text-sm text-slate-400">
+        <h1 className="mt-5 text-3xl font-bold text-[#1a1c24]">Page not found</h1>
+        <p className="mt-2 text-sm text-[#6c757d]">
           The EmPay page you are looking for does not exist.
         </p>
-        <Button asChild className="mt-5 bg-indigo-600 text-white hover:bg-indigo-500">
+        <Button asChild className="mt-5 bg-[#714b67] text-white hover:bg-[#5a3a52]">
           <Link href="/dashboard">Back to Dashboard</Link>
         </Button>
       </div>

@@ -97,12 +97,12 @@ export default function NewEmployeePage() {
   if (success) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] gap-4">
-        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-emerald-500/20">
-          <CheckCircle2 className="w-8 h-8 text-emerald-400" />
+        <div className="flex items-center justify-center w-16 h-16 rounded-full bg-[#edf7ef]">
+          <CheckCircle2 className="w-8 h-8 text-[#28a745]" />
         </div>
-        <h2 className="text-xl font-semibold text-slate-100">Employee Created!</h2>
-        <p className="text-slate-400 text-sm">Credentials have been sent to their email.</p>
-        <p className="text-slate-500 text-xs">Redirecting to employees list...</p>
+        <h2 className="text-xl font-semibold text-[#1a1c24]">Employee Created!</h2>
+        <p className="text-[#6c757d] text-sm">Credentials have been sent to their email.</p>
+        <p className="text-[#6c757d] text-xs">Redirecting to employees list...</p>
       </div>
     );
   }
@@ -114,29 +114,29 @@ export default function NewEmployeePage() {
         <Button
           variant="ghost"
           onClick={() => router.back()}
-          className="text-slate-400 hover:text-slate-100 hover:bg-slate-800/60 p-2"
+          className="text-[#6c757d] hover:text-[#1a1c24] hover:bg-[#faf8ff] p-2"
         >
           <ArrowLeft className="w-5 h-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <UserPlus className="w-6 h-6 text-indigo-400" />
+          <h1 className="text-2xl font-bold text-[#1a1c24] flex items-center gap-2">
+            <UserPlus className="w-6 h-6 text-[#714b67]" />
             Add New Employee
           </h1>
-          <p className="text-slate-400 text-sm mt-0.5">
+          <p className="text-[#6c757d] text-sm mt-0.5">
             An email with login credentials will be sent automatically
           </p>
         </div>
       </div>
 
-      <Card className="bg-slate-900/60 border-slate-800/60">
+      <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
         <CardHeader className="pb-4">
-          <CardTitle className="text-slate-100 text-lg">Employee Details</CardTitle>
+          <CardTitle className="text-[#1a1c24] text-lg">Employee Details</CardTitle>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
             {serverError && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+              <div className="p-3 rounded-lg bg-[#fdecea] border border-[#dc3545]/30 text-[#dc3545] text-sm">
                 {serverError}
               </div>
             )}
@@ -144,55 +144,55 @@ export default function NewEmployeePage() {
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {/* Full Name */}
               <div className="space-y-1.5 sm:col-span-2">
-                <Label htmlFor="name" className="text-slate-300">Full Name *</Label>
+                <Label htmlFor="name" className="text-[#374151]">Full Name *</Label>
                 <Input
                   id="name"
                   placeholder="John Doe"
-                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-500 focus:border-indigo-500"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
                   {...register("name")}
                 />
-                {errors.name && <p className="text-red-400 text-xs">{errors.name.message}</p>}
+                {errors.name && <p className="text-[#dc3545] text-xs">{errors.name.message}</p>}
               </div>
 
               {/* Email */}
               <div className="space-y-1.5">
-                <Label htmlFor="email" className="text-slate-300">Work Email *</Label>
+                <Label htmlFor="email" className="text-[#374151]">Work Email *</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="john@company.com"
-                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-500 focus:border-indigo-500"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
                   {...register("email")}
                 />
-                {errors.email && <p className="text-red-400 text-xs">{errors.email.message}</p>}
+                {errors.email && <p className="text-[#dc3545] text-xs">{errors.email.message}</p>}
               </div>
 
               {/* Phone */}
               <div className="space-y-1.5">
-                <Label htmlFor="phone" className="text-slate-300">Phone</Label>
+                <Label htmlFor="phone" className="text-[#374151]">Phone</Label>
                 <Input
                   id="phone"
                   type="tel"
                   placeholder="+91 98765 43210"
-                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-500 focus:border-indigo-500"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
                   {...register("phone")}
                 />
               </div>
 
               {/* Department */}
               <div className="space-y-1.5">
-                <Label htmlFor="department" className="text-slate-300">Department</Label>
+                <Label htmlFor="department" className="text-[#374151]">Department</Label>
                 <Input
                   id="department"
                   placeholder="Engineering, Sales, HR..."
-                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-500 focus:border-indigo-500"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
                   {...register("department")}
                 />
               </div>
 
               {/* Role */}
               <div className="space-y-1.5">
-                <Label htmlFor="role" className="text-slate-300">Role *</Label>
+                <Label htmlFor="role" className="text-[#374151]">Role *</Label>
                 <Select
                   defaultValue="EMPLOYEE"
                   onValueChange={(val) =>
@@ -201,33 +201,33 @@ export default function NewEmployeePage() {
                 >
                   <SelectTrigger
                     id="role"
-                    className="bg-slate-800/50 border-slate-600 text-slate-100 focus:border-indigo-500"
+                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-[#714b67]"
                   >
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-700 text-slate-200">
+                  <SelectContent className="bg-[#ffffff] border-[#e5e7eb] text-[#374151]">
                     <SelectItem value="EMPLOYEE">Employee</SelectItem>
                     <SelectItem value="HR_OFFICER">HR Officer</SelectItem>
                     <SelectItem value="PAYROLL_OFFICER">Payroll Officer</SelectItem>
                     <SelectItem value="ADMIN">Admin</SelectItem>
                   </SelectContent>
                 </Select>
-                {errors.role && <p className="text-red-400 text-xs">{errors.role.message}</p>}
+                {errors.role && <p className="text-[#dc3545] text-xs">{errors.role.message}</p>}
               </div>
 
               {/* Manager */}
               <div className="space-y-1.5">
-                <Label htmlFor="manager" className="text-slate-300">Reporting Manager</Label>
+                <Label htmlFor="manager" className="text-[#374151]">Reporting Manager</Label>
                 <Select
                   onValueChange={(val) => setValue("managerId", val === "none" ? undefined : val)}
                 >
                   <SelectTrigger
                     id="manager"
-                    className="bg-slate-800/50 border-slate-600 text-slate-100 focus:border-indigo-500"
+                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-[#714b67]"
                   >
                     <SelectValue placeholder="Select manager" />
                   </SelectTrigger>
-                  <SelectContent className="bg-slate-900 border-slate-700 text-slate-200">
+                  <SelectContent className="bg-[#ffffff] border-[#e5e7eb] text-[#374151]">
                     <SelectItem value="none">No Manager</SelectItem>
                     {managers.map((m) => (
                       <SelectItem key={m.id} value={m.id}>
@@ -240,11 +240,11 @@ export default function NewEmployeePage() {
 
               {/* Date of Joining */}
               <div className="space-y-1.5">
-                <Label htmlFor="dateOfJoining" className="text-slate-300">Date of Joining</Label>
+                <Label htmlFor="dateOfJoining" className="text-[#374151]">Date of Joining</Label>
                 <Input
                   id="dateOfJoining"
                   type="date"
-                  className="bg-slate-800/50 border-slate-600 text-slate-100 focus:border-indigo-500 [color-scheme:dark]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-[#714b67] [color-scheme:light]"
                   {...register("dateOfJoining")}
                 />
               </div>
@@ -255,14 +255,14 @@ export default function NewEmployeePage() {
                 type="button"
                 variant="ghost"
                 onClick={() => router.back()}
-                className="text-slate-400 hover:text-slate-100 hover:bg-slate-800/60"
+                className="text-[#6c757d] hover:text-[#1a1c24] hover:bg-[#faf8ff]"
               >
                 Cancel
               </Button>
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white shadow-lg shadow-indigo-500/25 gap-2"
+                className="bg-[#714b67] hover:bg-[#5a3a52] text-white shadow-[0_1px_4px_rgba(113,75,103,0.10)]  gap-2"
               >
                 {isSubmitting ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</>
