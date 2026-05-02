@@ -21,9 +21,7 @@ function calculateSalary(monthWage: number) {
   const employeePF = basicSalary * 0.12;
   const employerPF = basicSalary * 0.12;
   const professionalTax = 200;
-  const fixedAllowance =
-    monthWage -
-    (basicSalary + hra + standardAllowance + performanceBonus + lta);
+  const fixedAllowance = basicSalary * 0.1167;
 
   return {
     yearlyWage: monthWage * 12,

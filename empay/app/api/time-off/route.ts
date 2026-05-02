@@ -7,15 +7,39 @@ export const dynamic = "force-dynamic";
 
 const createTimeOffSchema = z
   .object({
-    leaveType: z.enum(["Sick Leave", "Casual Leave", "Earned Leave", "Other"]),
+    leaveType: z.enum(["Sick Leave", "Casual Leave", "Paid Leave", "Other"]),
     startDate: z.string().min(1),
     endDate: z.string().min(1),
     reason: z.string().optional(),
+    medicalCertificateName: z.string().optional(),
+    medicalCertificateType: z.string().optional(),
+    medicalCertificateData: z.string().max(3_000_000, "File must be under 2 MB").optional(),
   })
   .refine((data) => new Date(data.endDate) >= new Date(data.startDate), {
     message: "End date must be on or after start date",
     path: ["endDate"],
+  })
+  .refine((data) => data.leaveType !== "Sick Leave" || Boolean(data.medicalCertificateData), {
+    message: "Medical certificate is required for sick leave",
+    path: ["medicalCertificateData"],
   });
+
+const LEAVE_ALLOCATIONS = {
+  paid: 12,
+  sick: 6,
+};
+
+function leaveDays(startDate: Date, endDate: Date) {
+  const start = new Date(startDate);
+  start.setHours(0, 0, 0, 0);
+  const end = new Date(endDate);
+  end.setHours(0, 0, 0, 0);
+  return Math.max(1, Math.floor((end.getTime() - start.getTime()) / 86_400_000) + 1);
+}
+
+function paidLeaveTypes() {
+  return ["Paid Leave"];
+}
 
 export async function GET(request: NextRequest) {
   try {
@@ -40,7 +64,35 @@ export async function GET(request: NextRequest) {
       ? requests.filter((request) => request.userId === currentUser.id)
       : requests;
 
-    return NextResponse.json({ data: { requests, myRequests } });
+    const approvedMine = await prisma.timeOffRequest.findMany({
+      where: {
+        userId: currentUser.id,
+        status: "APPROVED",
+      },
+      select: { leaveType: true, startDate: true, endDate: true },
+    });
+
+    const usedPaid = approvedMine
+      .filter((request) => paidLeaveTypes().includes(request.leaveType))
+      .reduce((sum, request) => sum + leaveDays(request.startDate, request.endDate), 0);
+    const usedSick = approvedMine
+      .filter((request) => request.leaveType === "Sick Leave")
+      .reduce((sum, request) => sum + leaveDays(request.startDate, request.endDate), 0);
+
+    const leaveBalances = {
+      paid: {
+        allocated: LEAVE_ALLOCATIONS.paid,
+        approved: usedPaid,
+        remaining: Math.max(0, LEAVE_ALLOCATIONS.paid - usedPaid),
+      },
+      sick: {
+        allocated: LEAVE_ALLOCATIONS.sick,
+        approved: usedSick,
+        remaining: Math.max(0, LEAVE_ALLOCATIONS.sick - usedSick),
+      },
+    };
+
+    return NextResponse.json({ data: { requests, myRequests, leaveBalances } });
   } catch (error) {
     console.error("[TIME_OFF GET ERROR]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });
@@ -75,6 +127,9 @@ export async function POST(request: NextRequest) {
         startDate: new Date(parsed.data.startDate),
         endDate: new Date(parsed.data.endDate),
         reason: parsed.data.reason || null,
+        medicalCertificateName: parsed.data.medicalCertificateName || null,
+        medicalCertificateType: parsed.data.medicalCertificateType || null,
+        medicalCertificateData: parsed.data.medicalCertificateData || null,
       },
       include: {
         user: { select: { id: true, name: true, loginId: true, department: true } },

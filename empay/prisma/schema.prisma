@@ -115,6 +115,9 @@ model TimeOffRequest {
   endDate   DateTime
   reason    String?
   status    LeaveStatus @default(PENDING)
+  medicalCertificateName String?
+  medicalCertificateType String?
+  medicalCertificateData String?
   createdAt DateTime    @default(now())
 }
 

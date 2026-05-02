@@ -35,6 +35,8 @@ interface TimeOffRequest {
   endDate: string;
   reason: string | null;
   status: LeaveStatus;
+  medicalCertificateName: string | null;
+  medicalCertificateData: string | null;
   createdAt: string;
   user: {
     id: string;
@@ -44,13 +46,18 @@ interface TimeOffRequest {
   };
 }
 
+interface LeaveBalances {
+  paid: { allocated: number; approved: number; remaining: number };
+  sick: { allocated: number; approved: number; remaining: number };
+}
+
 const statusStyles: Record<LeaveStatus, string> = {
   PENDING: "border-amber-500/30 bg-amber-500/10 text-amber-300",
   APPROVED: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
   REJECTED: "border-red-500/30 bg-red-500/10 text-red-300",
 };
 
-const leaveTypes = ["Sick Leave", "Casual Leave", "Earned Leave", "Other"];
+const leaveTypes = ["Sick Leave", "Casual Leave", "Paid Leave", "Other"];
 
 function formatDate(value: string) {
   return new Intl.DateTimeFormat("en-IN", {
@@ -90,6 +97,7 @@ function RequestTable({
             <th className="px-4 py-3 font-medium">Leave Type</th>
             <th className="px-4 py-3 font-medium">Dates</th>
             <th className="px-4 py-3 font-medium">Reason</th>
+            {showEmployee && <th className="px-4 py-3 font-medium">Certificate</th>}
             <th className="px-4 py-3 font-medium">Status</th>
             {showEmployee && <th className="px-4 py-3 font-medium">Actions</th>}
           </tr>
@@ -110,6 +118,22 @@ function RequestTable({
               <td className="max-w-xs px-4 py-3 text-slate-400">
                 {request.reason || "-"}
               </td>
+              {showEmployee && (
+                <td className="px-4 py-3">
+                  {request.medicalCertificateData ? (
+                    <a
+                      href={request.medicalCertificateData}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="text-indigo-300 underline-offset-4 hover:underline"
+                    >
+                      {request.medicalCertificateName || "View file"}
+                    </a>
+                  ) : (
+                    <span className="text-xs text-slate-500">-</span>
+                  )}
+                </td>
+              )}
               <td className="px-4 py-3">
                 <Badge variant="outline" className={cn(statusStyles[request.status])}>
                   {request.status}
@@ -159,6 +183,7 @@ export default function TimeOffPage() {
   const { user } = useUser();
   const [requests, setRequests] = useState<TimeOffRequest[]>([]);
   const [myRequests, setMyRequests] = useState<TimeOffRequest[]>([]);
+  const [leaveBalances, setLeaveBalances] = useState<LeaveBalances | null>(null);
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
@@ -169,6 +194,9 @@ export default function TimeOffPage() {
     startDate: "",
     endDate: "",
     reason: "",
+    medicalCertificateName: "",
+    medicalCertificateType: "",
+    medicalCertificateData: "",
   });
 
   const canApply = ["EMPLOYEE", "ADMIN", "HR_OFFICER"].includes(user?.role || "");
@@ -193,6 +221,7 @@ export default function TimeOffPage() {
       if (!res.ok) throw new Error(json.error || "Failed to load time-off requests");
       setRequests(json.data.requests || []);
       setMyRequests(json.data.myRequests || []);
+      setLeaveBalances(json.data.leaveBalances || null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load requests.");
     } finally {
@@ -202,6 +231,10 @@ export default function TimeOffPage() {
 
   async function submitRequest(event: React.FormEvent<HTMLFormElement>) {
     event.preventDefault();
+    if (form.leaveType === "Sick Leave" && !form.medicalCertificateData) {
+      setError("Medical certificate is required for sick leave.");
+      return;
+    }
     setSubmitting(true);
     setError(null);
     try {
@@ -213,13 +246,51 @@ export default function TimeOffPage() {
       const json = await res.json();
       if (!res.ok) throw new Error(json.error || "Failed to submit request");
       setDialogOpen(false);
-      setForm({ leaveType: "Sick Leave", startDate: "", endDate: "", reason: "" });
+      setForm({
+        leaveType: "Sick Leave",
+        startDate: "",
+        endDate: "",
+        reason: "",
+        medicalCertificateName: "",
+        medicalCertificateType: "",
+        medicalCertificateData: "",
+      });
       await loadRequests();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to submit request.");
     } finally {
       setSubmitting(false);
     }
+  }
+
+  function handleCertificateUpload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    if (!file) {
+      setForm((prev) => ({
+        ...prev,
+        medicalCertificateName: "",
+        medicalCertificateType: "",
+        medicalCertificateData: "",
+      }));
+      return;
+    }
+
+    if (file.size > 2 * 1024 * 1024) {
+      setError("Medical certificate must be under 2 MB.");
+      event.target.value = "";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      setForm((prev) => ({
+        ...prev,
+        medicalCertificateName: file.name,
+        medicalCertificateType: file.type,
+        medicalCertificateData: String(reader.result),
+      }));
+    };
+    reader.readAsDataURL(file);
   }
 
   async function updateRequest(id: string, status: "APPROVED" | "REJECTED") {
@@ -266,12 +337,46 @@ export default function TimeOffPage() {
               <DialogHeader>
                 <DialogTitle>Apply for Time Off</DialogTitle>
               </DialogHeader>
+              {leaveBalances && (
+                <div className="grid gap-3 sm:grid-cols-2">
+                  <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/10 p-3">
+                    <p className="text-xs text-emerald-200/80">Paid Leaves Left</p>
+                    <p className="mt-1 text-2xl font-bold text-emerald-300">
+                      {leaveBalances.paid.remaining}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {leaveBalances.paid.approved} of {leaveBalances.paid.allocated} used
+                    </p>
+                  </div>
+                  <div className="rounded-lg border border-blue-500/25 bg-blue-500/10 p-3">
+                    <p className="text-xs text-blue-200/80">Sick Leaves Left</p>
+                    <p className="mt-1 text-2xl font-bold text-blue-300">
+                      {leaveBalances.sick.remaining}
+                    </p>
+                    <p className="text-xs text-slate-500">
+                      {leaveBalances.sick.approved} of {leaveBalances.sick.allocated} used
+                    </p>
+                  </div>
+                </div>
+              )}
               <form className="space-y-4" onSubmit={submitRequest}>
                 <div className="space-y-1.5">
                   <Label>Leave Type</Label>
                   <Select
                     value={form.leaveType}
-                    onValueChange={(value) => setForm((prev) => ({ ...prev, leaveType: value }))}
+                    onValueChange={(value) =>
+                      setForm((prev) => ({
+                        ...prev,
+                        leaveType: value,
+                        ...(value === "Sick Leave"
+                          ? {}
+                          : {
+                              medicalCertificateName: "",
+                              medicalCertificateType: "",
+                              medicalCertificateData: "",
+                            }),
+                      }))
+                    }
                   >
                     <SelectTrigger className="w-full border-slate-700 bg-slate-900 text-slate-100">
                       <SelectValue />
@@ -322,6 +427,23 @@ export default function TimeOffPage() {
                     placeholder="Add a short reason..."
                   />
                 </div>
+                {form.leaveType === "Sick Leave" && (
+                  <div className="space-y-1.5">
+                    <Label>Medical Certificate *</Label>
+                    <Input
+                      required
+                      type="file"
+                      accept="image/*,.pdf,application/pdf"
+                      onChange={handleCertificateUpload}
+                      className="border-slate-700 bg-slate-900 text-slate-100 file:text-slate-200"
+                    />
+                    {form.medicalCertificateName && (
+                      <p className="text-xs text-slate-400">
+                        Attached: {form.medicalCertificateName}
+                      </p>
+                    )}
+                  </div>
+                )}
                 <Button
                   type="submit"
                   disabled={submitting}

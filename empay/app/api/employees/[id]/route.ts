@@ -42,7 +42,10 @@ const updateEmployeeSchema = z.object({
     .optional(),
 });
 
-function canViewPrivate(targetId: string, currentUser: { id: string; role: string }) {
+function canViewSensitiveProfile(
+  targetId: string,
+  currentUser: { id: string; role: string }
+) {
   return (
     targetId === currentUser.id ||
     ["ADMIN", "HR_OFFICER", "PAYROLL_OFFICER"].includes(currentUser.role)
@@ -57,6 +60,10 @@ function canEditProfile(targetId: string, currentUser: { id: string; role: strin
   );
 }
 
+function canAssignManager(currentUser: { role: string }) {
+  return currentUser.role === "ADMIN" || currentUser.role === "HR_OFFICER";
+}
+
 export async function GET(
   request: NextRequest,
   { params }: { params: { id: string } }
@@ -67,9 +74,7 @@ export async function GET(
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    if (!canViewPrivate(params.id, currentUser)) {
-      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
-    }
+    const canViewSensitive = canViewSensitiveProfile(params.id, currentUser);
 
     const employee = await prisma.user.findUnique({
       where: { id: params.id },
@@ -90,7 +95,7 @@ export async function GET(
         isFirstLogin: true,
         createdAt: true,
         resume: true,
-        privateInfo: true,
+        privateInfo: canViewSensitive,
         salaryInfo: currentUser.role === "ADMIN" || currentUser.role === "PAYROLL_OFFICER",
       },
     });
@@ -129,12 +134,20 @@ export async function PATCH(
       );
     }
 
-    const { resume, privateInfo, dateOfJoining, ...userData } = parsed.data;
+    const { resume, privateInfo, dateOfJoining, managerId, ...userData } = parsed.data;
+
+    if (managerId !== undefined && !canAssignManager(currentUser)) {
+      return NextResponse.json(
+        { error: "Only Admin or HR Officer can assign reporting managers" },
+        { status: 403 }
+      );
+    }
 
     const updated = await prisma.user.update({
       where: { id: params.id },
       data: {
         ...userData,
+        managerId: managerId !== undefined ? managerId : undefined,
         dateOfJoining: dateOfJoining ? new Date(dateOfJoining) : dateOfJoining,
         resume: resume
           ? {
@@ -181,6 +194,7 @@ export async function PATCH(
         profilePhoto: true,
         department: true,
         managerId: true,
+        manager: { select: { id: true, name: true } },
         location: true,
         empCode: true,
         dateOfJoining: true,

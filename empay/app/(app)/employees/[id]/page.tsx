@@ -29,6 +29,7 @@ interface EmployeeProfile {
   phone: string | null;
   profilePhoto: string | null;
   department: string | null;
+  managerId: string | null;
   manager: { id: string; name: string } | null;
   location: string | null;
   empCode: string | null;
@@ -74,6 +75,13 @@ interface SalaryInfo {
   professionalTax: number;
 }
 
+interface ManagerOption {
+  id: string;
+  name: string;
+  loginId: string;
+  role: string;
+}
+
 const emptySalary: SalaryInfo = {
   monthWage: 0,
   yearlyWage: 0,
@@ -104,8 +112,7 @@ function calculateSalary(monthWage: number, base: SalaryInfo): SalaryInfo {
   const employeePF = basicSalary * 0.12;
   const employerPF = basicSalary * 0.12;
   const professionalTax = 200;
-  const fixedAllowance =
-    monthWage - (basicSalary + hra + standardAllowance + performanceBonus + lta);
+  const fixedAllowance = basicSalary * 0.1167;
 
   return {
     ...base,
@@ -136,6 +143,7 @@ export default function EmployeeProfilePage() {
   const params = useParams<{ id: string }>();
   const { user } = useUser();
   const [employee, setEmployee] = useState<EmployeeProfile | null>(null);
+  const [managers, setManagers] = useState<ManagerOption[]>([]);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
@@ -150,6 +158,16 @@ export default function EmployeeProfilePage() {
       employee &&
       (user.id === employee.id || user.role === "ADMIN" || user.role === "HR_OFFICER")
   );
+  const canAssignManager = user?.role === "ADMIN" || user?.role === "HR_OFFICER";
+  const canViewPrivateInfo = Boolean(
+    user &&
+      employee &&
+      (user.id === employee.id ||
+        user.role === "ADMIN" ||
+        user.role === "HR_OFFICER" ||
+        user.role === "PAYROLL_OFFICER")
+  );
+  const canUseSecurity = Boolean(user && employee && user.id === employee.id);
   const canViewSalary = user?.role === "ADMIN" || user?.role === "PAYROLL_OFFICER";
 
   useEffect(() => {
@@ -170,6 +188,19 @@ export default function EmployeeProfilePage() {
     }
     loadEmployee();
   }, [params.id]);
+
+  useEffect(() => {
+    if (!canEdit) return;
+
+    async function loadManagers() {
+      const res = await fetch("/api/employees");
+      if (!res.ok) return;
+      const json = await res.json();
+      setManagers(json.data.employees || []);
+    }
+
+    loadManagers();
+  }, [canEdit]);
 
   const initials = useMemo(
     () =>
@@ -240,23 +271,26 @@ export default function EmployeeProfilePage() {
     setSaving(true);
     setMessage(null);
     try {
+      const payload = {
+        name: employee.name,
+        email: employee.email,
+        phone: employee.phone,
+        department: employee.department,
+        location: employee.location,
+        empCode: employee.empCode,
+        dateOfJoining: employee.dateOfJoining,
+        resume: employee.resume,
+        privateInfo: employee.privateInfo,
+        ...(canAssignManager ? { managerId: employee.managerId } : {}),
+      };
       const res = await fetch(`/api/employees/${employee.id}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name: employee.name,
-          email: employee.email,
-          phone: employee.phone,
-          department: employee.department,
-          location: employee.location,
-          empCode: employee.empCode,
-          dateOfJoining: employee.dateOfJoining,
-          resume: employee.resume,
-          privateInfo: employee.privateInfo,
-        }),
+        body: JSON.stringify(payload),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(typeof json.error === "string" ? json.error : "Save failed");
+      updateEmployee(json.data.employee);
       setMessage("Profile saved.");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Save failed.");
@@ -399,9 +433,9 @@ export default function EmployeeProfilePage() {
       <Tabs defaultValue="resume">
         <TabsList className="flex w-full max-w-3xl justify-start overflow-x-auto">
           <TabsTrigger value="resume">Resume</TabsTrigger>
-          <TabsTrigger value="private">Private Info</TabsTrigger>
+          {canViewPrivateInfo && <TabsTrigger value="private">Private Info</TabsTrigger>}
           {canViewSalary && <TabsTrigger value="salary">Salary Info</TabsTrigger>}
-          <TabsTrigger value="security">Security</TabsTrigger>
+          {canUseSecurity && <TabsTrigger value="security">Security</TabsTrigger>}
         </TabsList>
 
         <TabsContent value="resume">
@@ -443,6 +477,7 @@ export default function EmployeeProfilePage() {
           </Card>
         </TabsContent>
 
+        {canViewPrivateInfo && (
         <TabsContent value="private">
           <Card className="bg-slate-900/70 border-slate-800/70">
             <CardHeader>
@@ -462,6 +497,20 @@ export default function EmployeeProfilePage() {
               <TextField label="PAN No" value={employee.privateInfo?.panNo || ""} disabled={!canEdit} onChange={(value) => updatePrivate({ panNo: value })} />
               <TextField label="UAN No" value={employee.privateInfo?.uanNo || ""} disabled={!canEdit} onChange={(value) => updatePrivate({ uanNo: value })} />
               <TextField label="Emp Code" value={employee.empCode || ""} disabled={!canEdit} onChange={(value) => updateEmployee({ empCode: value })} />
+              <ManagerField
+                value={employee.managerId || "none"}
+                managers={managers.filter((manager) => manager.id !== employee.id)}
+                disabled={!canAssignManager}
+                onChange={(value) =>
+                  updateEmployee({
+                    managerId: value === "none" ? null : value,
+                    manager:
+                      value === "none"
+                        ? null
+                        : managers.find((manager) => manager.id === value) || employee.manager,
+                  })
+                }
+              />
               <TextField label="Date of Joining" type="date" value={dateInput(employee.privateInfo?.dateOfJoining || employee.dateOfJoining)} disabled={!canEdit} onChange={(value) => {
                 updatePrivate({ dateOfJoining: value || null });
                 updateEmployee({ dateOfJoining: value || null });
@@ -469,6 +518,7 @@ export default function EmployeeProfilePage() {
             </CardContent>
           </Card>
         </TabsContent>
+        )}
 
         {canViewSalary && (
           <TabsContent value="salary">
@@ -503,6 +553,7 @@ export default function EmployeeProfilePage() {
           </TabsContent>
         )}
 
+        {canUseSecurity && (
         <TabsContent value="security">
           <Card className="bg-slate-900/70 border-slate-800/70">
             <CardHeader>
@@ -525,6 +576,7 @@ export default function EmployeeProfilePage() {
             </CardContent>
           </Card>
         </TabsContent>
+        )}
       </Tabs>
     </div>
   );
@@ -611,6 +663,37 @@ function SelectField({
           {values.map((item) => (
             <SelectItem key={item} value={item}>
               {item}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+function ManagerField({
+  value,
+  managers,
+  onChange,
+  disabled,
+}: {
+  value: string;
+  managers: ManagerOption[];
+  onChange: (value: string) => void;
+  disabled?: boolean;
+}) {
+  return (
+    <div className="space-y-1.5">
+      <Label className="text-slate-300">Reporting Manager</Label>
+      <Select value={value} onValueChange={onChange} disabled={disabled}>
+        <SelectTrigger className="w-full bg-slate-800/50 border-slate-600 text-slate-100">
+          <SelectValue placeholder="Select reporting manager" />
+        </SelectTrigger>
+        <SelectContent className="bg-slate-900 border-slate-700 text-slate-200">
+          <SelectItem value="none">No Manager</SelectItem>
+          {managers.map((manager) => (
+            <SelectItem key={manager.id} value={manager.id}>
+              {manager.name} ({manager.role.replace("_", " ")})
             </SelectItem>
           ))}
         </SelectContent>
