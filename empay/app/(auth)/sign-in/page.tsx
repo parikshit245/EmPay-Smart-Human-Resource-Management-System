@@ -44,7 +44,7 @@ export default function SignInPage() {
         return;
       }
 
-      router.push("/dashboard");
+      router.push(json.data.user.isFirstLogin ? "/change-password" : "/dashboard");
       router.refresh();
     } catch {
       setServerError("Network error. Please try again.");

@@ -37,6 +37,18 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check role-based protection
+  if (
+    payload.isFirstLogin &&
+    pathname !== "/change-password" &&
+    !pathname.startsWith("/api")
+  ) {
+    return NextResponse.redirect(new URL("/change-password", request.url));
+  }
+
+  if (!payload.isFirstLogin && pathname === "/change-password") {
+    return NextResponse.redirect(new URL("/dashboard", request.url));
+  }
+
   for (const { pattern, roles } of ROLE_PROTECTED) {
     if (pattern.test(pathname)) {
       if (!roles.includes(payload.role)) {

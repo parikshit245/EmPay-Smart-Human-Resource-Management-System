@@ -45,7 +45,12 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const token = signToken({ id: user.id, role: user.role, loginId: user.loginId });
+    const token = signToken({
+      id: user.id,
+      role: user.role,
+      loginId: user.loginId,
+      isFirstLogin: user.isFirstLogin,
+    });
 
     const safeUser = {
       id: user.id,

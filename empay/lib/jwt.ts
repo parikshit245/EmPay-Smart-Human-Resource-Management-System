@@ -6,6 +6,7 @@ export interface JwtPayload {
   id: string;
   role: string;
   loginId: string;
+  isFirstLogin?: boolean;
 }
 
 export function signToken(payload: JwtPayload): string {

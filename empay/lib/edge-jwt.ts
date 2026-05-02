@@ -2,6 +2,7 @@ export interface EdgeJwtPayload {
   id: string;
   role: string;
   loginId: string;
+  isFirstLogin?: boolean;
   exp?: number;
 }
 
@@ -27,6 +28,8 @@ function isPayload(value: unknown): value is EdgeJwtPayload {
     typeof payload.id === "string" &&
     typeof payload.role === "string" &&
     typeof payload.loginId === "string" &&
+    (payload.isFirstLogin === undefined ||
+      typeof payload.isFirstLogin === "boolean") &&
     (payload.exp === undefined || typeof payload.exp === "number")
   );
 }

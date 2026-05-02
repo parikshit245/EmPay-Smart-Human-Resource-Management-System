@@ -78,6 +78,7 @@ model SalaryInfo {
   yearlyWage         Float  @default(0)
   workingDaysPerWeek Int    @default(5)
   breakTime          Float  @default(1)
+  wageType           String @default("MONTHLY")
   basicSalary        Float  @default(0)
   hra                Float  @default(0)
   standardAllowance  Float  @default(0)
