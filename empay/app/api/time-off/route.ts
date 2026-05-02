@@ -2,12 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import { countCalendarDaysBetween, normalizeLeaveType } from "@/lib/leave-utils";
 
 export const dynamic = "force-dynamic";
 
 const createTimeOffSchema = z
   .object({
-    leaveType: z.enum(["Sick Leave", "Casual Leave", "Paid Leave", "Other"]),
+    leaveType: z.enum(["PAID", "SICK", "UNPAID", "OTHER"]),
     startDate: z.string().min(1),
     endDate: z.string().min(1),
     reason: z.string().optional(),
@@ -19,7 +20,7 @@ const createTimeOffSchema = z
     message: "End date must be on or after start date",
     path: ["endDate"],
   })
-  .refine((data) => data.leaveType !== "Sick Leave" || Boolean(data.medicalCertificateData), {
+  .refine((data) => data.leaveType !== "SICK" || Boolean(data.medicalCertificateData), {
     message: "Medical certificate is required for sick leave",
     path: ["medicalCertificateData"],
   });
@@ -28,18 +29,6 @@ const LEAVE_ALLOCATIONS = {
   paid: 12,
   sick: 6,
 };
-
-function leaveDays(startDate: Date, endDate: Date) {
-  const start = new Date(startDate);
-  start.setHours(0, 0, 0, 0);
-  const end = new Date(endDate);
-  end.setHours(0, 0, 0, 0);
-  return Math.max(1, Math.floor((end.getTime() - start.getTime()) / 86_400_000) + 1);
-}
-
-function paidLeaveTypes() {
-  return ["Paid Leave"];
-}
 
 export async function GET(request: NextRequest) {
   try {
@@ -73,11 +62,11 @@ export async function GET(request: NextRequest) {
     });
 
     const usedPaid = approvedMine
-      .filter((request) => paidLeaveTypes().includes(request.leaveType))
-      .reduce((sum, request) => sum + leaveDays(request.startDate, request.endDate), 0);
+      .filter((request) => normalizeLeaveType(request.leaveType) === "PAID")
+      .reduce((sum, request) => sum + countCalendarDaysBetween(request.startDate, request.endDate), 0);
     const usedSick = approvedMine
-      .filter((request) => request.leaveType === "Sick Leave")
-      .reduce((sum, request) => sum + leaveDays(request.startDate, request.endDate), 0);
+      .filter((request) => normalizeLeaveType(request.leaveType) === "SICK")
+      .reduce((sum, request) => sum + countCalendarDaysBetween(request.startDate, request.endDate), 0);
 
     const leaveBalances = {
       paid: {

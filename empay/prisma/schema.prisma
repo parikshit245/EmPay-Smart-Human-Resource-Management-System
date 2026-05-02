@@ -26,13 +26,13 @@ model User {
   isFirstLogin  Boolean   @default(true)
   createdAt     DateTime  @default(now())
 
-  resume          Resume?
-  privateInfo     PrivateInfo?
-  salaryInfo      SalaryInfo?
-  attendance      Attendance[]
+  resume           Resume?
+  privateInfo      PrivateInfo?
+  salaryInfo       SalaryInfo?
+  attendance       Attendance[]
   leaveAllocations EmployeeLeaveAllocation[]
-  timeOffRequests TimeOffRequest[]
-  payslips        Payslip[]
+  timeOffRequests  TimeOffRequest[]
+  payslips         Payslip[]
 }
 
 enum Role {
@@ -109,18 +109,25 @@ enum AttendanceStatus {
 }
 
 model TimeOffRequest {
-  id        String      @id @default(uuid())
-  userId    String
-  user      User        @relation(fields: [userId], references: [id])
-  leaveType String
-  startDate DateTime
-  endDate   DateTime
-  reason    String?
-  status    LeaveStatus @default(PENDING)
+  id                     String      @id @default(uuid())
+  userId                 String
+  user                   User        @relation(fields: [userId], references: [id])
+  leaveType              LeaveType
+  startDate              DateTime
+  endDate                DateTime
+  reason                 String?
+  status                 LeaveStatus @default(PENDING)
   medicalCertificateName String?
   medicalCertificateType String?
   medicalCertificateData String?
-  createdAt DateTime    @default(now())
+  createdAt              DateTime    @default(now())
+}
+
+enum LeaveType {
+  PAID
+  SICK
+  UNPAID
+  OTHER
 }
 
 enum LeaveStatus {
@@ -140,54 +147,53 @@ model Payrun {
   paidAt     DateTime?
   createdAt  DateTime     @default(now())
   payslips   Payslip[]
-
 }
 
 model Payslip {
-  id                String        @id @default(cuid())
-  payrunId          String
-  payrun            Payrun        @relation(fields: [payrunId], references: [id])
-  employeeId        String        @map("userId")
-  employee          User          @relation(fields: [employeeId], references: [id])
-  totalWorkingDays  Float         @default(0)
-  attendanceDays    Float         @default(0)
-  paidLeaveDays     Float         @default(0)
-  basicSalary       Float
-  hra               Float
-  standardAllowance Float
-  performanceBonus  Float
-  lta               Float
-  fixedAllowance    Float
-  grossPay          Float
-  employeePF        Float
-  employerPF        Float
-  professionalTax   Float
-  tdsDeduction      Float         @default(0)
-  netPay            Float
-  employerCost      Float         @default(0)
-  baseSalary        Float         @default(0)
-  totalSalary       Float         @default(0)
-  unpaidLeaveDays   Int           @default(0)
-  unpaidLeaveDeduction Float      @default(0)
-  status            PayslipStatus @default(GENERATED)
-  createdAt         DateTime      @default(now())
+  id                   String        @id @default(cuid())
+  payrunId             String
+  payrun               Payrun        @relation(fields: [payrunId], references: [id])
+  employeeId           String        @map("userId")
+  employee             User          @relation(fields: [employeeId], references: [id])
+  totalWorkingDays     Float         @default(0)
+  attendanceDays       Float         @default(0)
+  paidLeaveDays        Float         @default(0)
+  basicSalary          Float
+  hra                  Float
+  standardAllowance    Float
+  performanceBonus     Float
+  lta                  Float
+  fixedAllowance       Float
+  grossPay             Float
+  employeePF           Float
+  employerPF           Float
+  professionalTax      Float
+  tdsDeduction         Float         @default(0)
+  netPay               Float
+  employerCost         Float         @default(0)
+  baseSalary           Float         @default(0)
+  totalSalary          Float         @default(0)
+  unpaidLeaveDays      Int           @default(0)
+  unpaidLeaveDeduction Float         @default(0)
+  status               PayslipStatus @default(GENERATED)
+  createdAt            DateTime      @default(now())
 }
 
 model EmployeeLeaveAllocation {
-  id                  String   @id
+  id                  String   @id @default(cuid())
   employeeId          String
   employee            User     @relation(fields: [employeeId], references: [id], onDelete: Cascade)
   year                Int
   paidLeavesAllocated Int      @default(20)
   sickLeavesAllocated Int      @default(5)
   createdAt           DateTime @default(now())
-  updatedAt           DateTime
+  updatedAt           DateTime @updatedAt
 
   @@unique([employeeId, year])
 }
 
 model PublicHoliday {
-  id        String   @id
+  id        String   @id @default(cuid())
   name      String
   date      DateTime
   createdAt DateTime @default(now())

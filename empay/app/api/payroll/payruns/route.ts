@@ -2,6 +2,13 @@ import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser } from "@/lib/auth";
+import {
+  countWorkingDaysBetween,
+  monthRange,
+  normalizeLeaveType,
+  overlapRange,
+  publicHolidayKeys,
+} from "@/lib/leave-utils";
 
 export const dynamic = "force-dynamic";
 
@@ -16,36 +23,6 @@ function canUsePayroll(role: string) {
 
 function moneyNumber(value: number) {
   return Number(value.toFixed(2));
-}
-
-function monthRange(month: number, year: number) {
-  const start = new Date(year, month - 1, 1);
-  const end = new Date(year, month, 0, 23, 59, 59, 999);
-  return { start, end };
-}
-
-function isWeekday(date: Date) {
-  const day = date.getDay();
-  return day !== 0 && day !== 6;
-}
-
-function workingDaysInMonth(month: number, year: number) {
-  const { start, end } = monthRange(month, year);
-  let count = 0;
-  for (let date = new Date(start); date <= end; date.setDate(date.getDate() + 1)) {
-    if (isWeekday(date)) count += 1;
-  }
-  return count;
-}
-
-function countWeekdaysBetween(start: Date, end: Date) {
-  let count = 0;
-  const cursor = new Date(start.getFullYear(), start.getMonth(), start.getDate());
-  const last = new Date(end.getFullYear(), end.getMonth(), end.getDate());
-  for (; cursor <= last; cursor.setDate(cursor.getDate() + 1)) {
-    if (isWeekday(cursor)) count += 1;
-  }
-  return count;
 }
 
 function salaryHasValues(salaryInfo: {
@@ -68,7 +45,7 @@ function salaryHasValues(salaryInfo: {
   );
 }
 
-function toPayslipData(user: {
+async function toPayslipData(user: {
   id: string;
   salaryInfo: {
     basicSalary: number;
@@ -83,7 +60,7 @@ function toPayslipData(user: {
     tdsDeduction: number;
   } | null;
   attendance?: Array<{ date: Date; checkIn: Date | null; status: string }>;
-  timeOffRequests?: Array<{ startDate: Date; endDate: Date; status: string }>;
+  timeOffRequests?: Array<{ startDate: Date; endDate: Date; status: string; leaveType: string }>;
 }, month: number, year: number) {
   if (!user.salaryInfo || !salaryHasValues(user.salaryInfo)) return null;
 
@@ -94,23 +71,32 @@ function toPayslipData(user: {
     user.salaryInfo.performanceBonus +
     user.salaryInfo.lta +
     user.salaryInfo.fixedAllowance;
-  const totalWorkingDays = workingDaysInMonth(month, year);
+  const { start: monthStart, end: monthEnd } = monthRange(month, year);
+  const holidays = await publicHolidayKeys(monthStart, monthEnd);
+  const totalWorkingDays = countWorkingDaysBetween(monthStart, monthEnd, holidays);
   const attendanceDays = new Set(
     (user.attendance || [])
       .filter((item) => item.checkIn || item.status === "PRESENT")
       .map((item) => item.date.toISOString().slice(0, 10))
   ).size;
-  const { start: monthStart, end: monthEnd } = monthRange(month, year);
   const paidLeaveDays = (user.timeOffRequests || []).reduce((sum, leave) => {
     if (leave.status !== "APPROVED") return sum;
-    const overlapStart = leave.startDate > monthStart ? leave.startDate : monthStart;
-    const overlapEnd = leave.endDate < monthEnd ? leave.endDate : monthEnd;
-    if (overlapStart > overlapEnd) return sum;
-    return sum + countWeekdaysBetween(overlapStart, overlapEnd);
+    if (normalizeLeaveType(leave.leaveType) === "UNPAID") return sum;
+    const overlap = overlapRange(leave.startDate, leave.endDate, monthStart, monthEnd);
+    if (!overlap) return sum;
+    return sum + countWorkingDaysBetween(overlap.start, overlap.end, holidays);
   }, 0);
-  const paidDays = Math.min(totalWorkingDays, attendanceDays + paidLeaveDays);
+  const unpaidLeaveDays = (user.timeOffRequests || []).reduce((sum, leave) => {
+    if (leave.status !== "APPROVED" || normalizeLeaveType(leave.leaveType) !== "UNPAID") return sum;
+    const overlap = overlapRange(leave.startDate, leave.endDate, monthStart, monthEnd);
+    if (!overlap) return sum;
+    return sum + countWorkingDaysBetween(overlap.start, overlap.end, holidays);
+  }, 0);
+  const paidDays = Math.min(totalWorkingDays, attendanceDays + paidLeaveDays + unpaidLeaveDays);
   const dailyRate = totalWorkingDays > 0 ? grossPay / totalWorkingDays : 0;
-  const earnedGross = dailyRate * paidDays;
+  const monthlySalary = user.salaryInfo.basicSalary + user.salaryInfo.fixedAllowance;
+  const unpaidLeaveDeduction = totalWorkingDays > 0 ? (monthlySalary / totalWorkingDays) * unpaidLeaveDays : 0;
+  const earnedGross = Math.max(0, dailyRate * paidDays - unpaidLeaveDeduction);
   const netPay =
     earnedGross -
     user.salaryInfo.employeePF -
@@ -135,6 +121,10 @@ function toPayslipData(user: {
     grossPay: moneyNumber(earnedGross),
     netPay: moneyNumber(netPay),
     employerCost: moneyNumber(user.salaryInfo.basicSalary + user.salaryInfo.employerPF),
+    baseSalary: moneyNumber(user.salaryInfo.basicSalary),
+    totalSalary: moneyNumber(Math.max(0, monthlySalary - unpaidLeaveDeduction)),
+    unpaidLeaveDays,
+    unpaidLeaveDeduction: moneyNumber(unpaidLeaveDeduction),
   };
 }
 
@@ -163,7 +153,7 @@ export async function GET(request: NextRequest) {
           department: true,
           salaryInfo: true,
           attendance: { where: { date: { gte: start, lte: end } }, select: { date: true, checkIn: true, status: true } },
-          timeOffRequests: { where: { status: "APPROVED", startDate: { lte: end }, endDate: { gte: start } }, select: { startDate: true, endDate: true, status: true } },
+          timeOffRequests: { where: { status: "APPROVED", startDate: { lte: end }, endDate: { gte: start } }, select: { startDate: true, endDate: true, status: true, leaveType: true } },
         },
         orderBy: { name: "asc" },
       }),
@@ -202,9 +192,9 @@ export async function GET(request: NextRequest) {
       0
     );
 
-    const previewEmployees = users
-      .map((user) => {
-        const payslip = toPayslipData(user, month, year);
+    const previewEmployees = (
+      await Promise.all(users.map(async (user) => {
+        const payslip = await toPayslipData(user, month, year);
         if (!payslip) return null;
         const fullGross =
           user.salaryInfo!.basicSalary +
@@ -223,8 +213,8 @@ export async function GET(request: NextRequest) {
           deductions: payslip.employeePF + payslip.professionalTax + payslip.tdsDeduction,
           netPay: payslip.netPay,
         };
-      })
-      .filter(Boolean);
+      }))
+    ).filter(Boolean);
 
     const missingSalaryEmployees = warningUsers
       .filter((user) => !salaryHasValues(user.salaryInfo))
@@ -284,13 +274,13 @@ export async function POST(request: NextRequest) {
         id: true,
         salaryInfo: true,
         attendance: { where: { date: { gte: start, lte: end } }, select: { date: true, checkIn: true, status: true } },
-        timeOffRequests: { where: { status: "APPROVED", startDate: { lte: end }, endDate: { gte: start } }, select: { startDate: true, endDate: true, status: true } },
+        timeOffRequests: { where: { status: "APPROVED", startDate: { lte: end }, endDate: { gte: start } }, select: { startDate: true, endDate: true, status: true, leaveType: true } },
       },
     });
 
-    const payslips = users
-      .map((user) => toPayslipData(user, parsed.data.month, parsed.data.year))
-      .filter((payslip): payslip is NonNullable<typeof payslip> => Boolean(payslip));
+    const payslips = (
+      await Promise.all(users.map((user) => toPayslipData(user, parsed.data.month, parsed.data.year)))
+    ).filter((payslip): payslip is NonNullable<typeof payslip> => Boolean(payslip));
 
     if (payslips.length === 0) {
       return NextResponse.json({ error: "No employees with salary info found" }, { status: 400 });
