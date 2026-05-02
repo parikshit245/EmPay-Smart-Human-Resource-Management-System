@@ -23,8 +23,9 @@ model User {
   empCode       String?
   dateOfJoining DateTime?
   passwordHash  String
-  isFirstLogin  Boolean   @default(true)
-  createdAt     DateTime  @default(now())
+  isFirstLogin    Boolean   @default(true)
+  faceDescriptor  Json?
+  createdAt       DateTime  @default(now())
 
   resume           Resume?
   privateInfo      PrivateInfo?

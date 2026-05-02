@@ -12,6 +12,7 @@ import {
   Shield,
   ChevronRight,
   X,
+  Scan,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/lib/UserContext";
@@ -28,6 +29,7 @@ const navItems: NavItem[] = [
   { label: "Employees", href: "/employees", icon: Users, roles: ["ADMIN", "EMPLOYEE", "HR_OFFICER", "PAYROLL_OFFICER"] },
   { label: "Attendance", href: "/attendance", icon: Clock, roles: ["ADMIN", "EMPLOYEE", "HR_OFFICER", "PAYROLL_OFFICER"] },
   { label: "Time Off", href: "/time-off", icon: Calendar, roles: ["ADMIN", "EMPLOYEE", "HR_OFFICER", "PAYROLL_OFFICER"] },
+  { label: "Face Setup", href: "/face-setup", icon: Scan, roles: ["ADMIN", "EMPLOYEE", "HR_OFFICER", "PAYROLL_OFFICER"] },
   { label: "Payroll", href: "/payroll", icon: CreditCard, roles: ["ADMIN", "PAYROLL_OFFICER"] },
   { label: "Reports", href: "/reports", icon: BarChart3, roles: ["ADMIN", "PAYROLL_OFFICER"] },
   { label: "Settings", href: "/settings", icon: Settings, roles: ["ADMIN"] },
