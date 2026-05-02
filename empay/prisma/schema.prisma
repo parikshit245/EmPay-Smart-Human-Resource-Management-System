@@ -1,0 +1,152 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  loginId       String    @unique
+  email         String    @unique
+  name          String
+  role          Role      @default(EMPLOYEE)
+  phone         String?
+  profilePhoto  String?
+  department    String?
+  managerId     String?
+  manager       User?     @relation("ManagerEmployee", fields: [managerId], references: [id])
+  subordinates  User[]    @relation("ManagerEmployee")
+  location      String?
+  empCode       String?
+  dateOfJoining DateTime?
+  passwordHash  String
+  isFirstLogin  Boolean   @default(true)
+  createdAt     DateTime  @default(now())
+
+  resume          Resume?
+  privateInfo     PrivateInfo?
+  salaryInfo      SalaryInfo?
+  attendance      Attendance[]
+  timeOffRequests TimeOffRequest[]
+  payslips        Payslip[]
+}
+
+enum Role {
+  ADMIN
+  EMPLOYEE
+  HR_OFFICER
+  PAYROLL_OFFICER
+}
+
+model Resume {
+  id             String   @id @default(uuid())
+  userId         String   @unique
+  user           User     @relation(fields: [userId], references: [id])
+  about          String?
+  loveAboutJob   String?
+  interests      String?
+  skills         String[]
+  certifications String[]
+}
+
+model PrivateInfo {
+  id            String    @id @default(uuid())
+  userId        String    @unique
+  user          User      @relation(fields: [userId], references: [id])
+  dob           DateTime?
+  address       String?
+  nationality   String?
+  personalEmail String?
+  gender        String?
+  maritalStatus String?
+  accountNumber String?
+  bankName      String?
+  ifscCode      String?
+  panNo         String?
+  uanNo         String?
+  dateOfJoining DateTime?
+}
+
+model SalaryInfo {
+  id                 String @id @default(uuid())
+  userId             String @unique
+  user               User   @relation(fields: [userId], references: [id])
+  monthWage          Float  @default(0)
+  yearlyWage         Float  @default(0)
+  workingDaysPerWeek Int    @default(5)
+  breakTime          Float  @default(1)
+  basicSalary        Float  @default(0)
+  hra                Float  @default(0)
+  standardAllowance  Float  @default(0)
+  performanceBonus   Float  @default(0)
+  lta                Float  @default(0)
+  fixedAllowance     Float  @default(0)
+  employeePF         Float  @default(0)
+  employerPF         Float  @default(0)
+  professionalTax    Float  @default(200)
+}
+
+model Attendance {
+  id       String           @id @default(uuid())
+  userId   String
+  user     User             @relation(fields: [userId], references: [id])
+  date     DateTime         @default(now())
+  checkIn  DateTime?
+  checkOut DateTime?
+  status   AttendanceStatus @default(ABSENT)
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  ON_LEAVE
+}
+
+model TimeOffRequest {
+  id        String      @id @default(uuid())
+  userId    String
+  user      User        @relation(fields: [userId], references: [id])
+  leaveType String
+  startDate DateTime
+  endDate   DateTime
+  reason    String?
+  status    LeaveStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+}
+
+enum LeaveStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Payrun {
+  id        String    @id @default(uuid())
+  month     Int
+  year      Int
+  createdAt DateTime  @default(now())
+  payslips  Payslip[]
+}
+
+model Payslip {
+  id                String   @id @default(uuid())
+  payrunId          String
+  payrun            Payrun   @relation(fields: [payrunId], references: [id])
+  userId            String
+  user              User     @relation(fields: [userId], references: [id])
+  basicSalary       Float
+  hra               Float
+  standardAllowance Float
+  performanceBonus  Float
+  lta               Float
+  fixedAllowance    Float
+  employeePF        Float
+  employerPF        Float
+  professionalTax   Float
+  grossPay          Float
+  netPay            Float
+  createdAt         DateTime @default(now())
+}
