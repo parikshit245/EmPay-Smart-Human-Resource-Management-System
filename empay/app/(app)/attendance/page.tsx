@@ -1,7 +1,7 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
-import { CalendarDays, Clock, Loader2, LogIn, LogOut } from "lucide-react";
+import { useEffect, useMemo, useState, useCallback } from "react";
+import { CalendarDays, Clock, Loader2, LogIn, LogOut, Scan, AlertTriangle } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/select";
 import { useUser } from "@/lib/UserContext";
 import { cn } from "@/lib/utils";
+import { FaceCamera } from "@/components/face/FaceCamera";
+import Link from "next/link";
 
 interface AttendanceRecord {
   id: string;
@@ -156,6 +158,9 @@ export default function AttendancePage() {
   const [actionLoading, setActionLoading] = useState(false);
   const [now, setNow] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
+  const [faceEnrolled, setFaceEnrolled] = useState<boolean | null>(null);
+  const [showFaceCamera, setShowFaceCamera] = useState(false);
+  const [pendingAction, setPendingAction] = useState<"checkin" | "checkout" | null>(null);
 
   const canFilterEmployees =
     user?.role === "ADMIN" ||
@@ -175,6 +180,13 @@ export default function AttendancePage() {
   useEffect(() => {
     const interval = window.setInterval(() => setNow(new Date()), 30_000);
     return () => window.clearInterval(interval);
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/face/status")
+      .then((r) => r.json())
+      .then((j) => setFaceEnrolled(j.enrolled ?? false))
+      .catch(() => setFaceEnrolled(false));
   }, []);
 
   useEffect(() => {
@@ -229,6 +241,53 @@ export default function AttendancePage() {
     }
   }
 
+  // Called when the user clicks Check IN or Check OUT
+  function requestAttendanceAction(endpoint: "checkin" | "checkout") {
+    if (faceEnrolled === false) {
+      setError("You must enroll your face before using attendance. Go to Face Recognition Setup.");
+      return;
+    }
+    setPendingAction(endpoint);
+    setShowFaceCamera(true);
+  }
+
+  // Called after face-camera captures a descriptor
+  const handleFaceVerified = useCallback(async (descriptor: Float32Array) => {
+    setShowFaceCamera(false);
+    if (!pendingAction) return;
+
+    setActionLoading(true);
+    setError(null);
+    try {
+      // Step 1: verify face
+      const verifyRes = await fetch("/api/face/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ descriptor: Array.from(descriptor) }),
+      });
+      const verifyJson = await verifyRes.json();
+
+      if (verifyJson.code === "NO_FACE_ENROLLED") {
+        setFaceEnrolled(false);
+        throw new Error("No face enrolled. Please enroll your face first in Face Recognition Setup.");
+      }
+
+      if (!verifyRes.ok || !verifyJson.verified) {
+        throw new Error(
+          `Face verification failed. Identity not confirmed (distance: ${verifyJson.distance ?? "?"}). Please try again.`
+        );
+      }
+
+      // Step 2: mark attendance
+      const action = pendingAction;
+      setPendingAction(null);
+      await runAttendanceAction(action);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Verification failed.");
+      setActionLoading(false);
+    }
+  }, [pendingAction]); // eslint-disable-line react-hooks/exhaustive-deps
+
   const elapsed = useMemo(() => {
     if (!todayRecord?.checkIn || todayRecord.checkOut) return null;
     const diff = now.getTime() - new Date(todayRecord.checkIn).getTime();
@@ -238,6 +297,17 @@ export default function AttendancePage() {
   }, [now, todayRecord]);
 
   return (
+    <>
+      {showFaceCamera && (
+        <FaceCamera
+          mode="verify"
+          onSuccess={handleFaceVerified}
+          onClose={() => {
+            setShowFaceCamera(false);
+            setPendingAction(null);
+          }}
+        />
+      )}
     <div className="space-y-6">
       <AttendanceSummary />
 
@@ -252,7 +322,18 @@ export default function AttendancePage() {
           </p>
         </div>
 
-        <div className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-4">
+        <div className="rounded-xl border border-slate-800/70 bg-slate-900/70 p-4">
+          {faceEnrolled === false && (
+            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
+              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+              <span>
+                Face not enrolled.{" "}
+                <Link href="/face-setup" className="underline underline-offset-2 hover:text-amber-200">
+                  Set it up now
+                </Link>
+              </span>
+            </div>
+          )}
           {checkedIn ? (
             <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
               <div>
@@ -262,7 +343,7 @@ export default function AttendancePage() {
                 <p className="text-xs text-[#6c757d]">{elapsed} elapsed</p>
               </div>
               <Button
-                onClick={() => runAttendanceAction("checkout")}
+                onClick={() => requestAttendanceAction("checkout")}
                 disabled={actionLoading}
                 className="bg-[#dc3545] text-white hover:bg-[#c82333]"
               >
@@ -272,13 +353,19 @@ export default function AttendancePage() {
             </div>
           ) : (
             <Button
-              onClick={() => runAttendanceAction("checkin")}
+              onClick={() => requestAttendanceAction("checkin")}
               disabled={actionLoading || Boolean(todayRecord?.checkOut)}
               className="h-12 bg-[#28a745] px-6 text-white hover:bg-[#218838]"
             >
               {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
               {todayRecord?.checkOut ? "Checked Out" : "Check IN"}
             </Button>
+          )}
+          {faceEnrolled && (
+            <p className="mt-2 flex items-center gap-1 text-xs text-slate-500">
+              <Scan className="h-3 w-3" />
+              Face recognition required for attendance
+            </p>
           )}
         </div>
       </div>
@@ -395,5 +482,6 @@ export default function AttendancePage() {
         )}
       </div>
     </div>
+    </>
   );
 }
