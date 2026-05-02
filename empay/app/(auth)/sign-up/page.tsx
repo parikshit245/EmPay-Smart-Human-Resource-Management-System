@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import Image from "next/image";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -73,9 +74,14 @@ export default function SignUpPage() {
       <Card className="w-full max-w-md relative z-10 bg-[#ffffff]/80 backdrop-blur-xl border-[#e5e7eb] shadow-[0_8px_32px_rgba(26,28,36,0.14)]">
         <CardHeader className="space-y-4 pb-6">
           <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#714b67] shadow-[0_1px_4px_rgba(113,75,103,0.10)] ">
-              <Shield className="w-7 h-7 text-white" />
-            </div>
+            <Image 
+              src="/models/logo-final.png" 
+              alt="EmPay Logo" 
+              width={56} 
+              height={56} 
+              className="object-contain shadow-sm rounded-2xl" 
+              unoptimized
+            />
             <div className="text-center">
               <CardTitle className="text-3xl font-bold text-[#714b67]">
                 EmPay

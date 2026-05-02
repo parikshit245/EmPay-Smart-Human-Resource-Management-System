@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import {
   Users,
@@ -79,9 +80,14 @@ export default function Sidebar({
     >
       {/* Logo */}
       <div className="flex items-center gap-3 border-b border-sidebar-border px-6 py-5">
-        <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-primary shadow-sm shrink-0">
-          <Shield className="w-5 h-5 text-primary-foreground" />
-        </div>
+        <Image 
+          src="/models/logo-final.png" 
+          alt="EmPay Logo" 
+          width={36} 
+          height={36} 
+          className="object-contain shrink-0" 
+          unoptimized
+        />
         <span className="text-xl font-bold text-primary">
           EmPay
         </span>
