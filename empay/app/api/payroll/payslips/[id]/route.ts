@@ -18,7 +18,7 @@ export async function GET(
       where: { id: params.id },
       include: {
         payrun: true,
-        user: {
+        employee: {
           select: {
             id: true,
             name: true,
@@ -37,7 +37,7 @@ export async function GET(
 
     if (
       !["ADMIN", "PAYROLL_OFFICER"].includes(currentUser.role) &&
-      payslip.userId !== currentUser.id
+      payslip.employeeId !== currentUser.id
     ) {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }

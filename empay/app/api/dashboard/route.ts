@@ -94,7 +94,7 @@ export async function GET(request: NextRequest) {
         orderBy: { createdAt: "desc" },
       }),
       prisma.payslip.findMany({
-        where: { userId: currentUser.id },
+        where: { employeeId: currentUser.id },
         take: 2,
         include: { payrun: true },
         orderBy: { createdAt: "desc" },

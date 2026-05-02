@@ -19,14 +19,14 @@ export async function GET(request: NextRequest) {
 
     const payslips = await prisma.payslip.findMany({
       where: {
-        userId: userId && userId !== "all" ? userId : undefined,
+        employeeId: userId && userId !== "all" ? userId : undefined,
         payrun: {
           month: month ? Number(month) : undefined,
           year: year ? Number(year) : undefined,
         },
       },
       include: {
-        user: { select: { id: true, name: true, loginId: true, department: true } },
+        employee: { select: { id: true, name: true, loginId: true, department: true } },
         payrun: true,
       },
       orderBy: { createdAt: "desc" },

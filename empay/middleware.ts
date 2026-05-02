@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyEdgeToken } from "@/lib/edge-jwt";
 
-const PUBLIC_ROUTES = ["/sign-in", "/sign-up"];
+const PUBLIC_ROUTES = ["/login", "/sign-in", "/sign-up"];
 
 const ROLE_PROTECTED: { pattern: RegExp; roles: string[] }[] = [
   { pattern: /^\/payroll/, roles: ["ADMIN", "PAYROLL_OFFICER"] },
@@ -25,13 +25,13 @@ export async function middleware(request: NextRequest) {
   const token = request.cookies.get("empay_token")?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL("/sign-in", request.url));
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   const payload = await verifyEdgeToken(token);
 
   if (!payload) {
-    const response = NextResponse.redirect(new URL("/sign-in", request.url));
+    const response = NextResponse.redirect(new URL("/login", request.url));
     response.cookies.delete("empay_token");
     return response;
   }

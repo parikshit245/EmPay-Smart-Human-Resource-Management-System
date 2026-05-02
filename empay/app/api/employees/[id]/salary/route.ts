@@ -10,6 +10,7 @@ const salarySchema = z.object({
   workingDaysPerWeek: z.number().int().min(1).max(7),
   breakTime: z.number().min(0),
   wageType: z.string().min(1),
+  tdsDeduction: z.number().min(0).optional(),
 });
 
 function calculateSalary(monthWage: number) {
@@ -34,6 +35,7 @@ function calculateSalary(monthWage: number) {
     employeePF,
     employerPF,
     professionalTax,
+    tdsDeduction: 0,
   };
 }
 
@@ -67,10 +69,12 @@ export async function PATCH(
         userId: params.id,
         ...parsed.data,
         ...computed,
+        tdsDeduction: parsed.data.tdsDeduction ?? computed.tdsDeduction,
       },
       update: {
         ...parsed.data,
         ...computed,
+        tdsDeduction: parsed.data.tdsDeduction ?? computed.tdsDeduction,
       },
     });
 

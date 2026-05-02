@@ -29,7 +29,8 @@ interface PayslipReport {
   netPay: number;
   employeePF: number;
   professionalTax: number;
-  user: Employee;
+  tdsDeduction: number;
+  employee: Employee;
   payrun: { month: number; year: number };
 }
 
@@ -226,7 +227,7 @@ export default function ReportsPage() {
             <table className="w-full text-left text-sm">
               <thead className="bg-slate-950/60 text-xs uppercase text-slate-500"><tr><th className="px-4 py-3">Employee</th><th className="px-4 py-3">Month</th><th className="px-4 py-3">Gross</th><th className="px-4 py-3">Deductions</th><th className="px-4 py-3">Net</th><th className="px-4 py-3">Download</th></tr></thead>
               <tbody className="divide-y divide-slate-800/70">
-                {payslips.map((p) => <tr key={p.id} className="text-slate-300"><td className="px-4 py-3">{p.user.name}</td><td className="px-4 py-3">{months[p.payrun.month - 1]} {p.payrun.year}</td><td className="px-4 py-3">{money(p.grossPay)}</td><td className="px-4 py-3">{money(p.employeePF + p.professionalTax)}</td><td className="px-4 py-3 text-emerald-300">{money(p.netPay)}</td><td className="px-4 py-3"><Button size="sm" variant="outline" onClick={() => window.print()}><Download className="h-3.5 w-3.5" />PDF</Button></td></tr>)}
+                {payslips.map((p) => <tr key={p.id} className="text-slate-300"><td className="px-4 py-3">{p.employee.name}</td><td className="px-4 py-3">{months[p.payrun.month - 1]} {p.payrun.year}</td><td className="px-4 py-3">{money(p.grossPay)}</td><td className="px-4 py-3">{money(p.employeePF + p.professionalTax + p.tdsDeduction)}</td><td className="px-4 py-3 text-emerald-300">{money(p.netPay)}</td><td className="px-4 py-3"><Button size="sm" variant="outline" onClick={() => window.print()}><Download className="h-3.5 w-3.5" />PDF</Button></td></tr>)}
               </tbody>
             </table>
           </ReportShell>
