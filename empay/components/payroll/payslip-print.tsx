@@ -127,15 +127,15 @@ export function PayslipPrint({ payslip, payrun }: { payslip: PayslipForPrint; pa
   const payDate = payrun.paidAt || payrun.approvedAt || payrun.createdAt;
 
   return (
-    <div className="payslip-print-root bg-white text-slate-950">
+    <div className="payslip-print-root bg-white text-[#1a1c24]">
       <div className="payslip-print-page">
-        <div className="mb-7 border-b border-sky-700/70 pb-5 text-sm text-slate-800">[Company Logo]</div>
+        <div className="mb-7 border-b border-[#714b67]/70 pb-5 text-sm text-[#374151]">[Company Logo]</div>
 
-        <h1 className="mb-5 text-xl font-semibold text-teal-700">
+        <h1 className="mb-5 text-xl font-semibold text-[#017e84]">
           Salary slip for month of {monthName} {payrun.year}
         </h1>
 
-        <section className="rounded-2xl border border-sky-700 p-5 text-sm leading-8 text-violet-900">
+        <section className="rounded-2xl border border-[#714b67] p-5 text-sm leading-8 text-[#714b67]">
           <div className="grid grid-cols-2 gap-10">
             <div>
               <InfoRow label="Employee name" value={payslip.employee.name} />
@@ -154,23 +154,23 @@ export function PayslipPrint({ payslip, payrun }: { payslip: PayslipForPrint; pa
           </div>
         </section>
 
-        <section className="mt-6 overflow-hidden rounded-2xl border border-sky-700 text-sm">
-          <div className="grid grid-cols-[1fr_180px] bg-purple-800 px-5 py-3 text-base font-semibold text-white">
+        <section className="mt-6 overflow-hidden rounded-2xl border border-[#714b67] text-sm">
+          <div className="grid grid-cols-[1fr_180px] bg-[#714b67] px-5 py-3 text-base font-semibold text-white">
             <span>Worked Days</span>
             <span className="text-center">Number of Days</span>
           </div>
-          <div className="grid grid-cols-[1fr_180px] px-5 py-2 text-violet-900">
+          <div className="grid grid-cols-[1fr_180px] px-5 py-2 text-[#714b67]">
             <span>Attendance</span>
             <span className="text-center">{payslip.attendanceDays.toFixed(2)} Days</span>
           </div>
-          <div className="grid grid-cols-[1fr_180px] border-t border-sky-700/40 px-5 py-2 text-violet-900">
+          <div className="grid grid-cols-[1fr_180px] border-t border-[#714b67]/40 px-5 py-2 text-[#714b67]">
             <span>Total</span>
             <span className="text-center">{totalDays.toFixed(2)} Days</span>
           </div>
         </section>
 
-        <section className="mt-4 overflow-hidden rounded-2xl border border-sky-700 text-sm">
-          <div className="grid grid-cols-[1fr_130px_1fr_130px] bg-purple-800 px-5 py-3 text-base font-semibold text-white">
+        <section className="mt-4 overflow-hidden rounded-2xl border border-[#714b67] text-sm">
+          <div className="grid grid-cols-[1fr_130px_1fr_130px] bg-[#714b67] px-5 py-3 text-base font-semibold text-white">
             <span>Earnings</span>
             <span>Amounts</span>
             <span>Deductions</span>
@@ -192,17 +192,17 @@ export function PayslipPrint({ payslip, payrun }: { payslip: PayslipForPrint; pa
               <AmountRow label="PF Employer" value={payslip.employerPF} negative />
               <AmountRow label="Professional Tax" value={payslip.professionalTax} negative />
               <AmountRow label="TDS Deduction" value={payslip.tdsDeduction} negative />
-              <div className="mt-4 border-t border-sky-700/40 pt-2">
+              <div className="mt-4 border-t border-[#714b67]/40 pt-2">
                 <AmountRow label="Total Deductions" value={totalDeductions} negative />
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-[1fr_220px] overflow-hidden border-t border-sky-700/50">
-            <div className="bg-purple-800 px-5 py-4 text-2xl font-bold text-white">
+          <div className="grid grid-cols-[1fr_220px] overflow-hidden border-t border-[#714b67]/50">
+            <div className="bg-[#714b67] px-5 py-4 text-2xl font-bold text-white">
               Total Net Payable <span className="text-sm font-semibold">(Gross Earning - Total deductions)</span>
             </div>
-            <div className="bg-cyan-600 px-5 py-3 text-center text-white">
+            <div className="bg-[#017e84] px-5 py-3 text-center text-white">
               <div className="text-xl font-bold">{money(payslip.netPay)}</div>
               <div className="mt-1 text-xs">{amountInWords(payslip.netPay)}</div>
             </div>

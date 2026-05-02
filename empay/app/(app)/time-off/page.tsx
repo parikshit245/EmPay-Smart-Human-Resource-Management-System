@@ -52,9 +52,9 @@ interface LeaveBalances {
 }
 
 const statusStyles: Record<LeaveStatus, string> = {
-  PENDING: "border-amber-500/30 bg-amber-500/10 text-amber-300",
-  APPROVED: "border-emerald-500/30 bg-emerald-500/10 text-emerald-300",
-  REJECTED: "border-red-500/30 bg-red-500/10 text-red-300",
+  PENDING: "border-[#fbb130]/40 bg-[#fff8ec] text-[#b26f00]",
+  APPROVED: "border-[#28a745]/30 bg-[#edf7ef] text-[#28a745]",
+  REJECTED: "border-[#dc3545]/30 bg-[#fdecea] text-[#dc3545]",
 };
 
 const leaveTypeOptions = [
@@ -99,7 +99,7 @@ function RequestTable({
 }) {
   if (requests.length === 0) {
     return (
-      <p className="py-16 text-center text-sm text-slate-400">
+      <p className="py-16 text-center text-sm text-[#6c757d]">
         No time-off requests found.
       </p>
     );
@@ -108,7 +108,7 @@ function RequestTable({
   return (
     <div className="overflow-x-auto">
       <table className="w-full text-left text-sm">
-        <thead className="bg-slate-950/60 text-xs uppercase text-slate-500">
+        <thead className="bg-[#faf8ff] text-xs uppercase text-[#6c757d]">
           <tr>
             {showEmployee && <th className="px-4 py-3 font-medium">Employee</th>}
             <th className="px-4 py-3 font-medium">Leave Type</th>
@@ -119,20 +119,20 @@ function RequestTable({
             {showEmployee && <th className="px-4 py-3 font-medium">Actions</th>}
           </tr>
         </thead>
-        <tbody className="divide-y divide-slate-800/70">
+        <tbody className="divide-y divide-[#ede7f6]">
           {requests.map((request) => (
-            <tr key={request.id} className="text-slate-300">
+            <tr key={request.id} className="text-[#374151]">
               {showEmployee && (
                 <td className="px-4 py-3">
-                  <div className="font-medium text-slate-200">{request.user.name}</div>
-                  <div className="text-xs text-slate-500">{request.user.loginId}</div>
+                  <div className="font-medium text-[#374151]">{request.user.name}</div>
+                  <div className="text-xs text-[#6c757d]">{request.user.loginId}</div>
                 </td>
               )}
               <td className="px-4 py-3">{formatLeaveType(request.leaveType)}</td>
               <td className="px-4 py-3">
                 {formatDate(request.startDate)} - {formatDate(request.endDate)}
               </td>
-              <td className="max-w-xs px-4 py-3 text-slate-400">
+              <td className="max-w-xs px-4 py-3 text-[#6c757d]">
                 {request.reason || "-"}
               </td>
               {showEmployee && (
@@ -142,12 +142,12 @@ function RequestTable({
                       href={request.medicalCertificateData}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-indigo-300 underline-offset-4 hover:underline"
+                      className="text-[#714b67] underline-offset-4 hover:underline"
                     >
                       {request.medicalCertificateName || "View file"}
                     </a>
                   ) : (
-                    <span className="text-xs text-slate-500">-</span>
+                    <span className="text-xs text-[#6c757d]">-</span>
                   )}
                 </td>
               )}
@@ -164,7 +164,7 @@ function RequestTable({
                         size="sm"
                         onClick={() => onAction(request.id, "APPROVED")}
                         disabled={actionLoadingId === request.id}
-                        className="bg-emerald-600 text-white hover:bg-emerald-500"
+                        className="bg-[#28a745] text-white hover:bg-[#218838]"
                       >
                         {actionLoadingId === request.id ? (
                           <Loader2 className="h-3.5 w-3.5 animate-spin" />
@@ -177,14 +177,14 @@ function RequestTable({
                         size="sm"
                         onClick={() => onAction(request.id, "REJECTED")}
                         disabled={actionLoadingId === request.id}
-                        className="bg-red-600 text-white hover:bg-red-500"
+                        className="bg-[#dc3545] text-white hover:bg-[#c82333]"
                       >
                         <X className="h-3.5 w-3.5" />
                         Reject
                       </Button>
                     </div>
                   ) : (
-                    <span className="text-xs text-slate-500">-</span>
+                    <span className="text-xs text-[#6c757d]">-</span>
                   )}
                 </td>
               )}
@@ -372,11 +372,11 @@ export default function TimeOffPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-100">
-            <Calendar className="h-6 w-6 text-indigo-400" />
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
+            <Calendar className="h-6 w-6 text-[#714b67]" />
             Time Off
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-[#6c757d]">
             Manage leave requests and approvals
           </p>
         </div>
@@ -384,32 +384,32 @@ export default function TimeOffPage() {
         {canApply && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500">
+              <Button className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
                 <Plus className="h-4 w-4" />
                 Apply for Time Off
               </Button>
             </DialogTrigger>
-            <DialogContent className="border-slate-800 bg-slate-950 text-slate-100 sm:max-w-lg">
+            <DialogContent className="border-[#ede7f6] bg-[#f4f5f7] text-[#1a1c24] sm:max-w-lg">
               <DialogHeader>
                 <DialogTitle>Apply for Time Off</DialogTitle>
               </DialogHeader>
               {leaveBalances && (
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-lg border border-emerald-500/25 bg-emerald-500/10 p-3">
-                    <p className="text-xs text-emerald-200/80">Paid Leaves Left</p>
-                    <p className="mt-1 text-2xl font-bold text-emerald-300">
+                  <div className="rounded-lg border border-[#28a745]/25 bg-[#edf7ef] p-3">
+                    <p className="text-xs text-[#28a745]/80">Paid Leaves Left</p>
+                    <p className="mt-1 text-2xl font-bold text-[#28a745]">
                       {leaveBalances.paid.remaining}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#6c757d]">
                       {leaveBalances.paid.approved} of {leaveBalances.paid.allocated} used
                     </p>
                   </div>
-                  <div className="rounded-lg border border-blue-500/25 bg-blue-500/10 p-3">
-                    <p className="text-xs text-blue-200/80">Sick Leaves Left</p>
-                    <p className="mt-1 text-2xl font-bold text-blue-300">
+                  <div className="rounded-lg border border-[#1bb6f9]/25 bg-[#e8f7ff] p-3">
+                    <p className="text-xs text-[#1bb6f9]/80">Sick Leaves Left</p>
+                    <p className="mt-1 text-2xl font-bold text-[#1bb6f9]">
                       {leaveBalances.sick.remaining}
                     </p>
-                    <p className="text-xs text-slate-500">
+                    <p className="text-xs text-[#6c757d]">
                       {leaveBalances.sick.approved} of {leaveBalances.sick.allocated} used
                     </p>
                   </div>
@@ -434,10 +434,10 @@ export default function TimeOffPage() {
                       }))
                     }
                   >
-                    <SelectTrigger className="w-full border-slate-700 bg-slate-900 text-slate-100">
+                    <SelectTrigger className="w-full border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="border-slate-700 bg-slate-900 text-slate-200">
+                    <SelectContent className="border-[#e5e7eb] bg-[#ffffff] text-[#374151]">
                       {leaveTypeOptions.map((type) => (
                         <SelectItem key={type.value} value={type.value}>
                           {type.label}
@@ -456,7 +456,7 @@ export default function TimeOffPage() {
                       onChange={(event) =>
                         setForm((prev) => ({ ...prev, startDate: event.target.value }))
                       }
-                      className="border-slate-700 bg-slate-900 text-slate-100 [color-scheme:dark]"
+                      className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] [color-scheme:light]"
                     />
                   </div>
                   <div className="space-y-1.5">
@@ -468,13 +468,13 @@ export default function TimeOffPage() {
                       onChange={(event) =>
                         setForm((prev) => ({ ...prev, endDate: event.target.value }))
                       }
-                      className="border-slate-700 bg-slate-900 text-slate-100 [color-scheme:dark]"
+                      className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] [color-scheme:light]"
                     />
                   </div>
                 </div>
                 {form.leaveType === "UNPAID" && (
-                  <div className="flex gap-3 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-100">
-                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-amber-300" />
+                  <div className="flex gap-3 rounded-lg border border-[#fbb130]/40 bg-[#fff8ec] p-3 text-sm text-[#b26f00]">
+                    <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[#b26f00]" />
                     <div>
                       <p className="font-medium">
                         Selecting unpaid leave will deduct{" "}
@@ -484,7 +484,7 @@ export default function TimeOffPage() {
                         from your salary.
                       </p>
                       {deductionEstimate && (
-                        <p className="mt-1 text-xs text-amber-100/70">
+                        <p className="mt-1 text-xs text-[#b26f00]/70">
                           Based on {deductionEstimate.unpaidLeaveDays} unpaid working day
                           {deductionEstimate.unpaidLeaveDays === 1 ? "" : "s"} out of{" "}
                           {deductionEstimate.totalWorkingDays} working days this month.
@@ -500,7 +500,7 @@ export default function TimeOffPage() {
                     onChange={(event) =>
                       setForm((prev) => ({ ...prev, reason: event.target.value }))
                     }
-                    className="border-slate-700 bg-slate-900 text-slate-100"
+                    className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]"
                     placeholder="Add a short reason..."
                   />
                 </div>
@@ -512,10 +512,10 @@ export default function TimeOffPage() {
                       type="file"
                       accept="image/*,.pdf,application/pdf"
                       onChange={handleCertificateUpload}
-                      className="border-slate-700 bg-slate-900 text-slate-100 file:text-slate-200"
+                      className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] file:text-[#374151]"
                     />
                     {form.medicalCertificateName && (
-                      <p className="text-xs text-slate-400">
+                      <p className="text-xs text-[#6c757d]">
                         Attached: {form.medicalCertificateName}
                       </p>
                     )}
@@ -524,7 +524,7 @@ export default function TimeOffPage() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-indigo-600 text-white hover:bg-indigo-500"
+                  className="w-full bg-[#714b67] text-white hover:bg-[#5a3a52]"
                 >
                   {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                   Submit Request
@@ -536,7 +536,7 @@ export default function TimeOffPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+        <div className="rounded-lg border border-[#dc3545]/30 bg-[#fdecea] p-3 text-sm text-[#dc3545]">
           {error}
         </div>
       )}
@@ -547,10 +547,10 @@ export default function TimeOffPage() {
           {canViewAll && <TabsTrigger value="all">All Requests</TabsTrigger>}
         </TabsList>
         <TabsContent value="mine">
-          <div className="overflow-hidden rounded-xl border border-slate-800/70 bg-slate-900/70">
+          <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
             {loading ? (
               <div className="flex justify-center py-16">
-                <Loader2 className="h-7 w-7 animate-spin text-indigo-400" />
+                <Loader2 className="h-7 w-7 animate-spin text-[#714b67]" />
               </div>
             ) : (
               <RequestTable
@@ -565,10 +565,10 @@ export default function TimeOffPage() {
         </TabsContent>
         {canViewAll && (
           <TabsContent value="all">
-            <div className="overflow-hidden rounded-xl border border-slate-800/70 bg-slate-900/70">
+            <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
               {loading ? (
                 <div className="flex justify-center py-16">
-                  <Loader2 className="h-7 w-7 animate-spin text-indigo-400" />
+                  <Loader2 className="h-7 w-7 animate-spin text-[#714b67]" />
                 </div>
               ) : (
                 <RequestTable

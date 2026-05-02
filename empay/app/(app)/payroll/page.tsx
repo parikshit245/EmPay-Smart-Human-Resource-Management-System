@@ -161,25 +161,25 @@ export default function PayrollPage() {
       label: "Total Monthly Payroll",
       value: money(data?.latestSummary.totalMonthlyPayroll || 0),
       icon: IndianRupee,
-      tone: "text-emerald-300",
+      tone: "text-[#28a745]",
     },
     {
       label: "Employees Included",
       value: String(data?.latestSummary.employeesIncluded || 0),
       icon: Users,
-      tone: "text-indigo-300",
+      tone: "text-[#714b67]",
     },
     {
       label: "Average Net Pay",
       value: money(data?.latestSummary.averageNetPay || 0),
       icon: IndianRupee,
-      tone: "text-emerald-300",
+      tone: "text-[#28a745]",
     },
     {
       label: "Total Deductions",
       value: money(data?.latestSummary.totalDeductions || 0),
       icon: AlertTriangle,
-      tone: "text-red-300",
+      tone: "text-[#dc3545]",
     },
   ];
 
@@ -196,21 +196,21 @@ export default function PayrollPage() {
     <div className="space-y-6">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="flex items-center gap-2 text-2xl font-bold text-slate-100">
-            <CreditCard className="h-6 w-6 text-indigo-400" />
+          <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
+            <CreditCard className="h-6 w-6 text-[#714b67]" />
             Payroll
           </h1>
-          <p className="mt-1 text-sm text-slate-400">Manage payruns and payslips</p>
+          <p className="mt-1 text-sm text-[#6c757d]">Manage payruns and payslips</p>
         </div>
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-gradient-to-r from-indigo-600 to-violet-600 text-white hover:from-indigo-500 hover:to-violet-500">
+            <Button className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
               <Plus className="h-4 w-4" />
               Create Payrun
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-h-[88vh] overflow-y-auto border-slate-800 bg-slate-950 text-slate-100 sm:max-w-5xl">
+          <DialogContent className="max-h-[88vh] overflow-y-auto border-[#ede7f6] bg-[#f4f5f7] text-[#1a1c24] sm:max-w-5xl">
             <DialogHeader>
               <DialogTitle>Create Payrun</DialogTitle>
             </DialogHeader>
@@ -219,10 +219,10 @@ export default function PayrollPage() {
                 <div className="space-y-1.5">
                   <Label>Month</Label>
                   <Select value={month} onValueChange={setMonth}>
-                    <SelectTrigger className="w-full border-slate-700 bg-slate-900 text-slate-100">
+                    <SelectTrigger className="w-full border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent className="border-slate-700 bg-slate-900 text-slate-200">
+                    <SelectContent className="border-[#e5e7eb] bg-[#ffffff] text-[#374151]">
                       {months.map((name, index) => (
                         <SelectItem key={name} value={String(index + 1)}>
                           {name}
@@ -240,20 +240,20 @@ export default function PayrollPage() {
                     type="number"
                     value={year}
                     onChange={(event) => setYear(event.target.value)}
-                    className="border-slate-700 bg-slate-900 text-slate-100"
+                    className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]"
                   />
                 </div>
               </div>
 
               {duplicatePayrun && (
-                <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+                <div className="rounded-lg border border-[#dc3545]/30 bg-[#fdecea] p-3 text-sm text-[#dc3545]">
                   A payrun already exists for {months[Number(month) - 1]} {year}.
                 </div>
               )}
 
               {(data?.missingSalaryEmployees || []).length > 0 && (
-                <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-amber-200">
+                <div className="rounded-xl border border-[#fbb130]/40 bg-[#fff8ec] p-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-[#b26f00]">
                     <AlertTriangle className="h-4 w-4" />
                     Employees missing salary info
                   </div>
@@ -262,10 +262,10 @@ export default function PayrollPage() {
                       <Link
                         key={employee.id}
                         href={`/employees/${employee.id}`}
-                        className="rounded-lg border border-amber-500/20 bg-slate-950/40 px-3 py-2 text-sm text-amber-100 hover:bg-amber-500/10"
+                        className="rounded-lg border border-[#fbb130]/30 bg-[#faf8ff] px-3 py-2 text-sm text-[#b26f00] hover:bg-[#fff8ec]"
                       >
                         {employee.name}
-                        <span className="ml-2 text-xs text-amber-200/70">{employee.loginId}</span>
+                        <span className="ml-2 text-xs text-[#b26f00]/70">{employee.loginId}</span>
                       </Link>
                     ))}
                   </div>
@@ -273,14 +273,14 @@ export default function PayrollPage() {
               )}
 
               {previewEmployees.length === 0 ? (
-                <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-5 text-sm text-amber-200">
+                <div className="rounded-xl border border-[#fbb130]/40 bg-[#fff8ec] p-5 text-sm text-[#b26f00]">
                   No employees with salary info found.
                 </div>
               ) : (
-                <div className="overflow-hidden rounded-xl border border-slate-800">
+                <div className="overflow-hidden rounded-xl border border-[#ede7f6]">
                   <div className="overflow-x-auto">
                     <table className="w-full text-left text-sm">
-                      <thead className="bg-slate-900 text-xs uppercase text-slate-500">
+                      <thead className="bg-[#ffffff] text-xs uppercase text-[#6c757d]">
                         <tr>
                           <th className="px-4 py-3 font-medium">Employee Name</th>
                           <th className="px-4 py-3 font-medium">Login ID</th>
@@ -290,24 +290,24 @@ export default function PayrollPage() {
                           <th className="px-4 py-3 font-medium">Net Pay</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-slate-800">
+                      <tbody className="divide-y divide-[#ede7f6]">
                         {previewEmployees.map((employee) => (
-                          <tr key={employee.id} className="text-slate-300">
-                            <td className="px-4 py-3 font-medium text-slate-200">{employee.name}</td>
-                            <td className="px-4 py-3 text-slate-500">{employee.loginId}</td>
+                          <tr key={employee.id} className="text-[#374151]">
+                            <td className="px-4 py-3 font-medium text-[#374151]">{employee.name}</td>
+                            <td className="px-4 py-3 text-[#6c757d]">{employee.loginId}</td>
                             <td className="px-4 py-3">{money(employee.basicSalary)}</td>
                             <td className="px-4 py-3">{money(employee.grossPay)}</td>
-                            <td className="px-4 py-3 text-red-300">{money(employee.deductions)}</td>
-                            <td className="px-4 py-3 font-semibold text-emerald-300">{money(employee.netPay)}</td>
+                            <td className="px-4 py-3 text-[#dc3545]">{money(employee.deductions)}</td>
+                            <td className="px-4 py-3 font-semibold text-[#28a745]">{money(employee.netPay)}</td>
                           </tr>
                         ))}
                       </tbody>
-                      <tfoot className="border-t border-slate-800 bg-slate-900/70">
+                      <tfoot className="border-t border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
                         <tr>
-                          <td colSpan={5} className="px-4 py-3 font-semibold text-slate-100">
+                          <td colSpan={5} className="px-4 py-3 font-semibold text-[#1a1c24]">
                             Total Net Payable
                           </td>
-                          <td className="px-4 py-3 text-lg font-bold text-emerald-300">
+                          <td className="px-4 py-3 text-lg font-bold text-[#28a745]">
                             {money(totalNetPayable)}
                           </td>
                         </tr>
@@ -320,7 +320,7 @@ export default function PayrollPage() {
               <Button
                 type="submit"
                 disabled={creating || previewEmployees.length === 0 || Boolean(duplicatePayrun)}
-                className="w-full bg-indigo-600 text-white hover:bg-indigo-500"
+                className="w-full bg-[#714b67] text-white hover:bg-[#5a3a52]"
               >
                 {creating && <Loader2 className="h-4 w-4 animate-spin" />}
                 Generate Payslips
@@ -331,7 +331,7 @@ export default function PayrollPage() {
       </div>
 
       {error && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-3 text-sm text-red-300">
+        <div className="rounded-lg border border-[#dc3545]/30 bg-[#fdecea] p-3 text-sm text-[#dc3545]">
           {error}
         </div>
       )}
@@ -340,10 +340,10 @@ export default function PayrollPage() {
         {metrics.map((metric) => {
           const Icon = metric.icon;
           return (
-            <div key={metric.label} className="rounded-xl border border-slate-800/70 bg-slate-900/70 p-5">
+            <div key={metric.label} className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-5">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-slate-400">{metric.label}</p>
-                <div className="rounded-lg bg-gradient-to-br from-indigo-500/20 to-violet-500/20 p-2">
+                <p className="text-sm text-[#6c757d]">{metric.label}</p>
+                <div className="rounded-lg bg-[#f3eaf1] p-2">
                   <Icon className={`h-4 w-4 ${metric.tone}`} />
                 </div>
               </div>
@@ -358,14 +358,14 @@ export default function PayrollPage() {
           <Link
             key={label}
             href={`/employees?filter=${filter}`}
-            className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-4 transition hover:bg-amber-500/15"
+            className="rounded-xl border border-[#fbb130]/40 bg-[#fff8ec] p-4 transition hover:bg-[#fff8ec]"
           >
             <div className="flex items-start justify-between gap-3">
               <div>
-                <p className="text-sm font-medium text-amber-100">{label}</p>
-                <p className="mt-2 text-2xl font-bold text-amber-200">{count}</p>
+                <p className="text-sm font-medium text-[#b26f00]">{label}</p>
+                <p className="mt-2 text-2xl font-bold text-[#b26f00]">{count}</p>
               </div>
-              <AlertTriangle className="h-5 w-5 text-amber-300" />
+              <AlertTriangle className="h-5 w-5 text-[#b26f00]" />
             </div>
           </Link>
         ))}
@@ -373,12 +373,12 @@ export default function PayrollPage() {
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-indigo-400" />
+          <Loader2 className="h-8 w-8 animate-spin text-[#714b67]" />
         </div>
       ) : payruns.length === 0 ? (
-        <div className="rounded-xl border border-slate-800/70 bg-slate-900/70 py-16 text-center">
-          <CreditCard className="mx-auto h-10 w-10 text-slate-600" />
-          <p className="mt-3 text-sm text-slate-400">No payruns generated yet.</p>
+        <div className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] py-16 text-center">
+          <CreditCard className="mx-auto h-10 w-10 text-[#adb5bd]" />
+          <p className="mt-3 text-sm text-[#6c757d]">No payruns generated yet.</p>
         </div>
       ) : (
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
@@ -386,18 +386,18 @@ export default function PayrollPage() {
             <button
               key={payrun.id}
               onClick={() => router.push(`/payroll/${payrun.id}`)}
-              className="rounded-xl border border-slate-800/70 bg-slate-900/70 p-5 text-left transition hover:border-indigo-500/50 hover:bg-slate-900"
+              className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-5 text-left transition hover:border-[#714b67]/50 hover:bg-[#ffffff]"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-lg font-semibold text-slate-100">
+                  <p className="text-lg font-semibold text-[#1a1c24]">
                     Payrun for {months[payrun.month - 1]} {payrun.year}
                   </p>
-                  <p className="mt-1 text-sm text-slate-400">
+                  <p className="mt-1 text-sm text-[#6c757d]">
                     {payrun._count.payslips} Payslip{payrun._count.payslips !== 1 ? "s" : ""}
                   </p>
                 </div>
-                <CreditCard className="h-5 w-5 text-indigo-300" />
+                <CreditCard className="h-5 w-5 text-[#714b67]" />
               </div>
             </button>
           ))}

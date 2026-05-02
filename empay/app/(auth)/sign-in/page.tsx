@@ -52,80 +52,80 @@ export default function SignInPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-indigo-950 to-slate-900 px-4">
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-[#f4f5f7] via-[#faf8ff] to-[#f4f5f7] px-4">
       {/* Background orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-violet-600/15 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#faf8ff] rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#faf8ff] rounded-full blur-3xl pointer-events-none" />
 
-      <Card className="w-full max-w-md relative z-10 bg-slate-900/80 backdrop-blur-xl border-slate-700/50 shadow-2xl">
+      <Card className="w-full max-w-md relative z-10 bg-[#ffffff]/80 backdrop-blur-xl border-[#e5e7eb] shadow-[0_8px_32px_rgba(26,28,36,0.14)]">
         <CardHeader className="space-y-4 pb-6">
           <div className="flex flex-col items-center gap-3">
-            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30">
+            <div className="flex items-center justify-center w-14 h-14 rounded-2xl bg-[#714b67] shadow-[0_1px_4px_rgba(113,75,103,0.10)] ">
               <Shield className="w-7 h-7 text-white" />
             </div>
             <div className="text-center">
-              <CardTitle className="text-3xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
+              <CardTitle className="text-3xl font-bold text-[#714b67]">
                 EmPay
               </CardTitle>
-              <CardDescription className="text-slate-400 mt-1">
+              <CardDescription className="text-[#6c757d] mt-1">
                 Smart Human Resource Management
               </CardDescription>
             </div>
           </div>
           <div className="text-center">
-            <h2 className="text-xl font-semibold text-slate-100">Welcome back</h2>
-            <p className="text-sm text-slate-400">Sign in to your account</p>
+            <h2 className="text-xl font-semibold text-[#1a1c24]">Welcome back</h2>
+            <p className="text-sm text-[#6c757d]">Sign in to your account</p>
           </div>
         </CardHeader>
 
         <CardContent>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             {serverError && (
-              <div className="p-3 rounded-lg bg-red-500/10 border border-red-500/30 text-red-400 text-sm">
+              <div className="p-3 rounded-lg bg-[#fdecea] border border-[#dc3545]/30 text-[#dc3545] text-sm">
                 {serverError}
               </div>
             )}
 
             <div className="space-y-1.5">
-              <Label htmlFor="loginId" className="text-slate-300">Login ID or Email</Label>
+              <Label htmlFor="loginId" className="text-[#374151]">Login ID or Email</Label>
               <Input
                 id="loginId"
                 placeholder="OIJODO20250001 or john@company.com"
-                className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-500 focus:border-indigo-500 focus:ring-indigo-500/20"
+                className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67] focus:ring-[#714b67]/20"
                 {...register("loginId")}
               />
               {errors.loginId && (
-                <p className="text-red-400 text-xs">{errors.loginId.message}</p>
+                <p className="text-[#dc3545] text-xs">{errors.loginId.message}</p>
               )}
             </div>
 
             <div className="space-y-1.5">
-              <Label htmlFor="password" className="text-slate-300">Password</Label>
+              <Label htmlFor="password" className="text-[#374151]">Password</Label>
               <div className="relative">
                 <Input
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter your password"
-                  className="bg-slate-800/50 border-slate-600 text-slate-100 placeholder:text-slate-500 focus:border-indigo-500 focus:ring-indigo-500/20 pr-10"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67] focus:ring-[#714b67]/20 pr-10"
                   {...register("password")}
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6c757d] hover:text-[#374151] transition-colors"
                 >
                   {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                 </button>
               </div>
               {errors.password && (
-                <p className="text-red-400 text-xs">{errors.password.message}</p>
+                <p className="text-[#dc3545] text-xs">{errors.password.message}</p>
               )}
             </div>
 
             <Button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-gradient-to-r from-indigo-600 to-violet-600 hover:from-indigo-500 hover:to-violet-500 text-white font-semibold shadow-lg shadow-indigo-500/25 transition-all duration-200 mt-2"
+              className="w-full bg-[#714b67] hover:bg-[#5a3a52] text-white font-semibold shadow-[0_1px_4px_rgba(113,75,103,0.10)]  transition-all duration-200 mt-2"
             >
               {isSubmitting ? (
                 <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Signing in...</>
@@ -137,9 +137,9 @@ export default function SignInPage() {
         </CardContent>
 
         <CardFooter className="justify-center pt-0">
-          <p className="text-sm text-slate-400">
+          <p className="text-sm text-[#6c757d]">
             Don&apos;t have an account?{" "}
-            <Link href="/sign-up" className="text-indigo-400 hover:text-indigo-300 font-medium transition-colors">
+            <Link href="/sign-up" className="text-[#714b67] hover:text-[#714b67] font-medium transition-colors">
               Sign Up
             </Link>
           </p>
