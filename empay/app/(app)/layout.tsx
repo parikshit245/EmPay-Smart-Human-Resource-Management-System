@@ -3,8 +3,7 @@ import { redirect } from "next/navigation";
 import { verifyToken } from "@/lib/jwt";
 import { prisma } from "@/lib/prisma";
 import { UserProvider, CurrentUser } from "@/lib/UserContext";
-import Sidebar from "@/components/layout/Sidebar";
-import TopBar from "@/components/layout/TopBar";
+import AppShell from "@/components/layout/AppShell";
 
 async function getServerUser(): Promise<CurrentUser | null> {
   const cookieStore = await cookies();
@@ -45,15 +44,7 @@ export default async function AppLayout({
 
   return (
     <UserProvider initialUser={user}>
-      <div className="min-h-screen bg-slate-950">
-        <Sidebar />
-        <div className="pl-64">
-          <TopBar />
-          <main className="pt-16 min-h-screen">
-            <div className="p-6">{children}</div>
-          </main>
-        </div>
-      </div>
+      <AppShell>{children}</AppShell>
     </UserProvider>
   );
 }

@@ -11,6 +11,7 @@ import {
   Settings,
   Shield,
   ChevronRight,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useUser } from "@/lib/UserContext";
@@ -46,7 +47,13 @@ const roleLabels: Record<string, string> = {
   EMPLOYEE: "Employee",
 };
 
-export default function Sidebar() {
+export default function Sidebar({
+  open = false,
+  onClose,
+}: {
+  open?: boolean;
+  onClose?: () => void;
+}) {
   const pathname = usePathname();
   const { user } = useUser();
 
@@ -62,15 +69,27 @@ export default function Sidebar() {
     .slice(0, 2) || "??";
 
   return (
-    <aside className="fixed inset-y-0 left-0 z-40 w-64 flex flex-col bg-slate-950 border-r border-slate-800/60">
+    <aside
+      className={cn(
+        "fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-slate-800/60 bg-slate-950 transition-transform duration-200",
+        open ? "translate-x-0" : "-translate-x-full lg:translate-x-0"
+      )}
+    >
       {/* Logo */}
-      <div className="flex items-center gap-3 px-6 py-5 border-b border-slate-800/60">
+      <div className="flex items-center gap-3 border-b border-slate-800/60 px-6 py-5">
         <div className="flex items-center justify-center w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 shadow-lg shadow-indigo-500/30 shrink-0">
           <Shield className="w-5 h-5 text-white" />
         </div>
         <span className="text-xl font-bold bg-gradient-to-r from-indigo-400 to-violet-400 bg-clip-text text-transparent">
           EmPay
         </span>
+        <button
+          onClick={onClose}
+          className="ml-auto rounded-lg p-1.5 text-slate-400 hover:bg-slate-800 hover:text-slate-100 lg:hidden"
+          aria-label="Close navigation"
+        >
+          <X className="h-4 w-4" />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -88,6 +107,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={cn(
                 "group flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all duration-200",
                 isActive

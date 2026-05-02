@@ -151,3 +151,9 @@ model Payslip {
   netPay            Float
   createdAt         DateTime @default(now())
 }
+
+model Settings {
+  id          String  @id @default("singleton")
+  companyName String  @default("EmPay")
+  companyLogo String?
+}

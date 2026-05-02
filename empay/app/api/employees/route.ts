@@ -93,8 +93,20 @@ export async function GET(request: NextRequest) {
     const today = new Date();
     const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
     const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
+    const { searchParams } = new URL(request.url);
+    const search = searchParams.get("search")?.trim();
 
     const users = await prisma.user.findMany({
+      where: search
+        ? {
+            OR: [
+              { name: { contains: search, mode: "insensitive" } },
+              { email: { contains: search, mode: "insensitive" } },
+              { loginId: { contains: search, mode: "insensitive" } },
+              { department: { contains: search, mode: "insensitive" } },
+            ],
+          }
+        : undefined,
       select: {
         id: true,
         name: true,
@@ -104,9 +116,11 @@ export async function GET(request: NextRequest) {
         department: true,
         profilePhoto: true,
         empCode: true,
+        managerId: true,
         phone: true,
         dateOfJoining: true,
         createdAt: true,
+        privateInfo: { select: { accountNumber: true } },
         attendance: {
           where: {
             date: { gte: startOfDay, lt: endOfDay },
@@ -141,6 +155,8 @@ export async function GET(request: NextRequest) {
         department: u.department,
         profilePhoto: u.profilePhoto,
         empCode: u.empCode,
+        managerId: u.managerId,
+        hasBankAccount: Boolean(u.privateInfo?.accountNumber),
         phone: u.phone,
         dateOfJoining: u.dateOfJoining,
         createdAt: u.createdAt,
@@ -148,7 +164,23 @@ export async function GET(request: NextRequest) {
       };
     });
 
-    return NextResponse.json({ data: { employees: withStatus } });
+    const warningCounts =
+      currentUser.role === "ADMIN"
+        ? {
+            withoutBankAccount: await prisma.user.count({
+              where: {
+                OR: [
+                  { privateInfo: null },
+                  { privateInfo: { accountNumber: null } },
+                  { privateInfo: { accountNumber: "" } },
+                ],
+              },
+            }),
+            withoutManager: await prisma.user.count({ where: { managerId: null } }),
+          }
+        : null;
+
+    return NextResponse.json({ data: { employees: withStatus, warningCounts } });
   } catch (error) {
     console.error("[EMPLOYEES GET ERROR]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

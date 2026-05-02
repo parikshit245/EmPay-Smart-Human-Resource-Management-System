@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
-import { Plus, Search, Users, Loader2 } from "lucide-react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { Plus, Search, Users, Loader2, TriangleAlert, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import EmployeeCard from "@/components/employees/EmployeeCard";
@@ -16,46 +16,66 @@ interface Employee {
   role: string;
   department: string | null;
   profilePhoto: string | null;
+  managerId: string | null;
+  hasBankAccount: boolean;
   todayStatus: "PRESENT" | "ABSENT" | "ON_LEAVE";
 }
 
 export default function EmployeesPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const { user } = useUser();
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [filtered, setFiltered] = useState<Employee[]>([]);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [warningCounts, setWarningCounts] = useState<{
+    withoutBankAccount: number;
+    withoutManager: number;
+  } | null>(null);
+  const [showWarningBanner, setShowWarningBanner] = useState(true);
+  const activeFilter = searchParams.get("filter");
 
   useEffect(() => {
-    async function loadEmployees() {
+    async function loadEmployees(showLoader = true) {
       try {
+        if (showLoader) setLoading(true);
         const res = await fetch("/api/employees");
         if (!res.ok) throw new Error("Failed to load employees");
         const json = await res.json();
         setEmployees(json.data.employees);
+        setWarningCounts(json.data.warningCounts || null);
         setFiltered(json.data.employees);
       } catch {
         setError("Failed to load employees. Please try again.");
       } finally {
-        setLoading(false);
+        if (showLoader) setLoading(false);
       }
     }
     loadEmployees();
+    const interval = window.setInterval(() => loadEmployees(false), 30_000);
+    return () => window.clearInterval(interval);
   }, []);
 
   useEffect(() => {
     const q = search.toLowerCase();
     setFiltered(
-      employees.filter(
-        (e) =>
+      employees.filter((e) => {
+        const matchesSearch =
           e.name.toLowerCase().includes(q) ||
           (e.department?.toLowerCase().includes(q) ?? false) ||
-          e.email.toLowerCase().includes(q)
-      )
+          e.email.toLowerCase().includes(q);
+        const matchesFilter =
+          activeFilter === "missingBank"
+            ? !e.hasBankAccount
+            : activeFilter === "missingManager"
+              ? !e.managerId
+              : true;
+        return matchesSearch && matchesFilter;
+      })
     );
-  }, [search, employees]);
+  }, [search, employees, activeFilter]);
 
   const canAddEmployee = user?.role === "ADMIN" || user?.role === "HR_OFFICER";
 
@@ -86,6 +106,48 @@ export default function EmployeesPage() {
           </Button>
         )}
       </div>
+
+      {user?.role === "ADMIN" &&
+        showWarningBanner &&
+        warningCounts &&
+        (warningCounts.withoutBankAccount > 0 || warningCounts.withoutManager > 0) && (
+          <div className="flex flex-col gap-3 rounded-xl border border-red-500/30 bg-red-500/10 p-4 text-red-100 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex gap-3">
+              <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-red-300" />
+              <div>
+                <p className="font-medium">Employee setup warnings</p>
+                <p className="text-sm text-red-200/80">
+                  {warningCounts.withoutBankAccount} without Bank A/c ·{" "}
+                  {warningCounts.withoutManager} without Manager
+                </p>
+              </div>
+            </div>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                onClick={() => router.push("/employees?filter=missingBank")}
+                className="border-red-400/40 text-red-100 hover:bg-red-500/10"
+              >
+                Bank A/c
+              </Button>
+              <Button
+                variant="outline"
+                onClick={() => router.push("/employees?filter=missingManager")}
+                className="border-red-400/40 text-red-100 hover:bg-red-500/10"
+              >
+                Manager
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => setShowWarningBanner(false)}
+                className="text-red-100 hover:bg-red-500/10"
+              >
+                <X className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        )}
 
       {/* Stats row */}
       {!loading && (
