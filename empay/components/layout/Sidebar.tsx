@@ -10,7 +10,6 @@ import {
   CreditCard,
   BarChart3,
   Settings,
-  Shield,
   ChevronRight,
   X,
   Scan,

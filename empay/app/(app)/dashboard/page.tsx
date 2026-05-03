@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import {
   Bar,
@@ -11,7 +11,8 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Calendar, CreditCard, Loader2, LogIn, TriangleAlert } from "lucide-react";
+import { Calendar, CreditCard, Loader2, LogIn, LogOut, Scan, TriangleAlert } from "lucide-react";
+import { FaceCamera } from "@/components/face/FaceCamera";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -132,13 +133,27 @@ export default function DashboardPage() {
   const { user } = useUser();
   const [data, setData] = useState<DashboardData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [checkingIn, setCheckingIn] = useState(false);
+  const [actionLoading, setActionLoading] = useState(false);
+  const [now, setNow] = useState(new Date());
   const [error, setError] = useState<string | null>(null);
+  const [faceEnrolled, setFaceEnrolled] = useState<boolean | null>(null);
+  const [showFaceCamera, setShowFaceCamera] = useState(false);
+  const [pendingAction, setPendingAction] = useState<"checkin" | "checkout" | null>(null);
 
   const firstName = user?.name.split(" ")[0] || "there";
 
   useEffect(() => {
     loadDashboard();
+    fetch("/api/face/status")
+      .then((r) => r.json())
+      .then((j) => setFaceEnrolled(j.enrolled ?? false))
+      .catch(() => setFaceEnrolled(false));
+  }, []);
+
+  // Live clock — ticks every 30s for elapsed display
+  useEffect(() => {
+    const interval = window.setInterval(() => setNow(new Date()), 30_000);
+    return () => window.clearInterval(interval);
   }, []);
 
   async function loadDashboard() {
@@ -156,15 +171,72 @@ export default function DashboardPage() {
     }
   }
 
-  async function checkIn() {
-    setCheckingIn(true);
-    try {
-      await fetch("/api/attendance/checkin", { method: "POST" });
-      await loadDashboard();
-    } finally {
-      setCheckingIn(false);
+  // Open face camera for the given action
+  function requestAction(action: "checkin" | "checkout") {
+    if (faceEnrolled === false) {
+      setError("Face not enrolled. Go to Face Recognition Setup to enroll first.");
+      return;
     }
+    setError(null);
+    setPendingAction(action);
+    setShowFaceCamera(true);
   }
+
+  // Called after FaceCamera captures a descriptor
+  const handleFaceVerified = useCallback(async (descriptor: Float32Array) => {
+    setShowFaceCamera(false);
+    if (!pendingAction) return;
+
+    setActionLoading(true);
+    setError(null);
+    try {
+      // Step 1: verify face identity
+      const verifyRes = await fetch("/api/face/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ descriptor: Array.from(descriptor) }),
+      });
+      const verifyJson = await verifyRes.json();
+
+      if (verifyJson.code === "NO_FACE_ENROLLED") {
+        setFaceEnrolled(false);
+        throw new Error("No face enrolled. Please enroll in Face Recognition Setup.");
+      }
+      if (!verifyRes.ok || !verifyJson.verified) {
+        throw new Error(
+          `Face verification failed (distance: ${verifyJson.distance ?? "?"}).  Please try again.`
+        );
+      }
+
+      // Step 2: mark attendance
+      const action = pendingAction;
+      setPendingAction(null);
+      const attRes = await fetch(`/api/attendance/${action}`, { method: "POST" });
+      const attJson = await attRes.json();
+      if (!attRes.ok) throw new Error(attJson.error || "Attendance update failed.");
+
+      // Step 3: refresh dashboard data
+      await loadDashboard();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Action failed. Please try again.");
+    } finally {
+      setActionLoading(false);
+    }
+  }, [pendingAction]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // true = clocked in (checkIn set, no checkOut yet)
+  const checkedIn = Boolean(
+    data?.attendance?.checkIn && !data?.attendance?.checkOut
+  );
+
+  // Elapsed time since check-in
+  const elapsed = useMemo(() => {
+    if (!data?.attendance?.checkIn || data?.attendance?.checkOut) return null;
+    const diff = now.getTime() - new Date(data.attendance.checkIn).getTime();
+    const hours = Math.floor(diff / 3_600_000);
+    const mins = Math.floor((diff % 3_600_000) / 60_000);
+    return `${hours}h ${mins}m`;
+  }, [now, data?.attendance]);
 
   const attendanceStatus = useMemo(() => {
     if (!data?.attendance) return "ABSENT";
@@ -281,6 +353,18 @@ export default function DashboardPage() {
         </TypingAnimation>
       </div>
 
+      {/* Face Camera overlay */}
+      {showFaceCamera && (
+        <FaceCamera
+          mode="verify"
+          onSuccess={handleFaceVerified}
+          onClose={() => {
+            setShowFaceCamera(false);
+            setPendingAction(null);
+          }}
+        />
+      )}
+
       <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
@@ -288,12 +372,38 @@ export default function DashboardPage() {
             <Badge variant="outline" className={cn("px-3 py-1 font-medium", statusStyles[attendanceStatus])}>
               {attendanceStatus.replace("_", " ")}
             </Badge>
+            {checkedIn && elapsed && (
+              <p className="text-xs text-muted-foreground mt-1.5">
+                Clocked in · <span className="font-medium text-foreground">{elapsed} elapsed</span>
+              </p>
+            )}
+            {faceEnrolled && (
+              <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
+                <Scan className="h-3 w-3" /> Face recognition required
+              </p>
+            )}
           </div>
-          {attendanceStatus === "ABSENT" && (
-            <Button onClick={checkIn} disabled={checkingIn} className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm px-6 h-11">
-              {checkingIn ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
-              Check IN
-            </Button>
+
+          {attendanceStatus !== "ON_LEAVE" && (
+            checkedIn ? (
+              <Button
+                onClick={() => requestAction("checkout")}
+                disabled={actionLoading}
+                className="bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm px-6 h-11"
+              >
+                {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
+                Check OUT
+              </Button>
+            ) : (
+              <Button
+                onClick={() => requestAction("checkin")}
+                disabled={actionLoading}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm px-6 h-11"
+              >
+                {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
+                Check IN
+              </Button>
+            )
           )}
         </div>
       </div>

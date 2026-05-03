@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Sidebar from "@/components/layout/Sidebar";
 import TopBar from "@/components/layout/TopBar";
+import AIChatPanel from "@/components/ai/AIChatPanel";
 
 export default function AppShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -23,6 +24,7 @@ export default function AppShell({ children }: { children: React.ReactNode }) {
           <div className="p-4 sm:p-6 sm:px-8 space-y-8 max-w-7xl mx-auto">{children}</div>
         </main>
       </div>
+      <AIChatPanel />
     </div>
   );
 }

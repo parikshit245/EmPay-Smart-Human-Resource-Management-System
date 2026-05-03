@@ -101,8 +101,11 @@ export default function PayrollPage() {
   const [month, setMonth] = useState(String(new Date().getMonth() + 1));
   const [year, setYear] = useState(String(new Date().getFullYear()));
 
-  const payruns = data?.payruns || [];
-  const previewEmployees = data?.previewEmployees || [];
+  const payruns = useMemo(() => data?.payruns || [], [data?.payruns]);
+  const previewEmployees = useMemo(
+    () => data?.previewEmployees || [],
+    [data?.previewEmployees]
+  );
   const duplicatePayrun = payruns.find(
     (payrun) => payrun.month === Number(month) && payrun.year === Number(year)
   );

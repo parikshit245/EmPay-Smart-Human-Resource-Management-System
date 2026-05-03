@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Backlight } from "@/components/ui/backlight";
 import {
   Select,
   SelectContent,
@@ -366,11 +365,11 @@ export default function AttendancePage() {
               ) : (
                 <Button
                   onClick={() => requestAttendanceAction("checkin")}
-                  disabled={actionLoading || Boolean(todayRecord?.checkOut)}
+                  disabled={actionLoading}
                   className="w-full sm:w-auto h-11 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm px-6 transition-all duration-200"
                 >
                   {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
-                  {todayRecord?.checkOut ? "Checked Out" : "Check IN"}
+                  Check IN
                 </Button>
               )}
             </div>
