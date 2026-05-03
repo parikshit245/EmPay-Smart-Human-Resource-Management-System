@@ -79,12 +79,12 @@ export default function Sidebar({
       )}
     >
       {/* Logo */}
-      <div className="flex items-center gap-3 border-b border-sidebar-border px-6 py-5">
+      <div className="flex items-center gap-3 border-b border-sidebar-border px-6 h-16 shrink-0">
         <Image 
           src="/models/logo-final.png" 
           alt="EmPay Logo" 
-          width={36} 
-          height={36} 
+          width={32} 
+          height={32} 
           className="object-contain shrink-0" 
           unoptimized
         />
