@@ -14,7 +14,7 @@ export default function ErrorPage({ reset }: { reset: () => void }) {
         <p className="mt-2 text-sm text-[#6c757d]">
           The app hit an unexpected error. You can retry the page.
         </p>
-        <Button onClick={reset} className="mt-5 bg-[#714b67] text-white hover:bg-[#5a3a52]">
+        <Button onClick={reset} className="mt-5 bg-primary text-white hover:bg-[#5a3a52]">
           Try Again
         </Button>
       </div>

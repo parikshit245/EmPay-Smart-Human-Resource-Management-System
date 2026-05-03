@@ -13,6 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useUser } from "@/lib/UserContext";
 import { useEffect, useRef, useState } from "react";
+import { cn } from "@/lib/utils";
 
 interface TopBarProps {
   onSearch?: (query: string) => void;
@@ -77,6 +78,16 @@ export default function TopBar({ onSearch, onMenuClick }: TopBarProps) {
     return () => window.clearTimeout(timeout);
   }, [searchValue]);
 
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   useEffect(() => {
     function handleClick(event: MouseEvent) {
       if (!searchBoxRef.current?.contains(event.target as Node)) {
@@ -89,7 +100,12 @@ export default function TopBar({ onSearch, onMenuClick }: TopBarProps) {
   }, []);
 
   return (
-    <header className="fixed left-0 right-0 top-0 z-30 flex h-16 items-center justify-between border-b border-border bg-card/80 shadow-[0_2px_8px_rgba(0,0,0,0.05)] px-4 backdrop-blur-md lg:left-64 lg:px-6">
+    <header 
+      className={cn(
+        "fixed left-0 right-0 top-0 z-50 flex h-16 items-center justify-between px-4 lg:left-64 lg:px-6 transition-all duration-200 bg-sidebar",
+        isScrolled ? "shadow-sm border-b border-border" : "border-b border-transparent"
+      )}
+    >
       {/* Search */}
       <div className="flex items-center gap-3">
         <button

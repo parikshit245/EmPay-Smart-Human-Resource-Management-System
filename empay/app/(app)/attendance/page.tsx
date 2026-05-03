@@ -7,7 +7,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Backlight } from "@/components/ui/backlight";
 import {
   Select,
   SelectContent,
@@ -120,23 +119,23 @@ function AttendanceSummary() {
   const metrics = [
     { label: "Days Present", value: summary?.daysPresent ?? 0, className: "text-[#28a745]" },
     { label: "Total Leaves", value: summary?.totalLeaves ?? 0, className: "text-[#1bb6f9]" },
-    { label: "Working Days", value: summary?.totalWorkingDays ?? 0, className: "text-[#714b67]" },
+    { label: "Working Days", value: summary?.totalWorkingDays ?? 0, className: "text-primary" },
   ];
 
   return (
-    <Card className="border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
-      <CardHeader className="border-b border-[#ede7f6]">
+    <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+      <CardHeader className="border-b border-border p-6">
         <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <CardTitle className="text-[#1a1c24]">Attendance Summary</CardTitle>
-          <Badge variant="outline" className="w-fit border-[#714b67]/30 bg-[#ede7f6] text-[#714b67]">
+          <CardTitle className="text-foreground text-lg">Attendance Summary</CardTitle>
+          <Badge variant="outline" className="w-fit border-primary/30 bg-primary/5 text-primary">
             Current Month: {summary ? `${summary.currentMonth} ${summary.currentYear}` : "..."}
           </Badge>
         </div>
       </CardHeader>
-      <CardContent className="grid gap-3 pt-0 sm:grid-cols-3">
+      <CardContent className="grid gap-4 p-6 sm:grid-cols-3">
         {metrics.map((metric) => (
-          <div key={metric.label} className="rounded-lg border border-[#ede7f6] bg-[#faf8ff] p-4">
-            <p className="text-xs uppercase tracking-wide text-[#6c757d]">{metric.label}</p>
+          <div key={metric.label} className="rounded-xl border border-border bg-muted/30 p-5 transition-colors hover:bg-muted/50">
+            <p className="text-xs uppercase tracking-wide text-muted-foreground">{metric.label}</p>
             <p className={cn("mt-2 text-3xl font-bold", metric.className)}>
               {loading ? <Loader2 className="h-6 w-6 animate-spin" /> : metric.value}
             </p>
@@ -314,72 +313,79 @@ export default function AttendancePage() {
 
       <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-[#1a1c24] flex items-center gap-2">
-            <Clock className="w-6 h-6 text-[#714b67]" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Clock className="w-6 h-6 text-primary" />
             Attendance
           </h1>
-          <p className="text-[#6c757d] text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Track daily check-ins and check-outs
           </p>
         </div>
 
-        <div className="rounded-xl border border-slate-800/70 bg-slate-900/70 p-4">
-          {faceEnrolled === false && (
-            <div className="mb-3 flex items-center gap-2 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-300">
-              <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
-              <span>
-                Face not enrolled.{" "}
-                <Link href="/face-setup" className="underline underline-offset-2 hover:text-amber-200">
-                  Set it up now
-                </Link>
-              </span>
-            </div>
-          )}
-          {checkedIn ? (
-            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-              <div>
-                <p className="text-sm font-medium text-[#28a745]">
-                  Since {formatTime(todayRecord?.checkIn || null)}
+        <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              {faceEnrolled === false && (
+                <div className="mb-3 flex items-center gap-2 rounded-lg border border-yellow-500/30 bg-yellow-50 px-3 py-2 text-xs font-medium text-yellow-700">
+                  <AlertTriangle className="h-3.5 w-3.5 shrink-0" />
+                  <span>
+                    Face not enrolled.{" "}
+                    <Link href="/face-setup" className="underline underline-offset-2 hover:text-yellow-800">
+                      Set it up now
+                    </Link>
+                  </span>
+                </div>
+              )}
+              {faceEnrolled && (
+                <p className="mb-2 flex items-center gap-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <Scan className="h-3.5 w-3.5" />
+                  Face recognition required
                 </p>
-                <p className="text-xs text-[#6c757d]">{elapsed} elapsed</p>
-              </div>
-              <Button
-                onClick={() => requestAttendanceAction("checkout")}
-                disabled={actionLoading}
-                className="bg-[#dc3545] text-white hover:bg-[#c82333]"
-              >
-                {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogOut className="h-4 w-4" />}
-                Check OUT
-              </Button>
+              )}
+              {checkedIn && (
+                <div>
+                  <p className="text-sm font-medium text-green-700">
+                    Since {formatTime(todayRecord?.checkIn || null)}
+                  </p>
+                  <p className="text-xs text-muted-foreground mt-0.5">{elapsed} elapsed</p>
+                </div>
+              )}
             </div>
-          ) : (
-            <Button
-              onClick={() => requestAttendanceAction("checkin")}
-              disabled={actionLoading || Boolean(todayRecord?.checkOut)}
-              className="h-12 bg-[#28a745] px-6 text-white hover:bg-[#218838]"
-            >
-              {actionLoading ? <Loader2 className="h-4 w-4 animate-spin" /> : <LogIn className="h-4 w-4" />}
-              {todayRecord?.checkOut ? "Checked Out" : "Check IN"}
-            </Button>
-          )}
-          {faceEnrolled && (
-            <p className="mt-2 flex items-center gap-1 text-xs text-slate-500">
-              <Scan className="h-3 w-3" />
-              Face recognition required for attendance
-            </p>
-          )}
+
+            <div className="shrink-0">
+              {checkedIn ? (
+                <Button
+                  onClick={() => requestAttendanceAction("checkout")}
+                  disabled={actionLoading}
+                  className="w-full sm:w-auto h-11 bg-destructive hover:bg-destructive/90 text-destructive-foreground shadow-sm px-6 transition-all duration-200"
+                >
+                  {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogOut className="mr-2 h-4 w-4" />}
+                  Check OUT
+                </Button>
+              ) : (
+                <Button
+                  onClick={() => requestAttendanceAction("checkin")}
+                  disabled={actionLoading}
+                  className="w-full sm:w-auto h-11 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm px-6 transition-all duration-200"
+                >
+                  {actionLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <LogIn className="mr-2 h-4 w-4" />}
+                  Check IN
+                </Button>
+              )}
+            </div>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 gap-4 rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-4 md:grid-cols-4">
+      <div className="grid grid-cols-1 gap-4 rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 md:grid-cols-4">
         {canFilterEmployees && (
           <div className="space-y-1.5">
-            <Label className="text-[#374151]">Employee</Label>
+            <Label className="text-foreground">Employee</Label>
             <Select value={employeeId} onValueChange={setEmployeeId}>
-              <SelectTrigger className="w-full bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24]">
+              <SelectTrigger className="w-full bg-background border-border text-foreground">
                 <SelectValue />
               </SelectTrigger>
-              <SelectContent className="bg-[#ffffff] border-[#e5e7eb] text-[#374151]">
+              <SelectContent className="bg-card border-border text-foreground">
                 <SelectItem value="all">All Employees</SelectItem>
                 {employees.map((employee) => (
                   <SelectItem key={employee.id} value={employee.id}>
@@ -391,12 +397,12 @@ export default function AttendancePage() {
           </div>
         )}
         <div className="space-y-1.5">
-          <Label className="text-[#374151]">Date Range</Label>
+          <Label className="text-foreground">Date Range</Label>
           <Select value={rangeMode} onValueChange={(value) => setRangeMode(value as RangeMode)}>
-            <SelectTrigger className="w-full bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24]">
+            <SelectTrigger className="w-full bg-background border-border text-foreground">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-[#ffffff] border-[#e5e7eb] text-[#374151]">
+            <SelectContent className="bg-card border-border text-foreground">
               <SelectItem value="week">This Week</SelectItem>
               <SelectItem value="month">This Month</SelectItem>
               <SelectItem value="custom">Custom</SelectItem>
@@ -406,21 +412,21 @@ export default function AttendancePage() {
         {rangeMode === "custom" && (
           <>
             <div className="space-y-1.5">
-              <Label className="text-[#374151]">From</Label>
+              <Label className="text-foreground">From</Label>
               <Input
                 type="date"
                 value={customFrom}
                 onChange={(event) => setCustomFrom(event.target.value)}
-                className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] [color-scheme:light]"
+                className="bg-background border-border text-foreground [color-scheme:light]"
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[#374151]">To</Label>
+              <Label className="text-foreground">To</Label>
               <Input
                 type="date"
                 value={customTo}
                 onChange={(event) => setCustomTo(event.target.value)}
-                className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] [color-scheme:light]"
+                className="bg-background border-border text-foreground [color-scheme:light]"
               />
             </div>
           </>
@@ -433,48 +439,48 @@ export default function AttendancePage() {
         </div>
       )}
 
-      <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
-        <div className="flex items-center gap-2 border-b border-[#ede7f6] px-4 py-3">
-          <CalendarDays className="h-4 w-4 text-[#714b67]" />
-          <h2 className="font-semibold text-[#1a1c24]">Attendance Log</h2>
+      <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+        <div className="flex items-center gap-2 border-b border-border bg-muted/30 px-6 py-4">
+          <CalendarDays className="h-5 w-5 text-primary" />
+          <h2 className="font-semibold text-foreground text-lg">Attendance Log</h2>
         </div>
         {loading ? (
           <div className="flex justify-center py-16">
-            <Loader2 className="h-7 w-7 animate-spin text-[#714b67]" />
+            <Loader2 className="h-7 w-7 animate-spin text-primary" />
           </div>
         ) : records.length === 0 ? (
-          <p className="py-16 text-center text-sm text-[#6c757d]">No attendance records found.</p>
+          <p className="py-16 text-center text-sm text-muted-foreground">No attendance records found.</p>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#faf8ff] text-xs uppercase text-[#6c757d]">
+              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                 <tr>
-                  {canFilterEmployees && <th className="px-4 py-3 font-medium">Employee</th>}
-                  <th className="px-4 py-3 font-medium">Date</th>
-                  <th className="px-4 py-3 font-medium">Check In</th>
-                  <th className="px-4 py-3 font-medium">Check Out</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Hours Worked</th>
+                  {canFilterEmployees && <th className="px-6 py-4 font-medium">Employee</th>}
+                  <th className="px-6 py-4 font-medium">Date</th>
+                  <th className="px-6 py-4 font-medium">Check In</th>
+                  <th className="px-6 py-4 font-medium">Check Out</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
+                  <th className="px-6 py-4 font-medium">Hours Worked</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#ede7f6]">
+              <tbody className="divide-y divide-border">
                 {records.map((record) => (
-                  <tr key={record.id} className="text-[#374151]">
+                  <tr key={record.id} className="text-foreground transition-colors hover:bg-muted/30">
                     {canFilterEmployees && (
-                      <td className="px-4 py-3">
-                        <div className="font-medium text-[#374151]">{record.user.name}</div>
-                        <div className="text-xs text-[#6c757d]">{record.user.loginId}</div>
+                      <td className="px-6 py-4">
+                        <div className="font-medium text-foreground">{record.user.name}</div>
+                        <div className="text-xs text-muted-foreground">{record.user.loginId}</div>
                       </td>
                     )}
-                    <td className="px-4 py-3">{formatDate(record.date)}</td>
-                    <td className="px-4 py-3">{formatTime(record.checkIn)}</td>
-                    <td className="px-4 py-3">{formatTime(record.checkOut)}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">{formatDate(record.date)}</td>
+                    <td className="px-6 py-4 font-medium">{formatTime(record.checkIn)}</td>
+                    <td className="px-6 py-4 font-medium">{formatTime(record.checkOut)}</td>
+                    <td className="px-6 py-4">
                       <Badge variant="outline" className={cn(statusStyles[record.status])}>
                         {record.status.replace("_", " ")}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3">{hoursWorked(record)}</td>
+                    <td className="px-6 py-4 font-medium text-primary">{hoursWorked(record)}</td>
                   </tr>
                 ))}
               </tbody>

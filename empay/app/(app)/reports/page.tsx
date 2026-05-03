@@ -236,7 +236,7 @@ export default function ReportsPage() {
 
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
-          <BarChart3 className="h-6 w-6 text-[#714b67]" />
+          <BarChart3 className="h-6 w-6 text-primary" />
           Reports
         </h1>
         <p className="mt-1 text-sm text-[#6c757d]">Analytics and downloadable reports</p>
@@ -254,7 +254,7 @@ export default function ReportsPage() {
             <div className="space-y-1.5"><Label>Employee</Label>{employeeSelect(filters.payslipUser, (value) => setFilters((p) => ({ ...p, payslipUser: value })))}</div>
             <div className="space-y-1.5"><Label>Month</Label>{monthSelect(filters.payslipMonth, (value) => setFilters((p) => ({ ...p, payslipMonth: value })))}</div>
             <div className="space-y-1.5"><Label>Year</Label><Input value={filters.payslipYear} onChange={(e) => setFilters((p) => ({ ...p, payslipYear: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]" /></div>
-            <Button onClick={loadPayslips} className="self-end bg-[#714b67] text-white hover:bg-[#5a3a52]">Apply</Button>
+            <Button onClick={loadPayslips} className="self-end bg-primary text-white hover:bg-[#5a3a52]">Apply</Button>
           </div>
           <ReportShell loading={loadingReport}>
             <table className="w-full text-left text-sm">
@@ -271,7 +271,7 @@ export default function ReportsPage() {
             <div className="space-y-1.5"><Label>Employee</Label>{employeeSelect(filters.leaveUser, (value) => setFilters((p) => ({ ...p, leaveUser: value })))}</div>
             <div className="space-y-1.5"><Label>Start Date</Label><Input type="date" value={filters.startDate} onChange={(e) => setFilters((p) => ({ ...p, startDate: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] [color-scheme:light]" /></div>
             <div className="space-y-1.5"><Label>End Date</Label><Input type="date" value={filters.endDate} onChange={(e) => setFilters((p) => ({ ...p, endDate: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24] [color-scheme:light]" /></div>
-            <Button onClick={loadLeaves} className="self-end bg-[#714b67] text-white hover:bg-[#5a3a52]">Apply</Button>
+            <Button onClick={loadLeaves} className="self-end bg-primary text-white hover:bg-[#5a3a52]">Apply</Button>
           </div>
           <ReportShell loading={loadingReport}>
             <table className="w-full text-left text-sm">
@@ -288,7 +288,7 @@ export default function ReportsPage() {
             <div className="space-y-1.5"><Label>Employee</Label>{employeeSelect(filters.attendanceUser, (value) => setFilters((p) => ({ ...p, attendanceUser: value })))}</div>
             <div className="space-y-1.5"><Label>Month</Label>{monthSelect(filters.attendanceMonth, (value) => setFilters((p) => ({ ...p, attendanceMonth: value })))}</div>
             <div className="space-y-1.5"><Label>Year</Label><Input value={filters.attendanceYear} onChange={(e) => setFilters((p) => ({ ...p, attendanceYear: e.target.value }))} className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]" /></div>
-            <Button onClick={loadAttendance} className="self-end bg-[#714b67] text-white hover:bg-[#5a3a52]">Apply</Button>
+            <Button onClick={loadAttendance} className="self-end bg-primary text-white hover:bg-[#5a3a52]">Apply</Button>
           </div>
           <ReportShell loading={loadingReport}>
             <table className="w-full text-left text-sm">
@@ -315,7 +315,7 @@ function ReportShell({
     <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
       {loading ? (
         <div className="flex justify-center py-14">
-          <Loader2 className="h-7 w-7 animate-spin text-[#714b67]" />
+          <Loader2 className="h-7 w-7 animate-spin text-primary" />
         </div>
       ) : (
         <div className="overflow-x-auto">{children}</div>

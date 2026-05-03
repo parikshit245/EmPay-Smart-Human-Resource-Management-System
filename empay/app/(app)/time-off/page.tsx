@@ -142,7 +142,7 @@ function RequestTable({
                       href={request.medicalCertificateData}
                       target="_blank"
                       rel="noreferrer"
-                      className="text-[#714b67] underline-offset-4 hover:underline"
+                      className="text-primary underline-offset-4 hover:underline"
                     >
                       {request.medicalCertificateName || "View file"}
                     </a>
@@ -373,7 +373,7 @@ export default function TimeOffPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
-            <Calendar className="h-6 w-6 text-[#714b67]" />
+            <Calendar className="h-6 w-6 text-primary" />
             Time Off
           </h1>
           <p className="mt-1 text-sm text-[#6c757d]">
@@ -384,7 +384,7 @@ export default function TimeOffPage() {
         {canApply && (
           <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
+              <Button className="bg-primary text-white hover:bg-[#5a3a52]">
                 <Plus className="h-4 w-4" />
                 Apply for Time Off
               </Button>
@@ -524,7 +524,7 @@ export default function TimeOffPage() {
                 <Button
                   type="submit"
                   disabled={submitting}
-                  className="w-full bg-[#714b67] text-white hover:bg-[#5a3a52]"
+                  className="w-full bg-primary text-white hover:bg-[#5a3a52]"
                 >
                   {submitting && <Loader2 className="h-4 w-4 animate-spin" />}
                   Submit Request
@@ -550,7 +550,7 @@ export default function TimeOffPage() {
           <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
             {loading ? (
               <div className="flex justify-center py-16">
-                <Loader2 className="h-7 w-7 animate-spin text-[#714b67]" />
+                <Loader2 className="h-7 w-7 animate-spin text-primary" />
               </div>
             ) : (
               <RequestTable
@@ -568,7 +568,7 @@ export default function TimeOffPage() {
             <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
               {loading ? (
                 <div className="flex justify-center py-16">
-                  <Loader2 className="h-7 w-7 animate-spin text-[#714b67]" />
+                  <Loader2 className="h-7 w-7 animate-spin text-primary" />
                 </div>
               ) : (
                 <RequestTable

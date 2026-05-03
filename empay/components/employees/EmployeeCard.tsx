@@ -26,7 +26,7 @@ const roleColors: Record<string, string> = {
   ADMIN: "bg-[#fdecea] text-[#dc3545] border-[#dc3545]/25 hover:bg-[#fdecea]",
   HR_OFFICER: "bg-[#e8f7ff] text-[#1bb6f9] border-[#1bb6f9]/25 hover:bg-[#e8f7ff]",
   PAYROLL_OFFICER: "bg-[#edf7ef] text-[#28a745] border-[#28a745]/25 hover:bg-[#edf7ef]",
-  EMPLOYEE: "bg-[#ede7f6] text-[#6c757d] border-[#714b67]/25 hover:bg-[#ede7f6]",
+  EMPLOYEE: "bg-[#ede7f6] text-[#6c757d] border-primary/25 hover:bg-[#ede7f6]",
 };
 
 export default function EmployeeCard({ employee }: { employee: Employee }) {
@@ -60,9 +60,9 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
   return (
     <div
       onClick={() => router.push(`/employees/${employee.id}`)}
-      className="group relative bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border border-[#ede7f6] rounded-2xl p-5 cursor-pointer
-        hover:bg-[#faf8ff] hover:border-[#714b67]/30 hover:shadow-[0_1px_4px_rgba(113,75,103,0.10)] 
-        transition-all duration-300 hover:-translate-y-0.5"
+      className="group relative bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] border border-border rounded-2xl p-5 cursor-pointer
+        hover:bg-muted/30 hover:border-primary/30 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] 
+        transition-all duration-300 hover:-translate-y-1"
     >
       {/* Status indicator */}
       <div className={cn(
@@ -73,7 +73,7 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
 
       {/* Avatar */}
       <div className="flex items-center gap-4 mb-4">
-        <div className="w-14 h-14 rounded-2xl bg-[#714b67] flex items-center justify-center text-white font-bold text-lg shadow-[0_1px_4px_rgba(113,75,103,0.10)]  shrink-0 overflow-hidden">
+        <div className="w-14 h-14 rounded-2xl bg-primary flex items-center justify-center text-white font-bold text-lg shadow-[0_1px_4px_rgba(113,75,103,0.10)]  shrink-0 overflow-hidden">
           {employee.profilePhoto ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img src={employee.profilePhoto} alt={employee.name} className="w-full h-full object-cover" />
@@ -82,7 +82,7 @@ export default function EmployeeCard({ employee }: { employee: Employee }) {
           )}
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-semibold text-[#1a1c24] truncate group-hover:text-[#714b67] transition-colors">
+          <p className="font-semibold text-[#1a1c24] truncate group-hover:text-primary transition-colors">
             {employee.name}
           </p>
           <p className="text-xs text-[#6c757d] truncate mt-0.5">{employee.email}</p>

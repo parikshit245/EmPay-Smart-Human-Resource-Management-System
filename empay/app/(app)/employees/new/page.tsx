@@ -120,7 +120,7 @@ export default function NewEmployeePage() {
         </Button>
         <div>
           <h1 className="text-2xl font-bold text-[#1a1c24] flex items-center gap-2">
-            <UserPlus className="w-6 h-6 text-[#714b67]" />
+            <UserPlus className="w-6 h-6 text-primary" />
             Add New Employee
           </h1>
           <p className="text-[#6c757d] text-sm mt-0.5">
@@ -148,7 +148,7 @@ export default function NewEmployeePage() {
                 <Input
                   id="name"
                   placeholder="John Doe"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("name")}
                 />
                 {errors.name && <p className="text-[#dc3545] text-xs">{errors.name.message}</p>}
@@ -161,7 +161,7 @@ export default function NewEmployeePage() {
                   id="email"
                   type="email"
                   placeholder="john@company.com"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("email")}
                 />
                 {errors.email && <p className="text-[#dc3545] text-xs">{errors.email.message}</p>}
@@ -174,7 +174,7 @@ export default function NewEmployeePage() {
                   id="phone"
                   type="tel"
                   placeholder="+91 98765 43210"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("phone")}
                 />
               </div>
@@ -185,7 +185,7 @@ export default function NewEmployeePage() {
                 <Input
                   id="department"
                   placeholder="Engineering, Sales, HR..."
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("department")}
                 />
               </div>
@@ -201,7 +201,7 @@ export default function NewEmployeePage() {
                 >
                   <SelectTrigger
                     id="role"
-                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-[#714b67]"
+                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-primary"
                   >
                     <SelectValue />
                   </SelectTrigger>
@@ -223,7 +223,7 @@ export default function NewEmployeePage() {
                 >
                   <SelectTrigger
                     id="manager"
-                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-[#714b67]"
+                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-primary"
                   >
                     <SelectValue placeholder="Select manager" />
                   </SelectTrigger>
@@ -244,7 +244,7 @@ export default function NewEmployeePage() {
                 <Input
                   id="dateOfJoining"
                   type="date"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-[#714b67] [color-scheme:light]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] focus:border-primary [color-scheme:light]"
                   {...register("dateOfJoining")}
                 />
               </div>
@@ -262,7 +262,7 @@ export default function NewEmployeePage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="bg-[#714b67] hover:bg-[#5a3a52] text-white shadow-[0_1px_4px_rgba(113,75,103,0.10)]  gap-2"
+                className="bg-primary hover:bg-[#5a3a52] text-white shadow-[0_1px_4px_rgba(113,75,103,0.10)]  gap-2"
               >
                 {isSubmitting ? (
                   <><Loader2 className="w-4 h-4 animate-spin" /> Creating...</>

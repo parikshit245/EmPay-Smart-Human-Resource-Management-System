@@ -208,14 +208,14 @@ function EmployeeLeaveAvailability({ employeeId }: { employeeId: string }) {
   }, [employeeId]);
 
   return (
-    <Card className="border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
+    <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
       <CardHeader>
         <CardTitle className="text-[#1a1c24]">Leave Availability</CardTitle>
       </CardHeader>
       <CardContent>
         {loading ? (
           <div className="flex justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin text-[#714b67]" />
+            <Loader2 className="h-6 w-6 animate-spin text-primary" />
           </div>
         ) : error ? (
           <p className="text-sm text-[#dc3545]">{error}</p>
@@ -466,7 +466,7 @@ export default function EmployeeProfilePage() {
   if (loading) {
     return (
       <div className="flex min-h-[60vh] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-[#714b67]" />
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
@@ -490,11 +490,11 @@ export default function EmployeeProfilePage() {
         <h1 className="text-2xl font-bold text-[#1a1c24]">Employee Profile</h1>
       </div>
 
-      <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
+      <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
         <CardContent className="p-6">
           <div className="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
             <div className="flex items-center gap-5">
-              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-[#f3eaf1] text-2xl font-bold text-[#714b67]">
+              <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-2xl bg-[#f3eaf1] text-2xl font-bold text-primary">
                 {employee.profilePhoto ? (
                   // eslint-disable-next-line @next/next/no-img-element
                   <img src={employee.profilePhoto} alt={employee.name} className="h-full w-full object-cover" />
@@ -505,7 +505,7 @@ export default function EmployeeProfilePage() {
               <div>
                 <div className="flex flex-wrap items-center gap-2">
                   <h2 className="text-2xl font-semibold text-[#1a1c24]">{employee.name}</h2>
-                  <Badge variant="outline" className="border-[#714b67]/30 text-[#714b67]">
+                  <Badge variant="outline" className="border-primary/30 text-primary">
                     {employee.role.replace("_", " ")}
                   </Badge>
                 </div>
@@ -523,7 +523,7 @@ export default function EmployeeProfilePage() {
               <Button
                 onClick={saveProfile}
                 disabled={saving}
-                className="bg-[#714b67] text-white hover:bg-[#5a3a52]"
+                className="bg-primary text-white hover:bg-[#5a3a52]"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                 Save
@@ -557,7 +557,7 @@ export default function EmployeeProfilePage() {
         </TabsList>
 
         <TabsContent value="resume">
-          <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
+          <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
             <CardHeader>
               <CardTitle className="text-[#1a1c24]">Resume</CardTitle>
             </CardHeader>
@@ -597,7 +597,7 @@ export default function EmployeeProfilePage() {
 
         {canViewPrivateInfo && (
         <TabsContent value="private">
-          <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
+          <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
             <CardHeader>
               <CardTitle className="text-[#1a1c24]">Private Info</CardTitle>
             </CardHeader>
@@ -640,10 +640,10 @@ export default function EmployeeProfilePage() {
 
         {canViewSalary && (
           <TabsContent value="salary">
-            <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
+            <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
               <CardHeader className="flex flex-row items-center justify-between">
                 <CardTitle className="text-[#1a1c24]">Salary Info</CardTitle>
-                <Button onClick={saveSalary} disabled={saving} className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
+                <Button onClick={saveSalary} disabled={saving} className="bg-primary text-white hover:bg-[#5a3a52]">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Salary
                 </Button>
@@ -675,10 +675,10 @@ export default function EmployeeProfilePage() {
 
         {canUseSecurity && (
         <TabsContent value="security">
-          <Card className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
+          <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-[#1a1c24]">
-                <Shield className="h-5 w-5 text-[#714b67]" />
+                <Shield className="h-5 w-5 text-primary" />
                 Security
               </CardTitle>
             </CardHeader>
@@ -688,7 +688,7 @@ export default function EmployeeProfilePage() {
                 <TextField label="Old Password" type="password" value={oldPassword} onChange={setOldPassword} />
                 <TextField label="New Password" type="password" value={newPassword} onChange={setNewPassword} />
                 <TextField label="Confirm New Password" type="password" value={confirmPassword} onChange={setConfirmPassword} />
-                <Button type="submit" disabled={saving} className="w-fit bg-[#714b67] text-white hover:bg-[#5a3a52]">
+                <Button type="submit" disabled={saving} className="w-fit bg-primary text-white hover:bg-[#5a3a52]">
                   {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
                   Save Password
                 </Button>
@@ -844,7 +844,7 @@ function TagEditor({
       <Label className="text-[#374151]">{label}</Label>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
-          <Badge key={item} variant="outline" className="gap-1 border-[#714b67]/30 bg-[#ede7f6] text-[#714b67]">
+          <Badge key={item} variant="outline" className="gap-1 border-primary/30 bg-[#ede7f6] text-primary">
             {item}
             {!disabled && (
               <button type="button" onClick={() => onRemove(item)}>

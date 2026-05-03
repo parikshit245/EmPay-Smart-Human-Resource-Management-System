@@ -115,14 +115,14 @@ export default function SettingsPage() {
     <div className="space-y-6">
       <div>
         <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
-          <Settings className="h-6 w-6 text-[#714b67]" />
+          <Settings className="h-6 w-6 text-primary" />
           Settings
         </h1>
         <p className="mt-1 text-sm text-[#6c757d]">Manage organization configuration</p>
       </div>
 
       {message && (
-        <div className="rounded-lg border border-[#714b67]/30 bg-[#ede7f6] p-3 text-sm text-[#714b67]">
+        <div className="rounded-lg border border-primary/30 bg-[#ede7f6] p-3 text-sm text-primary">
           {message}
         </div>
       )}
@@ -145,7 +145,7 @@ export default function SettingsPage() {
               className="border-[#e5e7eb] bg-[#ffffff] text-[#1a1c24]"
             />
           </div>
-          <Button disabled={saving} className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
+          <Button disabled={saving} className="bg-primary text-white hover:bg-[#5a3a52]">
             {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4" />}
             Save
           </Button>
@@ -157,7 +157,7 @@ export default function SettingsPage() {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={settings.companyLogo} alt="Company logo" className="h-full w-full object-cover" />
             ) : (
-              <span className="text-lg font-bold text-[#714b67]">EP</span>
+              <span className="text-lg font-bold text-primary">EP</span>
             )}
           </div>
           <div className="space-y-1.5">
@@ -214,7 +214,7 @@ export default function SettingsPage() {
                         </SelectContent>
                       </Select>
                       {roleSavingId === user.id && (
-                        <Loader2 className="h-4 w-4 animate-spin text-[#714b67]" />
+                        <Loader2 className="h-4 w-4 animate-spin text-primary" />
                       )}
                     </div>
                   </td>

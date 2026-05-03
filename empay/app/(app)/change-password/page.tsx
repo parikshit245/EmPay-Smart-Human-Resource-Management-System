@@ -57,7 +57,7 @@ export default function ChangePasswordPage() {
       <Card className="w-full bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#ede7f6]">
         <CardHeader className="space-y-3">
           <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#ede7f6]">
-            <LockKeyhole className="h-5 w-5 text-[#714b67]" />
+            <LockKeyhole className="h-5 w-5 text-primary" />
           </div>
           <CardTitle className="text-xl text-[#1a1c24]">Change Password</CardTitle>
           <p className="text-sm text-[#6c757d]">
@@ -98,7 +98,7 @@ export default function ChangePasswordPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-[#714b67] text-white hover:bg-[#5a3a52]"
+              className="w-full bg-primary text-white hover:bg-[#5a3a52]"
             >
               {loading ? (
                 <>
