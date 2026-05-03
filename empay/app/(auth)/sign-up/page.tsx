@@ -85,7 +85,7 @@ export default function SignUpPage() {
                 unoptimized
               />
               <div className="text-center">
-                <CardTitle className="text-3xl font-bold text-[#714b67]">
+                <CardTitle className="text-3xl font-bold text-primary">
                   EmPay
                 </CardTitle>
                 <CardDescription className="text-[#6c757d] mt-1">
@@ -115,7 +115,7 @@ export default function SignUpPage() {
                 <Input
                   id="companyName"
                   placeholder="Acme Corp"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("companyName")}
                 />
                 {errors.companyName && <p className="text-[#dc3545] text-xs">{errors.companyName.message}</p>}
@@ -126,7 +126,7 @@ export default function SignUpPage() {
                 <Input
                   id="name"
                   placeholder="John Doe"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("name")}
                 />
                 {errors.name && <p className="text-[#dc3545] text-xs">{errors.name.message}</p>}
@@ -138,7 +138,7 @@ export default function SignUpPage() {
                   id="email"
                   type="email"
                   placeholder="john@company.com"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("email")}
                 />
                 {errors.email && <p className="text-[#dc3545] text-xs">{errors.email.message}</p>}
@@ -150,7 +150,7 @@ export default function SignUpPage() {
                   id="phone"
                   type="tel"
                   placeholder="+91 98765 43210"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67]"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary"
                   {...register("phone")}
                 />
               </div>
@@ -162,7 +162,7 @@ export default function SignUpPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Min. 8 characters"
-                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67] pr-10"
+                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary pr-10"
                     {...register("password")}
                   />
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6c757d] hover:text-[#374151]">
@@ -179,7 +179,7 @@ export default function SignUpPage() {
                     id="confirmPassword"
                     type={showConfirm ? "text" : "password"}
                     placeholder="Repeat password"
-                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67] pr-10"
+                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary pr-10"
                     {...register("confirmPassword")}
                   />
                   <button type="button" onClick={() => setShowConfirm(!showConfirm)} className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6c757d] hover:text-[#374151]">
@@ -192,7 +192,7 @@ export default function SignUpPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[#714b67] hover:bg-[#5a3a52] text-white font-semibold shadow-[0_1px_4px_rgba(113,75,103,0.10)]  transition-all duration-200 mt-2"
+                className="w-full bg-primary hover:bg-[#5a3a52] text-white font-semibold shadow-[0_1px_4px_rgba(113,75,103,0.10)]  transition-all duration-200 mt-2"
               >
                 {isSubmitting ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Creating Account...</>
@@ -206,7 +206,7 @@ export default function SignUpPage() {
           <CardFooter className="justify-center pt-0">
             <p className="text-sm text-[#6c757d]">
               Already have an account?{" "}
-              <Link href="/sign-in" className="text-[#714b67] hover:text-[#714b67] font-medium transition-colors">
+              <Link href="/sign-in" className="text-primary hover:text-primary font-medium transition-colors">
                 Sign In
               </Link>
             </p>

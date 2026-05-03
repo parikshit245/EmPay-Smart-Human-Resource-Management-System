@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import EmployeeCard from "@/components/employees/EmployeeCard";
 import { useUser } from "@/lib/UserContext";
+import { cn } from "@/lib/utils";
 
 interface Employee {
   id: string;
@@ -89,7 +90,7 @@ export default function EmployeesPage() {
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-[#1a1c24] flex items-center gap-2">
-            <Users className="w-6 h-6 text-[#714b67]" />
+            <Users className="w-6 h-6 text-primary" />
             Employees
           </h1>
           <p className="text-[#6c757d] text-sm mt-1">
@@ -99,7 +100,7 @@ export default function EmployeesPage() {
         {canAddEmployee && (
           <Button
             onClick={() => router.push("/employees/new")}
-            className="bg-[#714b67] hover:bg-[#5a3a52] text-white shadow-[0_1px_4px_rgba(113,75,103,0.10)]  gap-2"
+            className="bg-primary hover:bg-[#5a3a52] text-white shadow-[0_1px_4px_rgba(113,75,103,0.10)]  gap-2"
           >
             <Plus className="w-4 h-4" />
             Add Employee
@@ -111,7 +112,7 @@ export default function EmployeesPage() {
         showWarningBanner &&
         warningCounts &&
         (warningCounts.withoutBankAccount > 0 || warningCounts.withoutManager > 0) && (
-          <div className="flex flex-col gap-3 rounded-xl border border-[#dc3545]/30 bg-[#fdecea] p-4 text-[#dc3545] sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-col gap-3 rounded-2xl border border-red-500/30 bg-red-50/50 p-5 text-red-700 sm:flex-row sm:items-center sm:justify-between shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)]">
             <div className="flex gap-3">
               <TriangleAlert className="mt-0.5 h-5 w-5 shrink-0 text-[#dc3545]" />
               <div>
@@ -157,9 +158,9 @@ export default function EmployeesPage() {
             { label: "Absent Today", value: absentCount, color: "text-[#b26f00]", bg: "bg-[#fff8ec]", border: "border-[#fbb130]/30" },
             { label: "On Leave", value: onLeaveCount, color: "text-[#1bb6f9]", bg: "bg-[#e8f7ff]", border: "border-[#1bb6f9]/20" },
           ].map((stat) => (
-            <div key={stat.label} className={`${stat.bg} border ${stat.border} rounded-2xl p-4`}>
-              <p className="text-[#6c757d] text-xs mb-1">{stat.label}</p>
-              <p className={`text-3xl font-bold ${stat.color}`}>{stat.value}</p>
+            <div key={stat.label} className={cn(stat.bg, stat.border, "border rounded-2xl p-6 shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1")}>
+              <p className="text-xs uppercase tracking-wide opacity-80 mb-1 font-medium">{stat.label}</p>
+              <p className={cn("text-3xl font-bold", stat.color)}>{stat.value}</p>
             </div>
           ))}
         </div>
@@ -172,7 +173,7 @@ export default function EmployeesPage() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="Search by name, department, or email..."
-          className="pl-9 bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#e5e7eb] text-[#374151] placeholder:text-[#6c757d] focus:border-[#714b67]"
+          className="pl-9 bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] border-[#e5e7eb] text-[#374151] placeholder:text-[#6c757d] focus:border-primary"
         />
       </div>
 
@@ -180,7 +181,7 @@ export default function EmployeesPage() {
       {loading ? (
         <div className="flex items-center justify-center py-20">
           <div className="flex flex-col items-center gap-3">
-            <Loader2 className="w-8 h-8 text-[#714b67] animate-spin" />
+            <Loader2 className="w-8 h-8 text-primary animate-spin" />
             <p className="text-[#6c757d]">Loading employees...</p>
           </div>
         </div>
@@ -190,7 +191,7 @@ export default function EmployeesPage() {
             <p className="text-[#dc3545]">{error}</p>
             <Button
               variant="ghost"
-              className="mt-3 text-[#714b67] hover:text-[#714b67]"
+              className="mt-3 text-primary hover:text-primary"
               onClick={() => window.location.reload()}
             >
               Try Again
@@ -207,7 +208,7 @@ export default function EmployeesPage() {
             <Button
               onClick={() => router.push("/employees/new")}
               variant="outline"
-              className="border-[#714b67]/50 text-[#714b67] hover:bg-[#5a3a52]/10 mt-2"
+              className="border-primary/50 text-primary hover:bg-[#5a3a52]/10 mt-2"
             >
               Add First Employee
             </Button>

@@ -81,17 +81,17 @@ const months = [
 ];
 
 const payrunStatusStyles: Record<PayrunStatus, string> = {
-  DRAFT: "border-[#714b67]/30 bg-[#ede7f6] text-[#374151]",
+  DRAFT: "border-primary/30 bg-[#ede7f6] text-[#374151]",
   GENERATED: "border-[#1bb6f9]/30 bg-[#e8f7ff] text-[#1bb6f9]",
-  REVIEWED: "border-[#714b67]/30 bg-[#ede7f6] text-[#714b67]",
-  APPROVED: "border-[#714b67]/30 bg-[#ede7f6] text-[#714b67]",
+  REVIEWED: "border-primary/30 bg-[#ede7f6] text-primary",
+  APPROVED: "border-primary/30 bg-[#ede7f6] text-primary",
   PAID: "border-[#28a745]/30 bg-[#edf7ef] text-[#28a745]",
   LOCKED: "border-[#fbb130]/40 bg-[#fff8ec] text-[#b26f00]",
 };
 
 const payslipStatusStyles: Record<PayslipStatus, string> = {
   GENERATED: "border-[#1bb6f9]/30 bg-[#e8f7ff] text-[#1bb6f9]",
-  VALIDATED: "border-[#714b67]/30 bg-[#ede7f6] text-[#714b67]",
+  VALIDATED: "border-primary/30 bg-[#ede7f6] text-primary",
   PAID: "border-[#28a745]/30 bg-[#edf7ef] text-[#28a745]",
 };
 
@@ -126,39 +126,39 @@ function WorkedDaysTab({ payslip }: { payslip: Payslip }) {
   return (
     <div className="space-y-4">
       {payslip.attendanceDays === 0 && (
-        <div className="rounded-lg border border-[#fbb130]/40 bg-[#fff8ec] p-3 text-sm text-[#b26f00]">
+        <div className="rounded-lg border border-yellow-500/30 bg-yellow-50/50 p-3 text-sm text-yellow-800">
           No attendance data was found for this employee in this pay period.
         </div>
       )}
-      <div className="overflow-hidden rounded-xl border border-[#ede7f6]">
+      <div className="overflow-hidden rounded-xl border border-border shadow-sm">
         <table className="w-full text-left text-sm">
-          <thead className="bg-[#ffffff] text-xs uppercase text-[#6c757d]">
+          <thead className="bg-muted/30 text-xs uppercase text-muted-foreground border-b border-border">
             <tr>
-              <th className="px-4 py-3">Type</th>
-              <th className="px-4 py-3">Days</th>
-              <th className="px-4 py-3">Amount</th>
+              <th className="px-5 py-4 font-medium">Type</th>
+              <th className="px-5 py-4 font-medium text-center">Days</th>
+              <th className="px-5 py-4 font-medium text-right">Amount</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-[#ede7f6] text-[#374151]">
-            <tr>
-              <td className="px-4 py-3">Attendance</td>
-              <td className="px-4 py-3">{payslip.attendanceDays.toFixed(2)} (5 working days/week)</td>
-              <td className="px-4 py-3">{money(attendanceAmount)}</td>
+          <tbody className="divide-y divide-border bg-card text-foreground">
+            <tr className="hover:bg-muted/30 transition-colors">
+              <td className="px-5 py-3.5">Attendance</td>
+              <td className="px-5 py-3.5 text-center text-muted-foreground">{payslip.attendanceDays.toFixed(2)} (5 working days/week)</td>
+              <td className="px-5 py-3.5 text-right font-medium text-green-600">{money(attendanceAmount)}</td>
             </tr>
-            <tr>
-              <td className="px-4 py-3">Paid Time Off</td>
-              <td className="px-4 py-3">{payslip.paidLeaveDays.toFixed(2)} ({payslip.paidLeaveDays.toFixed(0)} Paid leaves/Month)</td>
-              <td className="px-4 py-3">{money(paidLeaveAmount)}</td>
+            <tr className="hover:bg-muted/30 transition-colors">
+              <td className="px-5 py-3.5">Paid Time Off</td>
+              <td className="px-5 py-3.5 text-center text-muted-foreground">{payslip.paidLeaveDays.toFixed(2)} ({payslip.paidLeaveDays.toFixed(0)} Paid leaves/Month)</td>
+              <td className="px-5 py-3.5 text-right font-medium text-green-600">{money(paidLeaveAmount)}</td>
             </tr>
-            <tr className="bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] font-semibold text-[#1a1c24]">
-              <td className="px-4 py-3">Total</td>
-              <td className="px-4 py-3">{(payslip.attendanceDays + payslip.paidLeaveDays).toFixed(2)}</td>
-              <td className="px-4 py-3 text-[#28a745]">{money(payslip.grossPay)}</td>
+            <tr className="bg-muted/30 font-semibold text-foreground border-t-2 border-border">
+              <td className="px-5 py-3.5">Total</td>
+              <td className="px-5 py-3.5 text-center">{(payslip.attendanceDays + payslip.paidLeaveDays).toFixed(2)}</td>
+              <td className="px-5 py-3.5 text-right text-primary text-base">{money(payslip.grossPay)}</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <p className="text-sm text-[#6c757d]">
+      <p className="text-sm text-muted-foreground">
         Salary is calculated based on employee&apos;s monthly attendance. Paid leaves are included in total payable days, while unpaid leaves are deducted from the salary.
       </p>
     </div>
@@ -181,29 +181,34 @@ function SalaryComputationTab({ payslip }: { payslip: Payslip }) {
     ["Net Amount", payslip.netPay, "net"],
   ];
   return (
-    <div className="overflow-hidden rounded-xl border border-[#ede7f6]">
+    <div className="overflow-hidden rounded-xl border border-border shadow-sm">
       <table className="w-full text-left text-sm">
-        <thead className="bg-[#ffffff] text-xs uppercase text-[#6c757d]">
+        <thead className="bg-muted/30 text-xs uppercase text-muted-foreground border-b border-border">
           <tr>
-            <th className="px-4 py-3">Rule Name</th>
-            <th className="px-4 py-3">Rate %</th>
-            <th className="px-4 py-3">Amount</th>
+            <th className="px-5 py-4 font-medium">Rule Name</th>
+            <th className="px-5 py-4 font-medium text-center">Rate %</th>
+            <th className="px-5 py-4 font-medium text-right">Amount</th>
           </tr>
         </thead>
-        <tbody className="divide-y divide-[#ede7f6] text-[#374151]">
+        <tbody className="divide-y divide-border bg-card text-foreground">
           {rows.map(([label, value, type]) => (
             <tr
               key={String(label)}
               className={cn(
-                type === "earning" && "bg-[#edf7ef]",
-                type === "deduction" && "bg-[#fdecea]",
-                type === "gross" && "bg-[#ede7f6] font-semibold text-[#714b67]",
-                type === "net" && "bg-[#edf7ef] font-bold text-[#28a745]"
+                "transition-colors hover:bg-muted/30",
+                type === "gross" && "bg-muted/30 font-semibold text-foreground border-y border-border",
+                type === "net" && "bg-muted/50 font-bold text-foreground border-t-2 border-border"
               )}
             >
-              <td className="px-4 py-3">{label}</td>
-              <td className="px-4 py-3">100</td>
-              <td className={cn("px-4 py-3", Number(value) < 0 ? "text-[#dc3545]" : "text-[#1a1c24]")}>
+              <td className="px-5 py-3.5">{label}</td>
+              <td className="px-5 py-3.5 text-center text-muted-foreground">100</td>
+              <td className={cn(
+                "px-5 py-3.5 text-right font-medium",
+                type === "earning" && "text-green-600",
+                type === "deduction" && "text-red-600",
+                type === "gross" && "text-primary",
+                type === "net" && "text-primary text-base"
+              )}>
                 {Number(value) < 0 ? `- ${money(Math.abs(Number(value)))}` : money(Number(value))}
               </td>
             </tr>
@@ -257,7 +262,7 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
         <div>
           <div className="flex flex-wrap items-center gap-3">
             <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
-              <CreditCard className="h-6 w-6 text-[#714b67]" />
+              <CreditCard className="h-6 w-6 text-primary" />
               {payrun ? `Payrun for ${monthName} ${payrun.year}` : "Payrun"}
             </h1>
             {payrun && <StatusBadge status={payrun.status} />}
@@ -265,11 +270,11 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
           <p className="mt-1 text-sm text-[#6c757d]">Review generated payslips and payroll totals</p>
         </div>
         <div className="flex flex-wrap gap-2">
-          <Button className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
+          <Button className="bg-primary text-white hover:bg-[#5a3a52]">
             <Plus className="h-4 w-4" />
             New Payslip
           </Button>
-          <Button className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
+          <Button className="bg-primary text-white hover:bg-[#5a3a52]">
             <RefreshCw className="h-4 w-4" />
             Compute
           </Button>
@@ -295,8 +300,8 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
           <SummaryCard label="Employer Cost" value={money(summary.employerCost)} />
           <SummaryCard label="Gross" value={money(summary.gross)} />
           <SummaryCard label="Net" value={money(summary.net)} tone="text-[#28a745]" />
-          <div className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-5">
-            <p className="text-sm text-[#6c757d]">Status</p>
+          <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+            <p className="text-sm font-medium text-muted-foreground">Status</p>
             <div className="mt-3"><StatusBadge status={payrun.status} /></div>
           </div>
         </div>
@@ -304,41 +309,41 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-[#714b67]" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : payrun ? (
-        <div className="overflow-hidden rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)]">
+        <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
           <div className="overflow-x-auto">
             <table className="w-full text-left text-sm">
-              <thead className="bg-[#faf8ff] text-xs uppercase text-[#6c757d]">
+              <thead className="bg-muted/50 text-xs uppercase text-muted-foreground">
                 <tr>
-                  <th className="px-4 py-3 font-medium">Employee</th>
-                  <th className="px-4 py-3 font-medium">Employer Cost</th>
-                  <th className="px-4 py-3 font-medium">Basic Wage</th>
-                  <th className="px-4 py-3 font-medium">Gross Wage</th>
-                  <th className="px-4 py-3 font-medium">Net Wage</th>
-                  <th className="px-4 py-3 font-medium">Status</th>
-                  <th className="px-4 py-3 font-medium">Payslip</th>
+                  <th className="px-6 py-4 font-medium">Employee</th>
+                  <th className="px-6 py-4 font-medium">Employer Cost</th>
+                  <th className="px-6 py-4 font-medium">Basic Wage</th>
+                  <th className="px-6 py-4 font-medium">Gross Wage</th>
+                  <th className="px-6 py-4 font-medium">Net Wage</th>
+                  <th className="px-6 py-4 font-medium">Status</th>
+                  <th className="px-6 py-4 font-medium">Payslip</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#ede7f6]">
+              <tbody className="divide-y divide-border">
                 {payrun.payslips.map((payslip) => (
-                  <tr key={payslip.id} className="text-[#374151]">
-                    <td className="px-4 py-3">
-                      <div className="font-medium text-[#374151]">{payslip.employee.name}</div>
-                      <div className="text-xs text-[#6c757d]">{payslip.employee.loginId}</div>
+                  <tr key={payslip.id} className="text-foreground transition-colors hover:bg-muted/30">
+                    <td className="px-6 py-4">
+                      <div className="font-medium text-foreground">{payslip.employee.name}</div>
+                      <div className="text-xs text-muted-foreground">{payslip.employee.loginId}</div>
                     </td>
-                    <td className="px-4 py-3">{money(payslip.employerCost)}</td>
-                    <td className="px-4 py-3">{money(payslip.basicSalary)}</td>
-                    <td className="px-4 py-3">{money(payslip.grossPay)}</td>
-                    <td className="px-4 py-3 font-semibold text-[#28a745]">{money(payslip.netPay)}</td>
-                    <td className="px-4 py-3"><PayslipStatusBadge status={payslip.status} /></td>
-                    <td className="px-4 py-3">
+                    <td className="px-6 py-4">{money(payslip.employerCost)}</td>
+                    <td className="px-6 py-4">{money(payslip.basicSalary)}</td>
+                    <td className="px-6 py-4">{money(payslip.grossPay)}</td>
+                    <td className="px-6 py-4 font-semibold text-primary">{money(payslip.netPay)}</td>
+                    <td className="px-6 py-4"><PayslipStatusBadge status={payslip.status} /></td>
+                    <td className="px-6 py-4">
                       <Button
                         variant="outline"
                         size="sm"
                         onClick={() => setSelectedPayslip(payslip)}
-                        className="border-[#714b67]/40 text-[#714b67] hover:bg-[#5a3a52]/10"
+                        className="border-primary/40 text-primary hover:bg-primary/10"
                       >
                         View Payslip
                       </Button>
@@ -352,27 +357,27 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
       ) : null}
 
       <Dialog open={Boolean(selectedPayslip)} onOpenChange={(open) => !open && setSelectedPayslip(null)}>
-        <DialogContent className="max-h-[92vh] overflow-y-auto border-[#ede7f6] bg-[#f4f5f7] text-[#1a1c24] sm:max-w-5xl">
-          <DialogHeader>
+        <DialogContent className="max-h-[92vh] overflow-y-auto border-border bg-card text-foreground shadow-lg sm:max-w-4xl p-0">
+          <DialogHeader className="px-6 py-4 border-b border-border bg-card sticky top-0 z-10">
             <div className="flex items-center justify-between gap-3">
-              <DialogTitle>Payslip</DialogTitle>
-              <Button variant="outline" size="sm" onClick={() => window.print()} className="border-[#e5e7eb] text-[#374151] hover:bg-[#faf8ff]">
+              <DialogTitle className="text-xl">Payslip Details</DialogTitle>
+              <Button variant="outline" size="sm" onClick={() => window.print()} className="shadow-sm">
                 <Printer className="h-4 w-4" />
                 Print
               </Button>
             </div>
           </DialogHeader>
           {selectedPayslip && payrun && (
-            <div className="space-y-5">
-              <Tabs defaultValue="worked-days">
-                <TabsList>
-                  <TabsTrigger value="worked-days">Worked Days</TabsTrigger>
+            <div className="p-6 pt-2 space-y-6">
+              <Tabs defaultValue="salary-computation" className="w-full">
+                <TabsList className="grid w-full max-w-[400px] grid-cols-2 mb-6">
                   <TabsTrigger value="salary-computation">Salary Computation</TabsTrigger>
+                  <TabsTrigger value="worked-days">Worked Days</TabsTrigger>
                 </TabsList>
-                <TabsContent value="worked-days">
+                <TabsContent value="worked-days" className="mt-0">
                   <WorkedDaysTab payslip={selectedPayslip} />
                 </TabsContent>
-                <TabsContent value="salary-computation">
+                <TabsContent value="salary-computation" className="mt-0">
                   <SalaryComputationTab payslip={selectedPayslip} />
                 </TabsContent>
               </Tabs>
@@ -384,10 +389,10 @@ export default function PayrunDetailPage({ params }: { params: { id: string } })
   );
 }
 
-function SummaryCard({ label, value, tone = "text-[#1a1c24]" }: { label: string; value: string; tone?: string }) {
+function SummaryCard({ label, value, tone = "text-foreground" }: { label: string; value: string; tone?: string }) {
   return (
-    <div className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-5">
-      <p className="text-sm text-[#6c757d]">{label}</p>
+    <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+      <p className="text-sm font-medium text-muted-foreground">{label}</p>
       <p className={cn("mt-3 text-2xl font-bold", tone)}>{value}</p>
     </div>
   );

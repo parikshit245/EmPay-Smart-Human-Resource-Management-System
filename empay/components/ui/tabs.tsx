@@ -42,7 +42,7 @@ function TabsTrigger({
     <TabsPrimitive.Trigger
       data-slot="tabs-trigger"
       className={cn(
-        "inline-flex h-7 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#714b67] disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-[#ede7f6] data-[state=active]:text-[#714b67]",
+        "inline-flex h-7 items-center justify-center rounded-md px-3 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary disabled:pointer-events-none disabled:opacity-50 data-[state=active]:bg-[#ede7f6] data-[state=active]:text-primary",
         className
       )}
       {...props}

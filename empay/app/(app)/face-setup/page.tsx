@@ -93,61 +93,61 @@ export default function FaceEnrollmentPage() {
 
       <div className="max-w-2xl mx-auto space-y-6">
         <div>
-          <h1 className="text-2xl font-bold text-slate-100 flex items-center gap-2">
-            <Scan className="h-6 w-6 text-indigo-400" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <Scan className="h-6 w-6 text-primary" />
             Face Recognition Setup
           </h1>
-          <p className="mt-1 text-slate-400 text-sm">
+          <p className="mt-1 text-muted-foreground text-sm">
             Enroll your face to enable biometric check-in and check-out authentication.
           </p>
         </div>
 
         {/* Status card */}
-        <Card className="border-slate-800/70 bg-slate-900/70">
-          <CardHeader className="border-b border-slate-800/70 pb-4">
+        <Card className="rounded-2xl border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+          <CardHeader className="border-b border-border p-6">
             <div className="flex items-center justify-between">
-              <CardTitle className="text-slate-100 text-base">Biometric Status</CardTitle>
+              <CardTitle className="text-card-foreground text-base font-semibold">Biometric Status</CardTitle>
               {isEnrolled === null ? (
-                <Loader2 className="h-4 w-4 animate-spin text-slate-400" />
+                <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
               ) : isEnrolled ? (
-                <Badge className="border-emerald-500/30 bg-emerald-500/10 text-emerald-300 border">
+                <Badge className="border-green-500/30 bg-green-50 text-green-700 shadow-none hover:bg-green-50">
                   <CheckCircle2 className="h-3 w-3 mr-1" />
                   Enrolled
                 </Badge>
               ) : (
-                <Badge variant="outline" className="border-amber-500/30 bg-amber-500/10 text-amber-300">
+                <Badge variant="outline" className="border-yellow-500/30 bg-yellow-50 text-yellow-700 shadow-none">
                   Not Enrolled
                 </Badge>
               )}
             </div>
           </CardHeader>
-          <CardContent className="pt-5 space-y-4">
-            <div className="flex items-start gap-4 rounded-lg border border-slate-800/60 bg-slate-950/40 p-4">
+          <CardContent className="p-6 space-y-4">
+            <div className="flex items-start gap-4 rounded-xl border border-border bg-muted/30 p-4 transition-colors hover:bg-muted/50">
               <div
                 className={cn(
                   "flex h-12 w-12 shrink-0 items-center justify-center rounded-xl border",
                   isEnrolled
-                    ? "border-emerald-500/30 bg-emerald-500/10"
-                    : "border-slate-700 bg-slate-800/50"
+                    ? "border-green-500/30 bg-green-50"
+                    : "border-border bg-muted/50"
                 )}
               >
                 {isEnrolled ? (
-                  <ShieldCheck className="h-6 w-6 text-emerald-400" />
+                  <ShieldCheck className="h-6 w-6 text-green-600" />
                 ) : (
-                  <ShieldOff className="h-6 w-6 text-slate-500" />
+                  <ShieldOff className="h-6 w-6 text-muted-foreground" />
                 )}
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm font-semibold text-slate-200">
+                <p className="text-sm font-semibold text-foreground">
                   {user?.name ?? "Your Account"}
                 </p>
-                <p className="text-xs text-slate-400 mt-0.5">
+                <p className="text-xs text-muted-foreground mt-0.5">
                   {isEnrolled
                     ? "Your face is enrolled. You can now use face recognition for attendance."
                     : "No face enrolled yet. Use the button below to register your face."}
                 </p>
                 {isEnrolled && (
-                  <p className="text-xs text-emerald-400/80 mt-1">
+                  <p className="text-xs text-green-600/80 mt-1 font-medium">
                     128-dimensional face descriptor stored securely in the database.
                   </p>
                 )}
@@ -158,10 +158,10 @@ export default function FaceEnrollmentPage() {
             {feedback && (
               <div
                 className={cn(
-                  "rounded-lg border p-3 text-sm",
+                  "rounded-lg border p-3 text-sm font-medium shadow-sm",
                   feedback.type === "success"
-                    ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-300"
-                    : "border-red-500/30 bg-red-500/10 text-red-300"
+                    ? "border-green-500/30 bg-green-50 text-green-700"
+                    : "border-red-500/30 bg-red-50 text-red-700"
                 )}
               >
                 {feedback.message}
@@ -169,11 +169,11 @@ export default function FaceEnrollmentPage() {
             )}
 
             {/* Actions */}
-            <div className="flex gap-3">
+            <div className="flex gap-3 mt-2">
               <Button
                 onClick={() => setShowCamera(true)}
                 disabled={loading || removing}
-                className="flex-1 bg-indigo-600 hover:bg-indigo-500 text-white"
+                className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm transition-all duration-200 h-10"
               >
                 {loading ? (
                   <><Loader2 className="h-4 w-4 animate-spin mr-2" /> Enrolling…</>
@@ -186,7 +186,7 @@ export default function FaceEnrollmentPage() {
                   variant="outline"
                   onClick={handleRemoveFace}
                   disabled={loading || removing}
-                  className="border-red-500/40 bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200"
+                  className="border-destructive/30 bg-destructive/5 text-destructive hover:bg-destructive/10 transition-all duration-200 h-10 shadow-sm"
                 >
                   {removing ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
@@ -206,33 +206,35 @@ export default function FaceEnrollmentPage() {
               title: "Secure Storage",
               description: "Your face is stored as an encrypted 128-point mathematical vector, never as a photo.",
               icon: ShieldCheck,
-              color: "text-indigo-400",
-              bg: "bg-indigo-500/10 border-indigo-500/30",
+              color: "text-primary",
+              bg: "bg-primary/10 border-primary/20",
             },
             {
               title: "Role-Based Access",
               description: "All roles (Admin, HR, Payroll, Employee) must verify their face for attendance.",
               icon: Scan,
-              color: "text-emerald-400",
-              bg: "bg-emerald-500/10 border-emerald-500/30",
+              color: "text-green-600",
+              bg: "bg-green-50 border-green-200",
             },
             {
               title: "Privacy First",
               description: "Face data never leaves your server. No third-party AI services are used.",
               icon: ShieldOff,
-              color: "text-amber-400",
-              bg: "bg-amber-500/10 border-amber-500/30",
+              color: "text-yellow-600",
+              bg: "bg-yellow-50 border-yellow-200",
             },
           ].map((info) => (
             <div
               key={info.title}
-              className="rounded-xl border border-slate-800/70 bg-slate-900/70 p-4 space-y-2"
+              className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 space-y-3 h-full flex flex-col transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1"
             >
-              <div className={cn("flex h-9 w-9 items-center justify-center rounded-lg border", info.bg)}>
-                <info.icon className={cn("h-4 w-4", info.color)} />
+              <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border shadow-sm", info.bg)}>
+                <info.icon className={cn("h-5 w-5", info.color)} />
               </div>
-              <p className="text-sm font-semibold text-slate-200">{info.title}</p>
-              <p className="text-xs text-slate-400 leading-relaxed">{info.description}</p>
+              <div>
+                <p className="text-sm font-semibold text-card-foreground">{info.title}</p>
+                <p className="text-xs text-muted-foreground leading-relaxed mt-1">{info.description}</p>
+              </div>
             </div>
           ))}
         </div>

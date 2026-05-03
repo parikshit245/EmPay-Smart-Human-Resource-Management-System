@@ -72,7 +72,7 @@ export default function SignInPage() {
                 unoptimized
               />
               <div className="text-center">
-                <CardTitle className="text-3xl font-bold text-[#714b67]">
+                <CardTitle className="text-3xl font-bold text-primary">
                   EmPay
                 </CardTitle>
                 <CardDescription className="text-[#6c757d] mt-1">
@@ -99,7 +99,7 @@ export default function SignInPage() {
                 <Input
                   id="loginId"
                   placeholder="OIJODO20250001 or john@company.com"
-                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67] focus:ring-[#714b67]/20"
+                  className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary focus:ring-primary/20"
                   {...register("loginId")}
                 />
                 {errors.loginId && (
@@ -114,7 +114,7 @@ export default function SignInPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Enter your password"
-                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-[#714b67] focus:ring-[#714b67]/20 pr-10"
+                    className="bg-[#faf8ff] border-[#e5e7eb] text-[#1a1c24] placeholder:text-[#6c757d] focus:border-primary focus:ring-primary/20 pr-10"
                     {...register("password")}
                   />
                   <button
@@ -133,7 +133,7 @@ export default function SignInPage() {
               <Button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-[#714b67] hover:bg-[#5a3a52] text-white font-semibold shadow-[0_1px_4px_rgba(113,75,103,0.10)]  transition-all duration-200 mt-2"
+                className="w-full bg-primary hover:bg-[#5a3a52] text-white font-semibold shadow-[0_1px_4px_rgba(113,75,103,0.10)]  transition-all duration-200 mt-2"
               >
                 {isSubmitting ? (
                   <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Signing in...</>
@@ -147,7 +147,7 @@ export default function SignInPage() {
           <CardFooter className="justify-center pt-0">
             <p className="text-sm text-[#6c757d]">
               Don&apos;t have an account?{" "}
-              <Link href="/sign-up" className="text-[#714b67] hover:text-[#714b67] font-medium transition-colors">
+              <Link href="/sign-up" className="text-primary hover:text-primary font-medium transition-colors">
                 Sign Up
               </Link>
             </p>

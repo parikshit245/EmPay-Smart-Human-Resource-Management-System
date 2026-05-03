@@ -167,7 +167,7 @@ export default function PayrollPage() {
       label: "Employees Included",
       value: String(data?.latestSummary.employeesIncluded || 0),
       icon: Users,
-      tone: "text-[#714b67]",
+      tone: "text-primary",
     },
     {
       label: "Average Net Pay",
@@ -197,7 +197,7 @@ export default function PayrollPage() {
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="flex items-center gap-2 text-2xl font-bold text-[#1a1c24]">
-            <CreditCard className="h-6 w-6 text-[#714b67]" />
+            <CreditCard className="h-6 w-6 text-primary" />
             Payroll
           </h1>
           <p className="mt-1 text-sm text-[#6c757d]">Manage payruns and payslips</p>
@@ -205,7 +205,7 @@ export default function PayrollPage() {
 
         <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
           <DialogTrigger asChild>
-            <Button className="bg-[#714b67] text-white hover:bg-[#5a3a52]">
+            <Button className="bg-primary text-white hover:bg-[#5a3a52]">
               <Plus className="h-4 w-4" />
               Create Payrun
             </Button>
@@ -252,9 +252,9 @@ export default function PayrollPage() {
               )}
 
               {(data?.missingSalaryEmployees || []).length > 0 && (
-                <div className="rounded-xl border border-[#fbb130]/40 bg-[#fff8ec] p-4">
-                  <div className="flex items-center gap-2 text-sm font-semibold text-[#b26f00]">
-                    <AlertTriangle className="h-4 w-4" />
+                <div className="rounded-xl border border-yellow-500/30 bg-yellow-50/50 p-4">
+                  <div className="flex items-center gap-2 text-sm font-semibold text-yellow-800">
+                    <AlertTriangle className="h-4 w-4 text-yellow-600" />
                     Employees missing salary info
                   </div>
                   <div className="mt-3 grid gap-2 sm:grid-cols-2">
@@ -262,10 +262,10 @@ export default function PayrollPage() {
                       <Link
                         key={employee.id}
                         href={`/employees/${employee.id}`}
-                        className="rounded-lg border border-[#fbb130]/30 bg-[#faf8ff] px-3 py-2 text-sm text-[#b26f00] hover:bg-[#fff8ec]"
+                        className="rounded-lg border border-yellow-500/20 bg-background px-3 py-2 text-sm text-foreground hover:bg-yellow-50 hover:border-yellow-500/40 transition-colors"
                       >
-                        {employee.name}
-                        <span className="ml-2 text-xs text-[#b26f00]/70">{employee.loginId}</span>
+                        <span className="font-medium">{employee.name}</span>
+                        <span className="ml-2 text-xs text-muted-foreground">{employee.loginId}</span>
                       </Link>
                     ))}
                   </div>
@@ -320,7 +320,7 @@ export default function PayrollPage() {
               <Button
                 type="submit"
                 disabled={creating || previewEmployees.length === 0 || Boolean(duplicatePayrun)}
-                className="w-full bg-[#714b67] text-white hover:bg-[#5a3a52]"
+                className="w-full bg-primary text-white hover:bg-[#5a3a52]"
               >
                 {creating && <Loader2 className="h-4 w-4 animate-spin" />}
                 Generate Payslips
@@ -340,10 +340,10 @@ export default function PayrollPage() {
         {metrics.map((metric) => {
           const Icon = metric.icon;
           return (
-            <div key={metric.label} className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-5">
+            <div key={metric.label} className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
               <div className="flex items-center justify-between">
-                <p className="text-sm text-[#6c757d]">{metric.label}</p>
-                <div className="rounded-lg bg-[#f3eaf1] p-2">
+                <p className="text-sm font-medium text-muted-foreground">{metric.label}</p>
+                <div className="rounded-lg bg-primary/5 p-2">
                   <Icon className={`h-4 w-4 ${metric.tone}`} />
                 </div>
               </div>
@@ -353,27 +353,35 @@ export default function PayrollPage() {
         })}
       </div>
 
-      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-        {warnings.map(([label, count, filter]) => (
-          <Link
-            key={label}
-            href={`/employees?filter=${filter}`}
-            className="rounded-xl border border-[#fbb130]/40 bg-[#fff8ec] p-4 transition hover:bg-[#fff8ec]"
-          >
-            <div className="flex items-start justify-between gap-3">
-              <div>
-                <p className="text-sm font-medium text-[#b26f00]">{label}</p>
-                <p className="mt-2 text-2xl font-bold text-[#b26f00]">{count}</p>
-              </div>
-              <AlertTriangle className="h-5 w-5 text-[#b26f00]" />
-            </div>
-          </Link>
-        ))}
+      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] overflow-hidden transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
+        <div className="border-b border-border bg-muted/30 px-6 py-5">
+          <h2 className="flex items-center gap-2 text-base font-semibold text-card-foreground">
+            <AlertTriangle className="h-5 w-5 text-yellow-600" />
+            Incomplete Employee Info
+          </h2>
+          <p className="text-xs text-muted-foreground mt-1 ml-6">
+            Resolve these missing details before generating payslips.
+          </p>
+        </div>
+        <div className="grid gap-3 p-4 sm:grid-cols-2 lg:grid-cols-3">
+          {warnings.map(([label, count, filter]) => (
+            <Link
+              key={label}
+              href={`/employees?filter=${filter}`}
+              className="flex items-center justify-between rounded-lg border border-yellow-500/30 bg-yellow-50/50 p-3 transition-all hover:bg-yellow-50 hover:border-yellow-500/50 hover:shadow-sm group"
+            >
+              <p className="text-sm font-medium text-yellow-800 transition-colors">{label}</p>
+              <span className="flex h-6 min-w-6 items-center justify-center rounded-full bg-yellow-100 px-2.5 text-xs font-bold text-yellow-800 ring-1 ring-inset ring-yellow-500/30">
+                {count}
+              </span>
+            </Link>
+          ))}
+        </div>
       </div>
 
       {loading ? (
         <div className="flex justify-center py-20">
-          <Loader2 className="h-8 w-8 animate-spin text-[#714b67]" />
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
         </div>
       ) : payruns.length === 0 ? (
         <div className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] py-16 text-center">
@@ -386,18 +394,18 @@ export default function PayrollPage() {
             <button
               key={payrun.id}
               onClick={() => router.push(`/payroll/${payrun.id}`)}
-              className="rounded-xl border border-[#ede7f6] bg-[#ffffff] shadow-[0_1px_4px_rgba(113,75,103,0.10)] p-5 text-left transition hover:border-[#714b67]/50 hover:bg-[#ffffff]"
+              className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 text-left transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-primary/50"
             >
               <div className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-lg font-semibold text-[#1a1c24]">
+                  <p className="text-lg font-semibold text-foreground">
                     Payrun for {months[payrun.month - 1]} {payrun.year}
                   </p>
-                  <p className="mt-1 text-sm text-[#6c757d]">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {payrun._count.payslips} Payslip{payrun._count.payslips !== 1 ? "s" : ""}
                   </p>
                 </div>
-                <CreditCard className="h-5 w-5 text-[#714b67]" />
+                <CreditCard className="h-5 w-5 text-primary" />
               </div>
             </button>
           ))}

@@ -90,7 +90,7 @@ function ChartCard({
 
   return (
     <Backlight className="w-full h-full">
-      <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
         <div className="mb-6 flex items-center justify-between gap-3">
           <h2 className="font-semibold text-card-foreground text-lg">{title}</h2>
           <div className="rounded-lg border border-border bg-muted/50 p-1">
@@ -228,7 +228,7 @@ export default function DashboardPage() {
             <Link
               key={payrun.id}
               href={`/payroll/${payrun.id}`}
-              className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:border-primary/30 group"
+              className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1 hover:border-primary/30 group"
             >
               <div className="flex items-center justify-between">
                 <div>
@@ -253,7 +253,7 @@ export default function DashboardPage() {
             title="Employer Cost"
             data={data.employerCost || []}
             dataKey="total"
-            color="#6B46C1"
+            color="var(--primary)"
             formatter={money}
           />
           <ChartCard
@@ -269,18 +269,19 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-8 min-h-[120px]">
+      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-8 min-h-[120px] transition-all duration-300 hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)] relative overflow-hidden">
+        <div className="absolute top-0 right-0 -mt-16 -mr-16 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
         <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{formatDate(data?.today || new Date())}</p>
         <TypingAnimation
           as="h1"
           delay={400}
-          className="mt-2 text-3xl font-bold tracking-tight text-foreground"
+          className="mt-2 text-3xl font-bold tracking-tight text-primary"
         >
           {`Welcome back, ${firstName}`}
         </TypingAnimation>
       </div>
 
-      <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+      <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <p className="text-sm text-muted-foreground mb-1">Today&apos;s attendance status</p>
@@ -298,7 +299,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+        <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
           <h2 className="mb-6 flex items-center gap-2 font-semibold text-card-foreground text-lg">
             <Calendar className="h-5 w-5 text-primary" />
             Recent Time Off
@@ -322,7 +323,7 @@ export default function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+        <div className="rounded-2xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all duration-300 hover:shadow-[0_8px_24px_rgba(0,0,0,0.08)] hover:-translate-y-1">
           <h2 className="mb-6 flex items-center gap-2 font-semibold text-card-foreground text-lg">
             <CreditCard className="h-5 w-5 text-primary" />
             Recent Payslips
