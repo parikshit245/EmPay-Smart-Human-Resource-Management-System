@@ -15,6 +15,8 @@ import { Calendar, CreditCard, Loader2, LogIn, TriangleAlert } from "lucide-reac
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Backlight } from "@/components/ui/backlight";
+import { TypingAnimation } from "@/components/ui/typing-animation";
 import { useUser } from "@/lib/UserContext";
 import { cn } from "@/lib/utils";
 
@@ -87,40 +89,42 @@ function ChartCard({
   const visibleData = view === "annual" ? data : data.slice(0, new Date().getMonth() + 1);
 
   return (
-    <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
-      <div className="mb-6 flex items-center justify-between gap-3">
-        <h2 className="font-semibold text-card-foreground text-lg">{title}</h2>
-        <div className="rounded-lg border border-border bg-muted/50 p-1">
-          {(["annual", "monthly"] as const).map((option) => (
-            <button
-              key={option}
-              onClick={() => setView(option)}
-              className={cn(
-                "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
-                view === option ? "bg-background text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
-              )}
-            >
-              {option === "annual" ? "Annually" : "Monthly"}
-            </button>
-          ))}
+    <Backlight className="w-full h-full">
+      <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
+        <div className="mb-6 flex items-center justify-between gap-3">
+          <h2 className="font-semibold text-card-foreground text-lg">{title}</h2>
+          <div className="rounded-lg border border-border bg-muted/50 p-1">
+            {(["annual", "monthly"] as const).map((option) => (
+              <button
+                key={option}
+                onClick={() => setView(option)}
+                className={cn(
+                  "rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
+                  view === option ? "bg-background text-primary shadow-sm" : "text-muted-foreground hover:text-foreground"
+                )}
+              >
+                {option === "annual" ? "Annually" : "Monthly"}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div className="h-72">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={visibleData}>
+              <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
+              <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} dy={10} />
+              <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} dx={-10} tickFormatter={(value) => formatter?.(Number(value)) || String(value)} />
+              <Tooltip
+                cursor={{ fill: "hsl(var(--muted))" }}
+                contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
+                formatter={(value) => formatter?.(Number(value)) || value}
+              />
+              <Bar dataKey={dataKey} fill={color} radius={[6, 6, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
         </div>
       </div>
-      <div className="h-72">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={visibleData}>
-            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" vertical={false} />
-            <XAxis dataKey="month" stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} dy={10} />
-            <YAxis stroke="hsl(var(--muted-foreground))" fontSize={12} tickLine={false} axisLine={false} dx={-10} tickFormatter={(value) => formatter?.(Number(value)) || String(value)} />
-            <Tooltip
-              cursor={{ fill: "hsl(var(--muted))" }}
-              contentStyle={{ background: "hsl(var(--card))", border: "1px solid hsl(var(--border))", borderRadius: 8, boxShadow: "0 4px 12px rgba(0,0,0,0.05)" }}
-              formatter={(value) => formatter?.(Number(value)) || value}
-            />
-            <Bar dataKey={dataKey} fill={color} radius={[6, 6, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
+    </Backlight>
   );
 }
 
@@ -265,9 +269,15 @@ export default function DashboardPage() {
 
   return (
     <div className="space-y-8">
-      <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-8">
+      <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-8 min-h-[120px]">
         <p className="text-sm font-medium text-muted-foreground uppercase tracking-wider">{formatDate(data?.today || new Date())}</p>
-        <h1 className="mt-2 text-3xl font-bold tracking-tight text-foreground">Welcome back, {firstName}</h1>
+        <TypingAnimation
+          as="h1"
+          delay={400}
+          className="mt-2 text-3xl font-bold tracking-tight text-foreground"
+        >
+          {`Welcome back, ${firstName}`}
+        </TypingAnimation>
       </div>
 
       <div className="rounded-xl border border-border bg-card shadow-[0_2px_8px_rgba(0,0,0,0.05)] p-6 transition-all hover:shadow-[0_4px_16px_rgba(0,0,0,0.08)]">
