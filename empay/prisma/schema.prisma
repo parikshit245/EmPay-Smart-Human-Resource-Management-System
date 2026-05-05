@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -34,6 +35,11 @@ model User {
   leaveAllocations EmployeeLeaveAllocation[]
   timeOffRequests  TimeOffRequest[]
   payslips         Payslip[]
+
+  @@index([createdAt])
+  @@index([managerId])
+  @@index([name])
+  @@index([department])
 }
 
 enum Role {
@@ -101,6 +107,9 @@ model Attendance {
   checkIn  DateTime?
   checkOut DateTime?
   status   AttendanceStatus @default(ABSENT)
+
+  @@index([userId, date])
+  @@index([date])
 }
 
 enum AttendanceStatus {
@@ -122,6 +131,10 @@ model TimeOffRequest {
   medicalCertificateType String?
   medicalCertificateData String?
   createdAt              DateTime    @default(now())
+
+  @@index([userId, createdAt])
+  @@index([userId, startDate, endDate])
+  @@index([status, startDate, endDate])
 }
 
 enum LeaveType {
@@ -148,6 +161,8 @@ model Payrun {
   paidAt     DateTime?
   createdAt  DateTime     @default(now())
   payslips   Payslip[]
+
+  @@index([year, month, createdAt])
 }
 
 model Payslip {
@@ -178,6 +193,9 @@ model Payslip {
   unpaidLeaveDeduction Float         @default(0)
   status               PayslipStatus @default(GENERATED)
   createdAt            DateTime      @default(now())
+
+  @@index([employeeId, createdAt])
+  @@index([payrunId, createdAt])
 }
 
 model EmployeeLeaveAllocation {
@@ -198,6 +216,8 @@ model PublicHoliday {
   name      String
   date      DateTime
   createdAt DateTime @default(now())
+
+  @@index([date])
 }
 
 enum PayrunStatus {

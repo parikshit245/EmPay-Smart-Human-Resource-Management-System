@@ -66,7 +66,7 @@ export default function TopBar({ onSearch, onMenuClick }: TopBarProps) {
     setSearching(true);
     const timeout = window.setTimeout(async () => {
       try {
-        const res = await fetch(`/api/employees?search=${encodeURIComponent(query)}`);
+        const res = await fetch(`/api/employees?compact=1&search=${encodeURIComponent(query)}`);
         const json = await res.json();
         setResults(res.ok ? json.data.employees || [] : []);
       } finally {

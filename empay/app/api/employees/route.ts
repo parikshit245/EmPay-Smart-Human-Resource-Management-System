@@ -95,6 +95,31 @@ export async function GET(request: NextRequest) {
     const endOfDay = new Date(startOfDay.getTime() + 24 * 60 * 60 * 1000);
     const { searchParams } = new URL(request.url);
     const search = searchParams.get("search")?.trim();
+    const compact = searchParams.get("compact") === "1";
+
+    if (compact && search) {
+      const employees = await prisma.user.findMany({
+        where: {
+          OR: [
+            { name: { contains: search, mode: "insensitive" } },
+            { email: { contains: search, mode: "insensitive" } },
+            { loginId: { contains: search, mode: "insensitive" } },
+            { department: { contains: search, mode: "insensitive" } },
+          ],
+        },
+        select: {
+          id: true,
+          name: true,
+          email: true,
+          loginId: true,
+          department: true,
+        },
+        orderBy: { name: "asc" },
+        take: 8,
+      });
+
+      return NextResponse.json({ data: { employees } });
+    }
 
     const users = await prisma.user.findMany({
       where: search

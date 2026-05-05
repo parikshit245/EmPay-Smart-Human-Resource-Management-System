@@ -61,7 +61,7 @@ async function toPayslipData(user: {
   } | null;
   attendance?: Array<{ date: Date; checkIn: Date | null; status: string }>;
   timeOffRequests?: Array<{ startDate: Date; endDate: Date; status: string; leaveType: string }>;
-}, month: number, year: number) {
+}, month: number, year: number, holidays?: Set<string>) {
   if (!user.salaryInfo || !salaryHasValues(user.salaryInfo)) return null;
 
   const grossPay =
@@ -72,8 +72,8 @@ async function toPayslipData(user: {
     user.salaryInfo.lta +
     user.salaryInfo.fixedAllowance;
   const { start: monthStart, end: monthEnd } = monthRange(month, year);
-  const holidays = await publicHolidayKeys(monthStart, monthEnd);
-  const totalWorkingDays = countWorkingDaysBetween(monthStart, monthEnd, holidays);
+  const holidayKeys = holidays ?? await publicHolidayKeys(monthStart, monthEnd);
+  const totalWorkingDays = countWorkingDaysBetween(monthStart, monthEnd, holidayKeys);
   const attendanceDays = new Set(
     (user.attendance || [])
       .filter((item) => item.checkIn || item.status === "PRESENT")
@@ -84,13 +84,13 @@ async function toPayslipData(user: {
     if (normalizeLeaveType(leave.leaveType) === "UNPAID") return sum;
     const overlap = overlapRange(leave.startDate, leave.endDate, monthStart, monthEnd);
     if (!overlap) return sum;
-    return sum + countWorkingDaysBetween(overlap.start, overlap.end, holidays);
+    return sum + countWorkingDaysBetween(overlap.start, overlap.end, holidayKeys);
   }, 0);
   const unpaidLeaveDays = (user.timeOffRequests || []).reduce((sum, leave) => {
     if (leave.status !== "APPROVED" || normalizeLeaveType(leave.leaveType) !== "UNPAID") return sum;
     const overlap = overlapRange(leave.startDate, leave.endDate, monthStart, monthEnd);
     if (!overlap) return sum;
-    return sum + countWorkingDaysBetween(overlap.start, overlap.end, holidays);
+    return sum + countWorkingDaysBetween(overlap.start, overlap.end, holidayKeys);
   }, 0);
   const paidDays = Math.min(totalWorkingDays, attendanceDays + paidLeaveDays + unpaidLeaveDays);
   const dailyRate = totalWorkingDays > 0 ? grossPay / totalWorkingDays : 0;
@@ -179,6 +179,7 @@ export async function GET(request: NextRequest) {
       }),
     ]);
 
+    const holidayKeys = await publicHolidayKeys(start, end);
     const latestPayrun = payruns[0]
       ? await prisma.payrun.findUnique({
           where: { id: payruns[0].id },
@@ -194,7 +195,7 @@ export async function GET(request: NextRequest) {
 
     const previewEmployees = (
       await Promise.all(users.map(async (user) => {
-        const payslip = await toPayslipData(user, month, year);
+        const payslip = await toPayslipData(user, month, year, holidayKeys);
         if (!payslip) return null;
         const fullGross =
           user.salaryInfo!.basicSalary +
@@ -278,8 +279,9 @@ export async function POST(request: NextRequest) {
       },
     });
 
+    const holidayKeys = await publicHolidayKeys(start, end);
     const payslips = (
-      await Promise.all(users.map((user) => toPayslipData(user, parsed.data.month, parsed.data.year)))
+      await Promise.all(users.map((user) => toPayslipData(user, parsed.data.month, parsed.data.year, holidayKeys)))
     ).filter((payslip): payslip is NonNullable<typeof payslip> => Boolean(payslip));
 
     if (payslips.length === 0) {
