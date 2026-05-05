@@ -1,0 +1,107 @@
+@import "tw-animate-css";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer base {
+  .theme {
+    --font-heading: var(--font-sans);
+    --font-sans: var(--font-sans);
+    --animate-blink-cursor: blink-cursor 1.2s step-end infinite;
+  }
+  :root {
+    --background: #F8F9FB;
+    --foreground: #4B5563;
+    --card: #FFFFFF;
+    --card-foreground: #111827;
+    --popover: #FFFFFF;
+    --popover-foreground: #111827;
+    --primary: #714B67;
+    --primary-foreground: #FFFFFF;
+    --secondary: #FDF8FB;
+    --secondary-foreground: #714B67;
+    --muted: #F3F4F6;
+    --muted-foreground: #6B7280;
+    --accent: #FDF8FB;
+    --accent-foreground: #714B67;
+    --destructive: #EF4444;
+    --destructive-foreground: #FFFFFF;
+    --border: #E5E7EB;
+    --input: #E5E7EB;
+    --ring: #714B67;
+    --chart-1: #9CA3AF;
+    --chart-2: #D1D5DB;
+    --chart-3: #714B67;
+    --chart-4: #4B5563;
+    --chart-5: #E5E7EB;
+    --radius: 0.75rem;
+    --sidebar: #FFFFFF;
+    --sidebar-foreground: #4B5563;
+    --sidebar-primary: #714B67;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #FDF8FB;
+    --sidebar-accent-foreground: #714B67;
+    --sidebar-border: #E5E7EB;
+    --sidebar-ring: #714B67;
+  }
+  .dark {
+    --background: #F8F9FB;
+    --foreground: #4B5563;
+    --card: #FFFFFF;
+    --card-foreground: #111827;
+    --popover: #FFFFFF;
+    --popover-foreground: #111827;
+    --primary: #714B67;
+    --primary-foreground: #FFFFFF;
+    --secondary: #FDF8FB;
+    --secondary-foreground: #714B67;
+    --muted: #F3F4F6;
+    --muted-foreground: #6B7280;
+    --accent: #FDF8FB;
+    --accent-foreground: #714B67;
+    --destructive: #EF4444;
+    --destructive-foreground: #FFFFFF;
+    --border: #E5E7EB;
+    --input: #E5E7EB;
+    --ring: #714B67;
+    --chart-1: #9CA3AF;
+    --chart-2: #D1D5DB;
+    --chart-3: #714B67;
+    --chart-4: #4B5563;
+    --chart-5: #E5E7EB;
+    --sidebar: #FFFFFF;
+    --sidebar-foreground: #4B5563;
+    --sidebar-primary: #714B67;
+    --sidebar-primary-foreground: #FFFFFF;
+    --sidebar-accent: #FDF8FB;
+    --sidebar-accent-foreground: #714B67;
+    --sidebar-border: #E5E7EB;
+    --sidebar-ring: #714B67;
+  }
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}
+
+@theme inline {
+  @keyframes blink-cursor {
+  0%, 49% {
+    opacity: 1;
+    }
+  50%, 100% {
+    opacity: 0;
+    }
+  }
+}
