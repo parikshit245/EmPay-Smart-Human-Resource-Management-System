@@ -1,0 +1,48 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: empay-hrms:latest
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      JWT_SECRET: ${JWT_SECRET:-change_this_secret_before_production}
+      GROQ_API_KEY: ${GROQ_API_KEY:-}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-empay}:${POSTGRES_PASSWORD:-empay_password}@postgres:5432/${POSTGRES_DB:-empay}
+      DIRECT_URL: postgresql://${POSTGRES_USER:-empay}:${POSTGRES_PASSWORD:-empay_password}@postgres:5432/${POSTGRES_DB:-empay}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+    expose:
+      - "3000"
+    ports:
+      - "3000:3000"
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.27-alpine
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    restart: unless-stopped
+
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-empay}
+      POSTGRES_USER: ${POSTGRES_USER:-empay}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-empay_password}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-empay} -d ${POSTGRES_DB:-empay}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+volumes:
+  postgres_data:

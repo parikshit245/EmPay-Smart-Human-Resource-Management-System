@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { getCurrentUser, hashPassword } from "@/lib/auth";
 import { generateLoginId, getNextSerialNumber } from "@/lib/generateLoginId";
-import nodemailer from "nodemailer";
 import { z } from "zod";
 
 export const dynamic = "force-dynamic";
@@ -12,75 +11,6 @@ function generateRandomPassword(length = 8): string {
   return Array.from({ length }, () =>
     chars.charAt(Math.floor(Math.random() * chars.length))
   ).join("");
-}
-
-function escapeHtml(value: string): string {
-  return value.replace(/[&<>"']/g, (char) => {
-    const entities: Record<string, string> = {
-      "&": "&amp;",
-      "<": "&lt;",
-      ">": "&gt;",
-      '"': "&quot;",
-      "'": "&#39;",
-    };
-
-    return entities[char];
-  });
-}
-
-async function sendWelcomeEmail({
-  to,
-  name,
-  loginId,
-  tempPassword,
-}: {
-  to: string;
-  name: string;
-  loginId: string;
-  tempPassword: string;
-}) {
-  const smtpUser = process.env.GMAIL_SMTP_USER;
-  const smtpPassword = process.env.GMAIL_SMTP_APP_PASSWORD;
-  const fromEmail = process.env.GMAIL_FROM_EMAIL || smtpUser;
-  const fromName = process.env.GMAIL_FROM_NAME || "EmPay";
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || "http://localhost:3000";
-
-  if (!smtpUser || !smtpPassword || !fromEmail) {
-    console.warn(
-      "[EMAIL SKIPPED] Configure GMAIL_SMTP_USER, GMAIL_SMTP_APP_PASSWORD, and GMAIL_FROM_EMAIL."
-    );
-    return;
-  }
-
-  const transporter = nodemailer.createTransport({
-    service: "gmail",
-    auth: {
-      user: smtpUser,
-      pass: smtpPassword,
-    },
-  });
-
-  const safeName = escapeHtml(name);
-  const safeLoginId = escapeHtml(loginId);
-  const safeTempPassword = escapeHtml(tempPassword);
-
-  await transporter.sendMail({
-    from: { name: fromName, address: fromEmail },
-    to,
-    subject: "Welcome to EmPay - Your Login Credentials",
-    html: `
-      <div style="font-family: sans-serif; max-width: 480px; margin: 0 auto;">
-        <h2 style="color: #6366f1;">Welcome to EmPay, ${safeName}!</h2>
-        <p>Your account has been created. Here are your login credentials:</p>
-        <div style="background: #f4f4f5; padding: 16px; border-radius: 8px; margin: 16px 0;">
-          <p><strong>Login ID:</strong> ${safeLoginId}</p>
-          <p><strong>Temporary Password:</strong> ${safeTempPassword}</p>
-        </div>
-        <p>Please log in and change your password immediately.</p>
-        <a href="${appUrl}/sign-in" style="display: inline-block; padding: 10px 20px; background: #6366f1; color: white; border-radius: 6px; text-decoration: none;">Login to EmPay</a>
-      </div>
-    `,
-  });
 }
 
 export async function GET(request: NextRequest) {
@@ -302,17 +232,18 @@ export async function POST(request: NextRequest) {
       },
     });
 
-    try {
-      await sendWelcomeEmail({
-        to: email,
-        name,
-        loginId,
-        tempPassword,
-      });
-    } catch (emailError) {
-      console.error("[EMAIL ERROR]", emailError);
-    }
-    return NextResponse.json({ data: { user } }, { status: 201 });
+    return NextResponse.json(
+      {
+        data: {
+          user,
+          credentials: {
+            loginId,
+            temporaryPassword: tempPassword,
+          },
+        },
+      },
+      { status: 201 }
+    );
   } catch (error) {
     console.error("[EMPLOYEES POST ERROR]", error);
     return NextResponse.json({ error: "Internal server error" }, { status: 500 });

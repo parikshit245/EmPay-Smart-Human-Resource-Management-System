@@ -1,0 +1,13 @@
+.git
+.next
+node_modules
+npm-debug.log*
+Dockerfile
+docker-compose*.yml
+.env
+.env*.local
+coverage
+terraform/.terraform
+terraform/*.tfstate
+terraform/*.tfstate.*
+ansible/*.retry

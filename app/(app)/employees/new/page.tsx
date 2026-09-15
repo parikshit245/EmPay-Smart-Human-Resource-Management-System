@@ -36,11 +36,17 @@ interface Manager {
   role: string;
 }
 
+interface CreatedCredentials {
+  loginId: string;
+  temporaryPassword: string;
+}
+
 export default function NewEmployeePage() {
   const router = useRouter();
   const [managers, setManagers] = useState<Manager[]>([]);
   const [serverError, setServerError] = useState<string | null>(null);
   const [success, setSuccess] = useState(false);
+  const [credentials, setCredentials] = useState<CreatedCredentials | null>(null);
 
   const {
     register,
@@ -87,8 +93,8 @@ export default function NewEmployeePage() {
         return;
       }
 
+      setCredentials(json.data.credentials);
       setSuccess(true);
-      setTimeout(() => router.push("/employees"), 2000);
     } catch {
       setServerError("Network error. Please try again.");
     }
@@ -101,8 +107,22 @@ export default function NewEmployeePage() {
           <CheckCircle2 className="w-8 h-8 text-[#28a745]" />
         </div>
         <h2 className="text-xl font-semibold text-[#1a1c24]">Employee Created!</h2>
-        <p className="text-[#6c757d] text-sm">Credentials have been sent to their email.</p>
-        <p className="text-[#6c757d] text-xs">Redirecting to employees list...</p>
+        <p className="text-[#6c757d] text-sm">Share these login credentials with the employee.</p>
+        {credentials && (
+          <div className="w-full max-w-sm rounded-lg border border-[#e5e7eb] bg-[#faf8ff] p-4 text-sm text-[#1a1c24]">
+            <div className="flex items-center justify-between gap-3">
+              <span className="text-[#6c757d]">Login ID</span>
+              <span className="font-medium">{credentials.loginId}</span>
+            </div>
+            <div className="mt-2 flex items-center justify-between gap-3">
+              <span className="text-[#6c757d]">Temporary Password</span>
+              <span className="font-medium">{credentials.temporaryPassword}</span>
+            </div>
+          </div>
+        )}
+        <Button onClick={() => router.push("/employees")} className="bg-primary hover:bg-[#5a3a52] text-white">
+          Go to Employees
+        </Button>
       </div>
     );
   }
@@ -124,7 +144,7 @@ export default function NewEmployeePage() {
             Add New Employee
           </h1>
           <p className="text-[#6c757d] text-sm mt-0.5">
-            An email with login credentials will be sent automatically
+            Login credentials will be shown after the employee is created
           </p>
         </div>
       </div>

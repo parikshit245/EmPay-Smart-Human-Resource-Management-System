@@ -1,0 +1,81 @@
+- name: Provision EC2 and deploy EmPay HRMS
+  hosts: app
+  become: true
+
+  vars:
+    app_name: empay-hrms
+    app_dir: /opt/empay-hrms
+    repo_version: main
+
+  tasks:
+    - name: Install system packages
+      ansible.builtin.apt:
+        name:
+          - ca-certificates
+          - curl
+          - git
+        update_cache: true
+        state: present
+
+    - name: Create apt keyring directory
+      ansible.builtin.file:
+        path: /etc/apt/keyrings
+        state: directory
+        mode: "0755"
+
+    - name: Install Docker repository key
+      ansible.builtin.get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: "0644"
+
+    - name: Add Docker apt repository
+      ansible.builtin.apt_repository:
+        repo: "deb [arch=amd64 signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        state: present
+
+    - name: Install Docker Engine and Compose plugin
+      ansible.builtin.apt:
+        name:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+        update_cache: true
+        state: present
+
+    - name: Ensure Docker is enabled
+      ansible.builtin.service:
+        name: docker
+        state: started
+        enabled: true
+
+    - name: Add ubuntu user to docker group
+      ansible.builtin.user:
+        name: ubuntu
+        groups: docker
+        append: true
+
+    - name: Clone or update application repository
+      ansible.builtin.git:
+        repo: "{{ repo_url }}"
+        dest: "{{ app_dir }}"
+        version: "{{ repo_version }}"
+        force: true
+
+    - name: Render production environment file
+      ansible.builtin.template:
+        src: templates/env.j2
+        dest: "{{ app_dir }}/.env"
+        mode: "0600"
+
+    - name: Start application with Docker Compose
+      community.docker.docker_compose_v2:
+        project_src: "{{ app_dir }}"
+        build: always
+        state: present
+
+    - name: Show deployed application URL
+      ansible.builtin.debug:
+        msg: "EmPay HRMS deployed at http://{{ ansible_host | default(inventory_hostname) }}"
